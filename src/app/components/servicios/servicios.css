@@ -1,0 +1,162 @@
+.servicios-page {
+    background-color: #fdf2f8;
+    min-height: 100vh;
+  }
+  
+  /* --- NUEVA NAVBAR TIPO PANEL --- */
+  .nav-header {
+    background: white;
+    border-bottom: 1px solid #f3e8ff;
+    padding: 15px 0;
+  }
+  
+  .nav-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+  }
+  
+  .logo-text {
+    color: #db2777;
+    font-family: serif;
+    font-size: 1.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0;
+  }
+  
+  .nav-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .nav-btn {
+    background: none;
+    border: none;
+    color: #4b5563;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+  }
+  
+  .nav-btn:hover {
+    background-color: #fdf2f8;
+    color: #db2777;
+  }
+  
+  .nav-btn.logout {
+    color: #dc2626;
+  }
+  
+  .nav-btn.logout:hover {
+    background-color: #fee2e2;
+  }
+  
+  /* --- Contenedor Principal --- */
+  .content-container {
+    max-width: 850px; /* Ancho reducido como en Promociones */
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  
+  /* --- Cabecera --- */
+  .top-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+    position: relative;
+  }
+  
+  .title { 
+    font-size: 1.8rem; 
+    color: #1f2937; 
+    margin: 0; 
+    font-weight: 700; 
+  }
+  
+  /* --- LISTA DE SERVICIOS --- */
+  .servicios-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .servicio-card {
+    width: 100%;
+    background: white;
+    border-radius: 20px;
+    padding: 25px 30px;
+    display: flex; /* Alineación horizontal */
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
+  }
+  
+  .servicio-card:hover { transform: scale(1.01); }
+  
+  /* Lado Izquierdo: Info */
+  .servicio-info {
+    flex-grow: 1;
+    padding-right: 20px;
+  }
+  
+  .servicio-info h3 { margin: 0; font-size: 1.3rem; color: #111827; font-weight: 700; }
+  .desc { color: #6b7280; font-size: 0.95rem; margin: 8px 0; line-height: 1.4; }
+  
+  .duracion {
+    display: flex;
+    align-items: center;
+    color: #9ca3af;
+    font-size: 0.85rem;
+    margin-top: 10px;
+  }
+  .icon-clock { width: 16px; height: 16px; margin-right: 6px; }
+  
+  /* Lado Derecho: Precio y Botón */
+  .servicio-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    min-width: 160px;
+  }
+  
+  .precio {
+    color: #db2777;
+    font-size: 1.8rem;
+    font-weight: 800;
+    margin-bottom: 12px;
+  }
+  
+  .btn-reservar {
+    padding: 12px 24px;
+    background-color: #db2777;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-reservar:hover { background-color: #be185d; }
+  
+  /* --- Sección Informativa --- */
+  .info-importante {
+    margin-top: 50px;
+    background: #fdf2f8;
+    border-left: 4px solid #db2777;
+    padding: 25px;
+    border-radius: 0 15px 15px 0;
+  }
+  .info-importante h3 { color: #db2777; margin-top: 0; font-size: 1.2rem; }
+  .info-list { margin-top: 15px; }
+  .info-item { display: flex; gap: 10px; margin-bottom: 10px; color: #4b5563; font-size: 0.9rem; }
+  .dot { color: #db2777; font-weight: bold; }

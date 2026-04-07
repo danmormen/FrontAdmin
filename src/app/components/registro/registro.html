@@ -1,0 +1,46 @@
+<div class="registro-container">
+    <div class="registro-card">
+      <h1 class="brand-title">Crear Cuenta</h1>
+      <p class="brand-subtitle">Únete a PonteGuapa y gestiona tus citas</p>
+  
+      <div class="form-row">
+        <div class="form-group">
+          <label>Nombre</label>
+          <input type="text" [(ngModel)]="nombre" placeholder="Ej. Ana">
+        </div>
+        <div class="form-group">
+          <label>Apellido</label>
+          <input type="text" [(ngModel)]="apellido" placeholder="Pérez">
+        </div>
+      </div>
+  
+      <div class="form-group">
+        <label>Email</label>
+        <input type="email" [(ngModel)]="email" placeholder="tu@email.com">
+      </div>
+  
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" [(ngModel)]="pass" placeholder="••••••••">
+      </div>
+  
+      <div class="form-group">
+        <label>Fecha de Nacimiento</label>
+        <input 
+          type="text" 
+          [(ngModel)]="fechaNacimiento" 
+          (keypress)="validarSoloNumeros($event)" 
+          (input)="formatearFecha($event)"
+          placeholder="DD/MM/AAAA"
+          maxlength="10" 
+          class="date-input-field">
+        <small class="helper-text">Solo números. Debes ser mayor de 18 años.</small>
+      </div>
+  
+      <button class="btn-registro" (click)="registrar()">Registrarse</button>
+  
+      <p class="footer-text">
+        ¿Ya tienes cuenta? <span class="highlight" (click)="irALogin()">Inicia Sesión</span>
+      </p>
+    </div>
+  </div>

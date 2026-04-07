@@ -1,0 +1,86 @@
+<div class="perfil-container">
+    <nav class="nav-header">
+      <div class="nav-content">
+        <h2 class="logo-text" (click)="onBack()">PonteGuapa - <span class="sub-text">Estilista</span></h2>
+        <div class="nav-actions">
+          <button class="nav-btn" (click)="onBack()">Volver al Panel</button>
+          <button class="nav-btn logout" (click)="onLogout()">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <main class="main-layout">
+      <header class="page-info">
+        <h1>Mi Perfil</h1>
+      </header>
+  
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="avatar-large">👤</div>
+          <div class="header-text">
+            <h2>{{estilista.nombre}}</h2>
+            <p>{{estilista.puesto}}</p>
+          </div>
+        </div>
+  
+        <div class="stats-bar">
+          <div class="stat-item">
+            <span class="stat-value">⭐ {{estilista.calificacion}}</span>
+            <span class="stat-label">Calificación</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">🗓️ {{estilista.citasCompletadas}}</span>
+            <span class="stat-label">Citas Completadas</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-value">👥 {{estilista.resenas}}</span>
+            <span class="stat-label">Reseñas</span>
+          </div>
+        </div>
+  
+        <div class="profile-details">
+          <div class="detail-row">
+            <span class="icon">✉️</span>
+            <div class="info">
+              <label>Email</label>
+              <p>{{estilista.email}}</p>
+            </div>
+          </div>
+  
+          <div class="detail-row">
+            <span class="icon">📞</span>
+            <div class="info">
+              <label>Teléfono</label>
+              <div class="edit-group" *ngIf="!editandoTelefono">
+                <p>{{estilista.telefono}}</p>
+                <button class="btn-edit" (click)="activarEdicion()">✎</button>
+              </div>
+              <div class="edit-group" *ngIf="editandoTelefono">
+                <input type="text" [(ngModel)]="nuevoTelefono" class="input-edit">
+                <button class="btn-save" (click)="guardarTelefono()">💾</button>
+              </div>
+            </div>
+          </div>
+  
+          <div class="detail-row">
+            <span class="icon">⭐</span>
+            <div class="info">
+              <label>Especialidades</label>
+              <div class="tags-container">
+                <span class="tag" *ngFor="let esp of estilista.especialidades">{{esp}}</span>
+              </div>
+              <p class="admin-note">Las especialidades son gestionadas por el administrador</p>
+            </div>
+          </div>
+  
+          <div class="detail-row">
+            <span class="icon">📅</span>
+            <div class="info">
+              <label>Fecha de Ingreso</label>
+              <p>{{estilista.fechaIngreso}}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>

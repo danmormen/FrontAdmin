@@ -1,0 +1,176 @@
+.reservar-page {
+    background-color: #fdf2f8;
+    min-height: 100vh;
+  }
+  
+  /* --- NUEVA NAVBAR TIPO PANEL --- */
+  .nav-header {
+    background: white;
+    border-bottom: 1px solid #f3e8ff;
+    padding: 15px 0;
+  }
+  
+  .nav-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+  }
+  
+  .logo-text {
+    color: #db2777;
+    font-family: serif;
+    font-size: 1.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0;
+  }
+  
+  .nav-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .nav-btn {
+    background: none;
+    border: none;
+    color: #4b5563;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+  }
+  
+  .nav-btn:hover {
+    background-color: #fdf2f8;
+    color: #db2777;
+  }
+  
+  .nav-btn.logout {
+    color: #dc2626;
+  }
+  
+  .nav-btn.logout:hover {
+    background-color: #fee2e2;
+  }
+  
+  /* Contenedor */
+  .content-container { 
+    max-width: 700px; 
+    margin: 0 auto; 
+    padding: 40px 20px; 
+  }
+  
+  .title { 
+    font-size: 1.5rem; 
+    color: #1f2937; 
+    margin: 0 0 25px 0; 
+    font-weight: 600; 
+  }
+  
+  /* Tarjeta Booking */
+  .booking-card {
+    background: white;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
+  }
+  
+  /* --- ESTILOS DEL BANNER DE PROMOCIÓN (NUEVO) --- */
+  .promo-banner {
+    background: linear-gradient(135deg, #db2777, #a855f7); /* Degradado de rosa a morado */
+    border-radius: 12px;
+    padding: 15px 20px;
+    margin-bottom: 25px;
+    color: white;
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  .promo-tag {
+    font-weight: 800;
+    font-size: 0.9rem;
+    display: block;
+    margin-bottom: 4px;
+  }
+  
+  .promo-detail {
+    font-size: 0.85rem;
+    margin: 0;
+    opacity: 0.95;
+    line-height: 1.4;
+  }
+  
+  /* Formulario */
+  .form-group { margin-bottom: 24px; }
+  
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+  label {
+    display: block;
+    font-size: 0.9rem;
+    color: #374151;
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+  
+  /* Inputs y Selects */
+  input, select, textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-family: inherit;
+    color: #1f2937;
+    background-color: white;
+    box-sizing: border-box;
+    transition: all 0.2s;
+  }
+  
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #f472b6;
+    box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.1);
+  }
+  
+  /* --- ESTILO PARA CAMPO BLOQUEADO (NUEVO) --- */
+  select:disabled {
+    background-color: #f3f4f6; /* Gris claro */
+    color: #6b7280;
+    cursor: not-allowed;
+    border-color: #e5e7eb;
+    opacity: 1; /* Para que el texto sea legible en algunos navegadores */
+  }
+  
+  /* Botón Confirmar */
+  .btn-confirm {
+    width: 100%;
+    padding: 16px;
+    background-color: #db2777;
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 10px;
+    transition: background 0.3s, transform 0.1s;
+  }
+  
+  .btn-confirm:hover { background-color: #be185d; }
+  .btn-confirm:active { transform: scale(0.98); }
+  
+  /* Animación sutil para el banner */
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }

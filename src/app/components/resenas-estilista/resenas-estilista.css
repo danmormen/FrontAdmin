@@ -1,0 +1,54 @@
+.resenas-container { background-color: #f0fdfa; min-height: 100vh; font-family: 'Inter', sans-serif; }
+
+/* Navbar */
+.nav-header { background: white; padding: 0 40px; height: 75px; display: flex; align-items: center; border-bottom: 1px solid #ccfbf1; }
+.nav-content { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+.logo-text { color: #0d9488; font-weight: 800; cursor: pointer; margin: 0; }
+.sub-text { font-weight: 300; }
+.nav-actions { display: flex; gap: 20px; }
+.nav-btn { background: none; border: none; font-weight: 600; color: #475569; cursor: pointer; }
+.logout:hover { color: #ef4444; }
+
+.main-layout { max-width: 1000px; margin: 0 auto; padding: 40px 20px; }
+.page-info h1 { color: #134e4a; font-size: 1.8rem; margin-bottom: 25px; }
+
+/* Card de Resumen */
+.summary-card { 
+  background: white; border-radius: 20px; padding: 30px; 
+  display: grid; grid-template-columns: 1fr 2fr; gap: 40px;
+  margin-bottom: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+}
+
+.rating-overall { text-align: center; border-right: 1px solid #f1f5f9; }
+.big-number { font-size: 4rem; font-weight: 800; color: #0d9488; display: block; }
+.stars-row { color: #facc15; font-size: 1.5rem; margin: 5px 0; }
+.total-count { color: #64748b; font-size: 0.9rem; }
+
+.rating-bars { display: flex; flex-direction: column; gap: 8px; justify-content: center; }
+.bar-row { display: flex; align-items: center; gap: 12px; }
+.star-label { font-size: 0.85rem; color: #475569; min-width: 25px; }
+.progress-bg { flex: 1; background: #f1f5f9; height: 8px; border-radius: 10px; overflow: hidden; }
+.progress-fill { background: #10b981; height: 100%; border-radius: 10px; }
+.count-label { font-size: 0.85rem; color: #94a3b8; min-width: 15px; }
+
+/* Items de Reseña */
+.review-item { 
+  background: white; border-radius: 20px; padding: 25px; margin-bottom: 15px;
+  border: 1px solid #e2f2f0;
+}
+.review-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px; }
+.user-info { display: flex; gap: 15px; align-items: center; }
+.avatar-icon { width: 45px; height: 45px; background: #ccfbf1; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+.user-info h3 { margin: 0; font-size: 1.1rem; color: #1e293b; }
+.service-tag { margin: 2px 0 0; color: #0d9488; font-size: 0.85rem; font-weight: 600; }
+
+.stars-rating { color: #cbd5e1; font-size: 1.2rem; }
+.stars-rating .star.filled { color: #facc15; }
+
+.comment-text { color: #475569; line-height: 1.6; margin-bottom: 15px; }
+.review-footer { font-size: 0.85rem; color: #94a3b8; display: flex; align-items: center; gap: 6px; }
+
+@media (max-width: 600px) {
+  .summary-card { grid-template-columns: 1fr; }
+  .rating-overall { border-right: none; border-bottom: 1px solid #f1f5f9; padding-bottom: 20px; }
+}

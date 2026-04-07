@@ -1,0 +1,86 @@
+<div class="home-page">
+    <header class="navbar">
+      <div class="navbar-content">
+        <h1 class="logo">PonteGuapa</h1>
+        <button class="btn-logout" (click)="cerrarSesion()">Cerrar Sesión</button>
+      </div>
+    </header>
+  
+    <div class="content-container">
+      <section class="welcome-card">
+        <h2 class="welcome-title">Bienvenida a PonteGuapa</h2>
+    
+        <p class="welcome-text">
+          En PonteGuapa, nos dedicamos a resaltar tu belleza natural con servicios
+          profesionales de la más alta calidad. Nuestro equipo de especialistas
+          está comprometido con tu bienestar y satisfacción.
+        </p>
+    
+        <p class="welcome-text explore">
+          ¡Explora todas nuestras opciones!
+        </p>
+      </section>
+    
+      <section class="menu-grid">
+        <button
+          *ngFor="let card of cards"
+          type="button"
+          class="menu-card"
+          (click)="goTo(card.section)"
+        >
+          <div class="menu-icon">
+            <ng-container [ngSwitch]="card.icon">
+    
+              <svg *ngSwitchCase="'perfil'" viewBox="0 0 24 24" fill="none" class="icon-svg">
+                <path d="M12 12a4 4 0 1 0 0-8a4 4 0 0 0 0 8Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M4 20a8 8 0 0 1 16 0" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+    
+              <svg *ngSwitchCase="'servicios'" viewBox="0 0 24 24" fill="none" class="icon-svg">
+                <path d="M12 3l1.2 3.6L17 8l-3.8 1.4L12 13l-1.2-3.6L7 8l3.8-1.4L12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <path d="M18.5 14l.7 2.1l2.3.8l-2.3.8l-.7 2.1l-.7-2.1l-2.3-.8l2.3-.8l.7-2.1Z" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+    
+              <svg *ngSwitchCase="'reservar'" viewBox="0 0 24 24" fill="none" class="icon-svg">
+                <rect x="4" y="5" width="16" height="15" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 3v4M16 3v4M4 9h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+    
+              <svg *ngSwitchCase="'promociones'" viewBox="0 0 24 24" fill="none" class="icon-svg">
+                <path d="M10 4H6a2 2 0 0 0-2 2v4l8 8l8-8V6a2 2 0 0 0-2-2h-4" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <circle cx="8.5" cy="8.5" r="1.2" fill="currentColor"/>
+              </svg>
+    
+              <svg *ngSwitchCase="'ver'" viewBox="0 0 24 24" fill="none" class="icon-svg">
+                <rect x="5" y="4" width="14" height="16" rx="2" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M8 8h8M8 12h8M8 16h5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+    
+              <svg *ngSwitchCase="'recompensas'" viewBox="0 0 24 24" fill="none" class="icon-svg">
+                <path d="M20 12v7a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1v-7" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M3 8h18v4H3V8Z" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 8v12" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 8H9.5a2.5 2.5 0 1 1 0-5c2 0 2.5 2 2.5 5Z" stroke="currentColor" stroke-width="1.8"/>
+                <path d="M12 8h2.5a2.5 2.5 0 1 0 0-5c-2 0-2.5 2-2.5 5Z" stroke="currentColor" stroke-width="1.8"/>
+              </svg>
+    
+              <svg *ngSwitchCase="'resenas'" viewBox="0 0 24 24" fill="none" class="icon-svg">
+                <path d="M12 3l2.7 5.4l6 .9l-4.3 4.2l1 5.9L12 16.8L6.6 19.4l1-5.9L3.3 9.3l6-.9L12 3Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              </svg>
+    
+              <svg *ngSwitchCase="'blog'" viewBox="0 0 24 24" fill="none" class="icon-svg">
+                <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H20v14H6.5A2.5 2.5 0 0 0 4 20.5V6.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+                <path d="M4 6.5A2.5 2.5 0 0 1 6.5 4H18v16H6.5A2.5 2.5 0 0 0 4 22.5V6.5Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+              </svg>
+    
+            </ng-container>
+          </div>
+    
+          <div class="menu-content">
+            <h3 class="menu-title">{{ card.title }}</h3>
+            <p class="menu-description">{{ card.description }}</p>
+          </div>
+        </button>
+      </section>
+    </div>
+  </div>

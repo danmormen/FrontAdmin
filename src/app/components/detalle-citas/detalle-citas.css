@@ -1,0 +1,52 @@
+.detalle-container { background-color: #f0fdfa; min-height: 100vh; font-family: 'Inter', sans-serif; }
+
+/* Navbar */
+.nav-header { background: white; padding: 0 40px; height: 75px; display: flex; align-items: center; border-bottom: 1px solid #ccfbf1; }
+.nav-content { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+.logo-text { color: #0d9488; font-weight: 800; cursor: pointer; margin: 0; }
+.sub-text { font-weight: 300; }
+.nav-actions { display: flex; gap: 20px; }
+.nav-btn { background: none; border: none; font-weight: 600; color: #475569; cursor: pointer; }
+.logout:hover { color: #ef4444; }
+
+.main-layout { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+.page-info h1 { color: #134e4a; font-size: 1.8rem; margin-bottom: 25px; font-weight: 700; }
+
+/* Buscador */
+.search-section { margin-bottom: 30px; }
+.search-box { 
+  background: white; border-radius: 15px; padding: 12px 20px; 
+  display: flex; align-items: center; gap: 15px;
+  border: 1px solid #ccfbf1; box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+}
+.search-icon { color: #94a3b8; }
+.search-box input { border: none; outline: none; width: 100%; font-size: 1rem; color: #1e293b; }
+
+/* Tarjetas de Historial */
+.detail-card { 
+  background: white; border-radius: 20px; padding: 25px; margin-bottom: 20px;
+  border: 1px solid #e2f2f0; box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+.client-meta h3 { margin: 0; color: #1e293b; font-size: 1.2rem; }
+.service-name { margin: 5px 0 0; color: #0d9488; font-weight: 600; }
+
+.status-badge { 
+  background: #d1fae5; color: #065f46; padding: 6px 14px; 
+  border-radius: 20px; font-size: 0.75rem; font-weight: 700; 
+}
+
+.info-grid { display: flex; gap: 40px; margin-bottom: 20px; color: #475569; font-size: 0.95rem; }
+.info-item { display: flex; align-items: center; gap: 8px; }
+.price { font-weight: 700; color: #1e293b; }
+
+.notes-box { 
+  background: #f0fdfa; padding: 15px 20px; border-radius: 12px; 
+  border-left: 4px solid #10b981; 
+}
+.notes-box p { margin: 0; color: #334155; font-size: 0.9rem; }
+
+@media (max-width: 768px) {
+  .info-grid { flex-direction: column; gap: 10px; }
+}

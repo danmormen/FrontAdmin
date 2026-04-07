@@ -1,0 +1,68 @@
+<div class="servicios-page">
+    <nav class="nav-header">
+      <div class="nav-content">
+        <h2 class="logo-text" (click)="regresar()">PonteGuapa</h2>
+        <div class="nav-actions">
+          <button class="nav-btn" (click)="regresar()">Volver al Panel</button>
+          <button class="nav-btn logout">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <div class="content-container">
+      <div class="top-header">
+        <h1 class="title">Nuestros Servicios</h1>
+      </div>
+  
+      <div class="servicios-grid">
+        <div class="servicio-card" *ngFor="let s of listaServicios">
+          
+          <div class="servicio-info">
+            <div class="info-principal">
+              <h3>{{ s.nombre }}</h3>
+              <p class="desc">{{ s.descripcion }}</p>
+            </div>
+            
+            <div class="duracion">
+              <svg class="icon-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"></circle>
+                <polyline points="12 6 12 12 16 14"></polyline>
+              </svg>
+              <span>Duración: {{ s.duracion }}</span>
+            </div>
+          </div>
+          
+          <div class="servicio-actions">
+            <span class="precio">{{ s.precio }}</span>
+            <button class="btn-reservar" (click)="onReservar(s.nombre)">
+              Reservar Cita
+            </button>
+          </div>
+  
+        </div>
+      </div>
+  
+      <section class="info-importante">
+        <h3>Información Importante</h3>
+        <div class="info-list">
+          <div class="info-item">
+            <span class="dot">•</span>
+            <p>Todos los servicios son realizados por profesionales certificados.</p>
+          </div>
+          <div class="info-item">
+            <span class="dot">•</span>
+            <p>Utilizamos solo productos de marcas reconocidas y de alta calidad.</p>
+          </div>
+          <div class="info-item">
+            <span class="dot">•</span>
+            <p>Por cada servicio acumulas puntos en nuestro programa de recompensas.</p>
+          </div>
+          <div class="info-item">
+            <span class="dot">•</span>
+            <p>Si necesitas cancelar, hazlo con al menos 24 horas de anticipación.</p>
+          </div>
+        </div>
+      </section>
+      
+    </div>
+  </div>

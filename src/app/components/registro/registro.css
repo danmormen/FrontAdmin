@@ -1,0 +1,121 @@
+.registro-container {
+    background-color: #fff5f8;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
+  }
+  
+  .registro-card {
+    background: white;
+    padding: 40px;
+    border-radius: 24px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.03);
+    width: 100%;
+    max-width: 460px;
+    text-align: center;
+    border: 1px solid #fce7f3;
+  }
+  
+  .brand-title {
+    color: #db2777;
+    font-weight: 800;
+    font-size: 28px;
+    margin-bottom: 8px;
+  }
+  
+  .brand-subtitle {
+    color: #6b7280;
+    font-size: 14px;
+    margin-bottom: 25px;
+  }
+  
+  .form-row {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .form-group {
+    text-align: left;
+    margin-bottom: 18px;
+    width: 100%;
+  }
+  
+  .form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: 700;
+    color: #4b5563;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .form-group input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #e5e7eb;
+    border-radius: 12px;
+    box-sizing: border-box;
+    font-size: 14px;
+    background-color: #fafafa;
+    transition: all 0.2s;
+  }
+  
+  .form-group input:focus {
+    outline: none;
+    border-color: #db2777;
+    background-color: #fff;
+    box-shadow: 0 0 0 4px rgba(219, 39, 119, 0.1);
+  }
+  
+  /* Estilo para que la fecha se vea clara */
+  .date-input-field {
+    letter-spacing: 2px;
+    font-weight: 600;
+    color: #374151;
+  }
+  
+  .helper-text {
+    font-size: 11px;
+    color: #9ca3af;
+    margin-top: 5px;
+    display: block;
+  }
+  
+  .btn-registro {
+    width: 100%;
+    background: #db2777;
+    color: white;
+    border: none;
+    padding: 15px;
+    border-radius: 12px;
+    font-weight: 700;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 20px;
+    transition: background 0.3s ease;
+  }
+  
+  .btn-registro:hover {
+    background: #be185d;
+  }
+  
+  .footer-text {
+    font-size: 14px;
+    color: #6b7280;
+  }
+  
+  .highlight {
+    color: #db2777;
+    font-weight: 800;
+    cursor: pointer;
+    margin-left: 5px;
+  }
+  
+  .highlight:hover {
+    text-decoration: underline;
+  }

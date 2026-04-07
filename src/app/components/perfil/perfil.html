@@ -1,0 +1,56 @@
+<div class="perfil-page">
+    <nav class="nav-header">
+      <div class="nav-content">
+        <h2 class="logo-text" (click)="regresar()">PonteGuapa</h2>
+        <div class="nav-actions">
+          <button class="nav-btn" (click)="regresar()">Volver al Panel</button>
+          <button class="nav-btn logout">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <div class="content-container">
+      <div class="top-actions">
+        <h2 class="title">Mi Perfil</h2>
+      </div>
+  
+      <div class="profile-card">
+        <div class="profile-header">
+          <div class="avatar-circle">
+            <span>{{ usuario.iniciales }}</span>
+          </div>
+          <div class="profile-info">
+            <h3>{{ usuario.nombre }} {{ usuario.apellido }}</h3>
+            <p>Cliente de PonteGuapa</p>
+          </div>
+        </div>
+  
+        <form class="profile-form">
+          <div class="form-row">
+            <div class="form-group">
+              <label>Nombre</label>
+              <input type="text" [(ngModel)]="usuario.nombre" name="nombre">
+            </div>
+            <div class="form-group">
+              <label>Apellido</label>
+              <input type="text" [(ngModel)]="usuario.apellido" name="apellido">
+            </div>
+          </div>
+  
+          <div class="form-group">
+            <label>Email</label>
+            <input type="email" [(ngModel)]="usuario.email" name="email">
+          </div>
+  
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="text" [(ngModel)]="usuario.telefono" name="telefono">
+          </div>
+  
+          <button type="button" class="btn-save" (click)="guardarCambios()">
+            Guardar Cambios
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>

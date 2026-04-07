@@ -1,0 +1,165 @@
+.ver-cita-page {
+    background-color: #fdf2f8;
+    min-height: 100vh;
+  }
+  
+  /* --- NUEVA NAVBAR TIPO PANEL --- */
+  .nav-header {
+    background: white;
+    border-bottom: 1px solid #f3e8ff;
+    padding: 15px 0;
+  }
+  
+  .nav-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 30px;
+  }
+  
+  .logo-text {
+    color: #db2777;
+    font-family: serif;
+    font-size: 1.8rem;
+    font-weight: bold;
+    cursor: pointer;
+    margin: 0;
+  }
+  
+  .nav-actions {
+    display: flex;
+    gap: 15px;
+    align-items: center;
+  }
+  
+  .nav-btn {
+    background: none;
+    border: none;
+    color: #4b5563;
+    font-size: 0.95rem;
+    font-weight: 500;
+    cursor: pointer;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+  }
+  
+  .nav-btn:hover {
+    background-color: #fdf2f8;
+    color: #db2777;
+  }
+  
+  .nav-btn.logout {
+    color: #dc2626;
+  }
+  
+  .nav-btn.logout:hover {
+    background-color: #fee2e2;
+  }
+  
+  /* --- Contenedor --- */
+  .content-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 20px;
+  }
+  
+  /* --- Cabecera --- */
+  .top-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 40px;
+    position: relative;
+  }
+  
+  .title {
+    font-size: 1.8rem;
+    color: #1f2937;
+    font-weight: 700;
+    margin: 0;
+  }
+  
+  /* --- Tarjetas de Citas --- */
+  .citas-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .cita-card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  }
+  
+  .title-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 8px;
+  }
+  
+  .title-badge-row h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #111827;
+    font-weight: 600;
+  }
+  
+  /* Badges */
+  .status-tag {
+    padding: 4px 10px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 700;
+  }
+  .tag-green { background-color: #dcfce7; color: #10b981; }
+  .tag-yellow { background-color: #fef9c3; color: #ca8a04; }
+  
+  .detail-line {
+    margin: 3px 0;
+    color: #6b7280;
+    font-size: 0.95rem;
+  }
+  
+  /* Botones */
+  .actions-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 130px;
+  }
+  
+  .btn-action {
+    padding: 10px;
+    border-radius: 10px;
+    font-size: 0.85rem;
+    font-weight: 700;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+  }
+  
+  .btn-green { background-color: #10b981; color: white; }
+  .btn-pink { background-color: #db2777; color: white; }
+  .btn-outline-red { 
+    background-color: transparent; 
+    color: #dc2626; 
+    border: 1px solid #dc2626; 
+  }
+  
+  .btn-action:hover {
+    transform: translateY(-1px);
+    filter: brightness(1.05);
+  }
+  
+  .btn-outline-red:hover {
+    background-color: #fef2f2;
+  }

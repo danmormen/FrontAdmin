@@ -1,0 +1,65 @@
+<div class="admin-page-layout">
+    <nav class="admin-nav">
+      <div class="nav-container">
+        <div class="brand" (click)="backToAdmin.emit()">
+          PonteGuapa <span class="sub-brand">- Admin</span>
+        </div>
+        <div class="nav-actions">
+          <button class="text-btn" (click)="backToAdmin.emit()">Volver al Panel</button>
+          <button class="text-btn logout-btn" (click)="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <div class="main-content">
+      <h1 class="page-title">Gestión de Citas</h1>
+  
+      <div class="toolbar">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input type="text" [(ngModel)]="filtroBusqueda" placeholder="Buscar por cliente o servicio...">
+        </div>
+        
+        <div class="filter-group">
+          <span class="filter-icon">⏳</span>
+          <select [(ngModel)]="filtroEstado">
+            <option value="Todas">Todas</option>
+            <option value="Confirmada">Confirmadas</option>
+            <option value="Pendiente">Pendientes</option>
+            <option value="Cancelada">Canceladas</option>
+          </select>
+        </div>
+      </div>
+  
+      <div class="table-container">
+        <table class="citas-table">
+          <thead>
+            <tr>
+              <th>Cliente</th>
+              <th>Servicio</th>
+              <th>Estilista</th>
+              <th>Fecha</th>
+              <th>Hora</th>
+              <th>Precio</th>
+              <th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let cita of citasFiltradas">
+              <td class="font-bold">{{ cita.cliente }}</td>
+              <td>{{ cita.servicio }}</td>
+              <td>{{ cita.estilista }}</td>
+              <td>{{ cita.fecha }}</td>
+              <td>{{ cita.hora }}</td>
+              <td class="font-bold">{{ cita.precio }}</td>
+              <td>
+                <span class="status-badge" [ngClass]="cita.estado.toLowerCase()">
+                  {{ cita.estado }}
+                </span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>

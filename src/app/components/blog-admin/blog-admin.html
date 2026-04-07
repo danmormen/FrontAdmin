@@ -1,0 +1,96 @@
+<div class="blog-admin-page">
+    <nav class="navbar">
+      <div class="nav-content">
+        <h2 class="brand" (click)="volverAlPanel()">PonteGuapa <span class="tag">Admin</span></h2>
+        <div class="nav-links">
+          <button class="link-btn" (click)="volverAlPanel()">Volver al Panel</button>
+          <button class="link-btn logout" (click)="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <div class="container">
+      <header class="page-header">
+        <h1>Gestión de Blog</h1>
+        <button class="btn-add" (click)="abrirModalNuevo()">+ Agregar Publicación</button>
+      </header>
+  
+      <div class="posts-grid">
+        <article class="post-card" *ngFor="let post of publicaciones">
+          <div class="image-wrapper">
+            <img [src]="post.urlImagen" alt="Portada">
+            <span class="category-badge">{{ post.categoria }}</span>
+          </div>
+          <div class="card-content">
+            <h3>{{ post.titulo }}</h3>
+            <p class="meta">👤 {{ post.autor }} | 📅 {{ post.fecha | date:'d/M/yyyy' }}</p>
+            <p class="excerpt">{{ post.descripcionBreve }}</p>
+            <div class="card-footer">
+              <button class="btn-action edit" (click)="abrirModalEditar(post)">Editar</button>
+              <button class="btn-action delete" (click)="eliminarPost(post.id)">Eliminar</button>
+            </div>
+          </div>
+        </article>
+      </div>
+    </div>
+  
+    <div class="modal-overlay" *ngIf="mostrarModal">
+      <div class="modal-box">
+        <div class="modal-header">
+          <h2>{{ editando ? 'Editar Publicación' : 'Nueva Publicación' }}</h2>
+          <button class="btn-close" (click)="mostrarModal = false">&times;</button>
+        </div>
+  
+        <div class="form-body">
+          <div class="form-group full">
+            <label>Título</label>
+            <input type="text" [(ngModel)]="postForm.titulo">
+          </div>
+  
+          <div class="form-group full">
+            <label>Categoría</label>
+            <select [(ngModel)]="postForm.categoria">
+              <option value="Manicure">Manicure</option>
+              <option value="Pedicure">Pedicure</option>
+              <option value="Cabello">Cabello</option>
+            </select>
+          </div>
+  
+          <div class="form-group full">
+            <label>Descripción Breve</label>
+            <input type="text" [(ngModel)]="postForm.descripcionBreve">
+          </div>
+  
+          <div class="form-group full">
+            <label>Contenido Completo</label>
+            <textarea rows="4" [(ngModel)]="postForm.contenidoCompleto"></textarea>
+          </div>
+  
+          <div class="form-group full">
+            <label>URL de la Imagen</label>
+            <input type="text" [(ngModel)]="postForm.urlImagen" placeholder="https://ejemplo.com/imagen.jpg">
+          </div>
+  
+          <div class="form-row">
+            <div class="form-group">
+              <label>Autor</label>
+              <input type="text" [(ngModel)]="postForm.autor">
+            </div>
+            <div class="form-group">
+              <label>Fecha</label>
+              <input type="date" [(ngModel)]="postForm.fecha">
+            </div>
+            <div class="form-group">
+              <label>Tiempo Lectura</label>
+              <input type="text" [(ngModel)]="postForm.tiempoLectura" placeholder="Ej: 3 min">
+            </div>
+          </div>
+        </div>
+  
+        <div class="modal-actions">
+          <button class="btn-cancel" (click)="mostrarModal = false">Cancelar</button>
+          <button class="btn-save" (click)="guardarPost()">{{ editando ? 'Actualizar' : 'Guardar' }}</button>
+        </div>
+      </div>
+    </div>
+  </div>

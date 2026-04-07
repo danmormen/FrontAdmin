@@ -1,0 +1,46 @@
+<div class="promociones-page">
+    <nav class="nav-header">
+      <div class="nav-content">
+        <h2 class="logo-text" (click)="regresar()">PonteGuapa</h2>
+        <div class="nav-actions">
+          <button class="nav-btn" (click)="regresar()">Volver al Panel</button>
+          <button class="nav-btn logout">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <div class="content-container">
+      <div class="top-header">
+        <h1 class="title">Promociones Especiales</h1>
+      </div>
+  
+      <div class="promo-grid">
+        <div class="promo-card" *ngFor="let p of promociones">
+          
+          <div class="promo-header-gradient">
+            <span class="pct">{{ p.porcentaje }}%</span>
+            <span class="sub">de descuento</span>
+          </div>
+          
+          <div class="promo-body">
+            
+            <div class="promo-info">
+              <h3>{{ p.servicio }}</h3>
+              <p class="desc">{{ p.descripcion }}</p>
+            </div>
+            
+            <div class="promo-actions">
+              <div class="precios">
+                <span class="original">{{ p.precioOriginal }}</span>
+                <span class="actual">{{ p.precioPromo }}</span>
+              </div>
+              <button class="btn-reservar-promo" (click)="irAReservar(p.servicio)">
+                Reservar Ahora
+              </button>
+            </div>
+  
+          </div> 
+        </div> 
+      </div> 
+    </div>
+</div>

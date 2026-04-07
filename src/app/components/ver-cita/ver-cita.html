@@ -1,0 +1,53 @@
+<div class="ver-cita-page">
+    <nav class="nav-header">
+      <div class="nav-content">
+        <h2 class="logo-text" (click)="regresar()">PonteGuapa</h2>
+        <div class="nav-actions">
+          <button class="nav-btn" (click)="regresar()">Volver al Panel</button>
+          <button class="nav-btn logout">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <div class="content-container">
+      <div class="top-header">
+        <h1 class="title">Mis Citas</h1>
+      </div>
+  
+      <div class="citas-wrapper">
+        <div class="cita-card" *ngFor="let cita of listaCitas">
+          
+          <div class="info-section">
+            <div class="title-badge-row">
+              <h3>{{ cita.servicio }}</h3>
+              <span class="status-tag" [ngClass]="cita.estado === 'Confirmada' ? 'tag-green' : 'tag-yellow'">
+                {{ cita.estado }}
+              </span>
+            </div>
+            <p class="detail-line">{{ cita.fecha }}</p>
+            <p class="detail-line">Hora: {{ cita.hora }}</p>
+            <p class="detail-line">Estilista: {{ cita.estilista }}</p>
+          </div>
+  
+          <div class="actions-section">
+            <button *ngIf="cita.estado === 'Pendiente'" 
+                    class="btn-action btn-green" 
+                    (click)="onConfirmar(cita)">
+              Confirmar
+            </button>
+            
+            <button *ngIf="cita.estado === 'Pendiente'" 
+                    class="btn-action btn-pink" 
+                    (click)="onModificar(cita)">
+              Modificar
+            </button>
+  
+            <button class="btn-action btn-outline-red" (click)="onCancelar(cita)">
+              Cancelar
+            </button>
+          </div>
+  
+        </div>
+      </div>
+    </div>
+  </div>

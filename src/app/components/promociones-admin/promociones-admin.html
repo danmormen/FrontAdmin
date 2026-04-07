@@ -1,0 +1,104 @@
+<div class="admin-page-layout">
+    <nav class="admin-nav">
+      <div class="nav-container">
+        <div class="brand" (click)="backToAdmin.emit()">
+          PonteGuapa <span class="sub-brand">- Admin</span>
+        </div>
+        <div class="nav-actions">
+          <button class="text-btn" (click)="backToAdmin.emit()">Volver al Panel</button>
+          <button class="text-btn logout-btn" (click)="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <div class="main-content">
+      <header class="page-header">
+        <h1 class="page-title">Gestión de Promociones</h1>
+        <button class="add-btn" (click)="abrirModalNuevo()">+ Agregar Promoción</button>
+      </header>
+  
+      <div class="promo-grid">
+        <div class="promo-card" *ngFor="let p of promociones">
+          <div class="promo-banner" [class.inactive-banner]="!p.estado">
+            <span class="discount-val">{{ p.descuento }}%</span>
+            <span class="discount-label">de descuento</span>
+          </div>
+  
+          <div class="card-body">
+            <div class="body-header">
+              <h3>{{ p.titulo }}</h3>
+              <div class="status-toggle" [class.on]="p.estado">
+                <div class="toggle-circle"></div>
+              </div>
+            </div>
+            
+            <p class="description">{{ p.descripcion }}</p>
+            <div class="price-offer main-color">Q{{ p.precioOferta }}</div>
+            
+            <div class="validity-box">
+              <span class="label">Vigencia:</span>
+              <span class="value">{{ p.fechaInicio | date:'d/M/yyyy' }} - {{ p.fechaFin | date:'d/M/yyyy' }}</span>
+            </div>
+          </div>
+  
+          <div class="card-footer">
+            <button class="action-btn edit" (click)="abrirModalEditar(p)">Editar</button>
+            <button class="action-btn delete" (click)="eliminarPromo(p.id)">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="modal-backdrop" *ngIf="mostrarModal">
+      <div class="modal-window">
+        <h2 class="modal-title">{{ editando ? 'Editar Promoción' : 'Nueva Promoción' }}</h2>
+        
+        <div class="form-container">
+          <div class="input-field full-width">
+            <label>Título de la Promoción</label>
+            <input type="text" [(ngModel)]="promoForm.titulo" placeholder="Ej. Combo Verano">
+          </div>
+  
+          <div class="input-field full-width">
+            <label>Descripción</label>
+            <textarea [(ngModel)]="promoForm.descripcion" rows="2"></textarea>
+          </div>
+  
+          <div class="input-row">
+            <div class="input-field">
+              <label>Descuento (%)</label>
+              <input type="number" [(ngModel)]="promoForm.descuento">
+            </div>
+            <div class="input-field">
+              <label>Precio Oferta (Q)</label>
+              <input type="number" [(ngModel)]="promoForm.precioOferta">
+            </div>
+          </div>
+  
+          <div class="input-row">
+            <div class="input-field">
+              <label>Fecha Inicio</label>
+              <input type="date" [(ngModel)]="promoForm.fechaInicio">
+            </div>
+            <div class="input-field">
+              <label>Fecha Fin</label>
+              <input type="date" [(ngModel)]="promoForm.fechaFin">
+            </div>
+          </div>
+  
+          <div class="input-field full-width">
+            <label>Estado de la Promoción</label>
+            <select [(ngModel)]="promoForm.estado">
+              <option [ngValue]="true">Activa</option>
+              <option [ngValue]="false">Inactiva</option>
+            </select>
+          </div>
+        </div>
+  
+        <div class="modal-btns">
+          <button class="cancel-btn" (click)="mostrarModal = false">Cancelar</button>
+          <button class="save-btn" (click)="guardarPromo()">{{ editando ? 'Actualizar' : 'Guardar' }}</button>
+        </div>
+      </div>
+    </div>
+  </div>

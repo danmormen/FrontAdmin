@@ -1,0 +1,64 @@
+.login-container {
+    background-color: #fff5f8;
+    /* Cambiamos height por min-height y aseguramos que no haya scroll */
+    min-height: 100vh;
+    width: 100vw;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: sans-serif;
+    
+    /* Estas líneas son la clave para que no aparezca nada abajo */
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow: hidden; 
+}
+
+.login-card {
+    background: white;
+    padding: 50px 40px;
+    border-radius: 20px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+    width: 100%;
+    max-width: 400px;
+    text-align: center;
+    /* Evita que la tarjeta se mueva si intentas hacer scroll */
+    position: relative; 
+    z-index: 10;
+}
+
+/* El resto de tus estilos se mantienen igual */
+.brand-title { color: #db2777; font-weight: 800; font-size: 28px; margin-bottom: 5px; }
+.brand-subtitle { color: #6b7280; font-size: 14px; margin-bottom: 30px; }
+
+.form-group { text-align: left; margin-bottom: 20px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 8px; }
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    box-sizing: border-box;
+    outline-color: #db2777;
+}
+
+.extra-links { text-align: right; margin-bottom: 25px; }
+.extra-links span { color: #db2777; font-size: 13px; font-weight: 600; cursor: pointer; }
+
+.btn-login {
+    width: 100%;
+    background: #db2777;
+    color: white;
+    border: none;
+    padding: 14px;
+    border-radius: 10px;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.footer-text { font-size: 13px; color: #4b5563; }
+.highlight { color: #db2777; font-weight: bold; cursor: pointer; }

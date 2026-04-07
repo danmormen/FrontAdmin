@@ -1,0 +1,50 @@
+.admin-page-container { background-color: #f8faff; min-height: 100vh; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+/* Navbar ajustado */
+.admin-navbar { background: white; border-bottom: 1px solid #edf2f7; padding: 0 40px; height: 70px; display: flex; align-items: center; position: sticky; top: 0; z-index: 1000; }
+.navbar-content { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+.admin-brand { color: #9333ea; font-weight: 800; cursor: pointer; margin: 0; font-size: 1.4rem; }
+.brand-tag { font-weight: 300; font-size: 1.1rem; }
+.nav-actions { display: flex; gap: 20px; align-items: center; }
+.nav-link-btn { background: none; border: none; color: #64748b; font-weight: 600; cursor: pointer; font-size: 0.95rem; }
+.logout-link { color: #64748b; font-weight: 600; cursor: pointer; background: none; border: none; font-size: 0.95rem; }
+.logout-link:hover { color: #ef4444; }
+
+.content-wrapper { max-width: 1200px; margin: 0 auto; padding: 40px 20px; }
+.page-title { font-size: 1.8rem; font-weight: 700; color: #1e293b; margin-bottom: 30px; }
+
+/* Layout de dos columnas */
+.notif-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+
+.glass-card { background: white; padding: 30px; border-radius: 24px; border: 1px solid #f1f5f9; box-shadow: 0 10px 25px rgba(0,0,0,0.02); }
+.card-subtitle { font-size: 1.1rem; color: #475569; margin-bottom: 25px; }
+
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 0.85rem; font-weight: 700; color: #64748b; margin-bottom: 8px; }
+.custom-input { width: 100%; padding: 12px 16px; border: 1px solid #e2e8f0; border-radius: 12px; font-size: 0.95rem; transition: 0.2s; }
+.custom-input:focus { outline: none; border-color: #9333ea; box-shadow: 0 0 0 3px rgba(147, 51, 234, 0.1); }
+
+.submit-btn { 
+    width: 100%; background: #9333ea; color: white; border: none; padding: 16px; 
+    border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s; margin-top: 10px;
+}
+.submit-btn:disabled { background: #cbd5e1; cursor: not-allowed; opacity: 0.7; }
+
+/* Reach info visual */
+.reach-info { margin-top: 30px; padding: 20px; }
+.reach-content { display: flex; gap: 20px; align-items: center; }
+.reach-icon { font-size: 2rem; }
+.reach-number { color: #9333ea; font-size: 2.2rem; margin: 5px 0; font-weight: 800; }
+.reach-label { color: #64748b; font-size: 0.9rem; margin: 0; font-weight: 600; }
+.reach-sub { color: #94a3b8; font-size: 0.8rem; margin: 0; }
+
+/* Historial */
+.section-title { font-size: 1.1rem; color: #475569; margin-bottom: 20px; }
+.history-item { background: white; padding: 20px; border-radius: 18px; margin-bottom: 15px; border: 1px solid #f1f5f9; }
+.item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.item-header h4 { margin: 0; font-size: 1rem; color: #1e293b; }
+.item-date { font-size: 0.8rem; color: #94a3b8; }
+.item-body { font-size: 0.9rem; color: #64748b; line-height: 1.5; margin-bottom: 15px; }
+.item-footer { display: flex; justify-content: space-between; align-items: center; font-size: 0.8rem; }
+.target-tag { color: #94a3b8; }
+.count-tag { color: #9333ea; }

@@ -1,0 +1,55 @@
+<div class="detalle-container">
+    <nav class="nav-header">
+      <div class="nav-content">
+        <h2 class="logo-text" (click)="onBack()">PonteGuapa - <span class="sub-text">Estilista</span></h2>
+        <div class="nav-actions">
+          <button class="nav-btn" (click)="onBack()">Volver al Panel</button>
+          <button class="nav-btn logout" (click)="onLogout()">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <main class="main-layout">
+      <header class="page-info">
+        <h1>Detalle de Citas</h1>
+      </header>
+  
+      <section class="search-section">
+        <div class="search-box">
+          <span class="search-icon">🔍</span>
+          <input 
+            type="text" 
+            [(ngModel)]="searchQuery" 
+            placeholder="Buscar por cliente o servicio...">
+        </div>
+      </section>
+  
+      <div class="history-list">
+        <article class="detail-card" *ngFor="let cita of historialCitas">
+          <div class="card-header">
+            <div class="client-meta">
+              <h3>{{cita.cliente}}</h3>
+              <p class="service-name">{{cita.servicio}}</p>
+            </div>
+            <span class="status-badge">Completada</span>
+          </div>
+  
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="icon">🗓️</span> {{cita.fecha}}
+            </div>
+            <div class="info-item">
+              <span class="icon">🕒</span> {{cita.hora}} - {{cita.duracion}}
+            </div>
+            <div class="info-item price">
+              <span class="icon">💰</span> Q{{cita.precio}}
+            </div>
+          </div>
+  
+          <div class="notes-box">
+            <p><strong>Notas:</strong> {{cita.notas}}</p>
+          </div>
+        </article>
+      </div>
+    </main>
+  </div>

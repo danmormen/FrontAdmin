@@ -1,0 +1,97 @@
+<div class="admin-page-layout">
+    <nav class="admin-nav">
+      <div class="nav-container">
+        <div class="brand" (click)="backToAdmin.emit()">
+          PonteGuapa <span class="sub-brand">- Admin</span>
+        </div>
+        <div class="nav-actions">
+          <button class="text-btn" (click)="backToAdmin.emit()">Volver al Panel</button>
+          <button class="text-btn logout-btn" (click)="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <div class="main-content">
+      <header class="page-header">
+        <h1 class="page-title">Gestión de Empleados</h1>
+        <button class="add-btn" (click)="abrirModalNuevo()">+ Agregar Empleado</button>
+      </header>
+  
+      <div class="employee-grid">
+        <div class="employee-card" *ngFor="let emp of empleados">
+          <div class="card-top">
+            <div class="info">
+              <h3>{{ emp.nombre }} {{ emp.apellido }}</h3>
+              <p class="role-badge">{{ emp.rol }}</p>
+            </div>
+            <span class="status-tag">Activo</span>
+          </div>
+          
+          <div class="card-details">
+            <p><strong>Especialidades:</strong> {{ emp.especialidades }}</p>
+            <p><strong>Teléfono:</strong> {{ emp.telefono }}</p>
+            <p><strong>Email:</strong> {{ emp.email }}</p>
+          </div>
+  
+          <div class="card-footer">
+            <button class="action-btn edit" (click)="abrirModalEditar(emp)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+              Editar
+            </button>
+            <button class="action-btn delete" (click)="eliminarEmpleado(emp.id)">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              Eliminar
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="modal-backdrop" *ngIf="mostrarModal">
+      <div class="modal-window">
+        <h2 class="modal-title">{{ editando ? 'Editar Empleado' : 'Nuevo Empleado' }}</h2>
+        
+        <div class="form-container">
+          <div class="input-row">
+            <div class="input-field">
+              <label>Nombre</label>
+              <input type="text" [(ngModel)]="empleadoForm.nombre" placeholder="Ej. Ana">
+            </div>
+            <div class="input-field">
+              <label>Apellido</label>
+              <input type="text" [(ngModel)]="empleadoForm.apellido" placeholder="Ej. Martínez">
+            </div>
+          </div>
+  
+          <div class="input-row">
+            <div class="input-field">
+              <label>Rol de Sistema</label>
+              <select [(ngModel)]="empleadoForm.rol">
+                <option value="Estilista">Estilista</option>
+                <option value="Administrador">Administrador</option>
+              </select>
+            </div>
+            <div class="input-field">
+              <label>Teléfono</label>
+              <input type="text" [(ngModel)]="empleadoForm.telefono" placeholder="+502 0000-0000">
+            </div>
+          </div>
+  
+          <div class="input-field full-width">
+            <label>Correo Electrónico</label>
+            <input type="email" [(ngModel)]="empleadoForm.email" placeholder="correo@ponteguapa.com">
+          </div>
+  
+          <div class="input-field full-width">
+            <label>Especialidades</label>
+            <textarea [(ngModel)]="empleadoForm.especialidades" rows="2" placeholder="Corte, Color, Manicure..."></textarea>
+          </div>
+        </div>
+  
+        <div class="modal-btns">
+          <button class="cancel-btn" (click)="mostrarModal = false">Cancelar</button>
+          <button class="save-btn" (click)="guardarEmpleado()">{{ editando ? 'Actualizar' : 'Guardar' }}</button>
+        </div>
+      </div>
+    </div>
+  </div>

@@ -1,0 +1,92 @@
+<div class="admin-page-layout">
+    <nav class="admin-nav">
+      <div class="nav-container">
+        <div class="brand" (click)="backToAdmin.emit()">
+          PonteGuapa <span class="sub-brand">- Admin</span>
+        </div>
+        <div class="nav-actions">
+          <button class="text-btn" (click)="backToAdmin.emit()">Volver al Panel</button>
+          <button class="text-btn logout-btn" (click)="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <div class="main-content">
+      <header class="page-header">
+        <h1 class="page-title">Gestión de Servicios</h1>
+        <button class="add-btn" (click)="abrirModalNuevo()">+ Agregar Servicio</button>
+      </header>
+  
+      <div class="service-grid">
+        <div class="service-card" *ngFor="let s of servicios">
+          <div class="card-top">
+            <div class="info">
+              <h3>{{ s.nombre }}</h3>
+            </div>
+            <span class="status-tag" [class.inactive]="s.estado === 'Inactivo'">{{ s.estado }}</span>
+          </div>
+          
+          <div class="card-details">
+            <p class="description">{{ s.descripcion }}</p>
+            <div class="meta-info">
+              <div class="price-box">
+                <span class="label">Precio:</span>
+                <span class="value main-color">Q{{ s.precio }}</span>
+              </div>
+              <div class="duration-box">
+                <span class="label">Duración:</span>
+                <span class="value">{{ s.duracion }} min</span>
+              </div>
+            </div>
+          </div>
+  
+          <div class="card-footer">
+            <button class="action-btn edit" (click)="abrirModalEditar(s)">Editar</button>
+            <button class="action-btn delete" (click)="eliminarServicio(s.id)">Eliminar</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    <div class="modal-backdrop" *ngIf="mostrarModal">
+      <div class="modal-window">
+        <h2 class="modal-title">{{ editando ? 'Editar Servicio' : 'Nuevo Servicio' }}</h2>
+        
+        <div class="form-container">
+          <div class="input-field full-width">
+            <label>Nombre del Servicio</label>
+            <input type="text" [(ngModel)]="servicioForm.nombre" placeholder="Ej. Corte de Dama">
+          </div>
+  
+          <div class="input-field full-width">
+            <label>Descripción</label>
+            <textarea [(ngModel)]="servicioForm.descripcion" rows="2" placeholder="Describe brevemente el servicio..."></textarea>
+          </div>
+  
+          <div class="input-row">
+            <div class="input-field">
+              <label>Precio (Q)</label>
+              <input type="number" [(ngModel)]="servicioForm.precio">
+            </div>
+            <div class="input-field">
+              <label>Duración (Minutos)</label>
+              <input type="number" [(ngModel)]="servicioForm.duracion">
+            </div>
+          </div>
+  
+          <div class="input-field full-width">
+            <label>Estado del Servicio</label>
+            <select [(ngModel)]="servicioForm.estado">
+              <option value="Activo">Activo</option>
+              <option value="Inactivo">Inactivo</option>
+            </select>
+          </div>
+        </div>
+  
+        <div class="modal-btns">
+          <button class="cancel-btn" (click)="mostrarModal = false">Cancelar</button>
+          <button class="save-btn" (click)="guardarServicio()">{{ editando ? 'Actualizar' : 'Guardar' }}</button>
+        </div>
+      </div>
+    </div>
+  </div>

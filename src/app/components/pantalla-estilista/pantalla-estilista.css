@@ -1,0 +1,90 @@
+.estilista-page {
+    background-color: #f0fdfa; /* Verde turquesa muy claro */
+    min-height: 100vh;
+    font-family: 'Segoe UI', sans-serif;
+  }
+  
+  .estilista-navbar {
+    background: white;
+    padding: 15px 40px;
+    border-bottom: 1px solid #ccfbf1;
+  }
+  
+  .navbar-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .brand-logo { color: #0d9488; font-size: 1.4rem; margin: 0; }
+  .role-tag { font-weight: 300; }
+  
+  .btn-logout {
+    background: none;
+    border: none;
+    color: #64748b;
+    font-weight: 600;
+    cursor: pointer;
+  }
+  
+  .main-container {
+    max-width: 1100px;
+    margin: 40px auto;
+    padding: 0 20px;
+  }
+  
+  .welcome-header {
+    background: white;
+    padding: 40px;
+    border-radius: 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    margin-bottom: 30px;
+  }
+  
+  .title { color: #0d9488; font-size: 2rem; margin-bottom: 15px; }
+  .subtitle { color: #64748b; line-height: 1.6; max-width: 800px; margin: 0 auto; }
+  
+  .actions-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  .action-card {
+    background: white;
+    padding: 30px;
+    border-radius: 20px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    border: 1px solid #f1f5f9;
+  }
+  
+  .action-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(13, 148, 136, 0.1);
+    border-color: #99f6e4;
+  }
+  
+  .icon-box {
+    width: 60px;
+    height: 60px;
+    background: #f0fdfa;
+    color: #0d9488;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 15px;
+  }
+  
+  .icon-box svg { width: 28px; height: 28px; }
+  
+  .action-card h3 { font-size: 1.1rem; color: #1e293b; margin: 0 0 8px 0; }
+  .action-card p { color: #94a3b8; font-size: 0.85rem; margin: 0; }
+  
+  @media (max-width: 850px) { .actions-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 550px) { .actions-grid { grid-template-columns: 1fr; } }

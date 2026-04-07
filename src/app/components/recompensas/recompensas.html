@@ -1,0 +1,66 @@
+<div class="recompensas-page">
+    <nav class="nav-header">
+      <div class="nav-content">
+        <h2 class="logo-text" (click)="regresar()">PonteGuapa</h2>
+        <div class="nav-actions">
+          <button class="nav-btn" (click)="regresar()">Volver al Panel</button>
+          <button class="nav-btn logout">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <div class="content-container">
+      <div class="top-header">
+        <h1 class="title">Mis Recompensas</h1>
+      </div>
+  
+      <div class="points-banner-compact">
+        <p class="points-label">Puntos Disponibles</p>
+        <h1 class="points-value">{{ puntosDisponibles }}</h1>
+      </div>
+  
+      <div class="main-grid">
+        <section class="recompensas-section">
+          <h3 class="sub-title">Recompensas Disponibles</h3>
+          <div class="recompensa-card" *ngFor="let r of recompensas" [class.disabled]="puntosDisponibles < r.puntos">
+            <div class="recompensa-info">
+              <h4>{{ r.titulo }}</h4>
+              <p>{{ r.descripcion }}</p>
+              <div class="tags">
+                <span class="tag-puntos">{{ r.puntos }} puntos</span>
+              </div>
+            </div>
+            <button class="btn-canjear" 
+                    [disabled]="puntosDisponibles < r.puntos"
+                    (click)="canjear(r)">
+              Canjear
+            </button>
+          </div>
+        </section>
+  
+        <aside class="side-section">
+          <div class="historial-container">
+            <h3 class="sub-title">Historial de Puntos</h3>
+            <div class="historial-item" *ngFor="let item of historial">
+              <div class="historial-info">
+                <p class="actividad">{{ item.actividad }}</p>
+                <p class="fecha">{{ item.fecha }}</p>
+              </div>
+              <p class="puntos-change" [class.suma]="item.tipo === 'suma'">
+                {{ item.tipo === 'suma' ? '+' : '-' }}{{ item.puntos }}
+              </p>
+            </div>
+          </div>
+  
+          <div class="info-card warning-card">
+            <h3>¿Cómo ganar puntos?</h3>
+            <p>• Por cada Q1 gastado: 1 punto</p>
+            <hr class="divider">
+            <p class="importante-text">
+              <strong>Importante:</strong> Los cupones son únicamente válidos al canjear en el salón.
+            </p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>

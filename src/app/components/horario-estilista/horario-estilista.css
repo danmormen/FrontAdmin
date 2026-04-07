@@ -1,0 +1,202 @@
+/* Contenedor Principal (Usa la misma clase que notificaciones) */
+.notif-page {
+    background-color: #f0fdfa;
+    min-height: 100vh;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}
+
+/* --- NAVBAR (IDÉNTICA A NOTIFICACIONES) --- */
+.nav-header {
+    background: white;
+    padding: 1rem 0;
+    border-bottom: 1px solid #e2e8f0;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.nav-content {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 1.5rem;
+}
+
+.logo-text { 
+    color: #158074; 
+    cursor: pointer; 
+    margin: 0; 
+    font-size: 1.25rem; 
+    font-weight: bold; 
+}
+
+.sub-text { 
+    color: #0d9488; 
+    font-weight: normal; 
+}
+
+.nav-actions { 
+    display: flex; 
+    gap: 1rem; 
+}
+
+/* --- BOTONES DE NAVEGACIÓN (IDÉNTICOS A NOTIFICACIONES) --- */
+.nav-btn {
+    background: #f1f5f9;
+    border: none;
+    padding: 0.5rem 1.2rem;
+    border-radius: 0.5rem;
+    color: #475569;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.nav-btn:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.nav-btn.logout {
+    color: #ef4444; /* Rojo para cerrar sesión */
+}
+
+.nav-btn.logout:hover {
+    background: #fef2f2;
+}
+
+/* --- CUERPO DE LA PÁGINA --- */
+.main-layout {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-header h1 {
+    margin: 0;
+    font-size: 1.8rem;
+    color: #0f172a;
+}
+
+/* --- TARJETA DE HORARIOS --- */
+.schedule-card {
+    background: white;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.day-row {
+    display: flex;
+    align-items: center;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.day-row:last-child { 
+    border-bottom: none; 
+}
+
+.day-main { 
+    display: flex; 
+    align-items: center; 
+    gap: 1rem; 
+    flex: 1; 
+}
+
+.mini-icon {
+    width: 40px;
+    height: 40px;
+    background: #f8fafc;
+    color: #94a3b8;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.day-text .name { 
+    display: block; 
+    font-weight: 600; 
+    color: #1e293b; 
+}
+
+.day-text .hours { 
+    font-size: 0.875rem; 
+    color: #64748b; 
+}
+
+.day-stats { 
+    text-align: right; 
+    margin-right: 2rem; 
+}
+
+.stats-label { 
+    display: block; 
+    font-size: 0.7rem; 
+    color: #94a3b8; 
+    text-transform: uppercase; 
+}
+
+.stats-value { 
+    font-weight: 700; 
+    color: #0d9488; 
+    font-size: 1.1rem; 
+}
+
+/* --- BADGES DE ESTADO --- */
+.status-badge {
+    padding: 0.4rem 1rem;
+    border-radius: 2rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    min-width: 80px;
+    text-align: center;
+}
+
+.status-badge.active { 
+    background: #ccf3ed; 
+    color: #0f766e; 
+}
+
+.status-badge.inactive { 
+    background: #f1f5f9; 
+    color: #64748b; 
+}
+
+/* --- GRID DE RESUMEN INFERIOR --- */
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.summary-item {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    text-align: center;
+}
+
+.summary-item .label { 
+    display: block; 
+    font-size: 0.875rem; 
+    color: #64748b; 
+    margin-bottom: 6px; 
+}
+
+.summary-item .value { 
+    font-size: 1.75rem; 
+    font-weight: 800; 
+    color: #1e293b; 
+}

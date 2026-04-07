@@ -1,0 +1,42 @@
+.notif-page { background-color: #f0fdfa; min-height: 100vh; font-family: 'Inter', sans-serif; }
+
+.nav-header { background: white; padding: 0 40px; height: 70px; display: flex; align-items: center; border-bottom: 1px solid #ccfbf1; }
+.nav-content { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+.logo-text { color: #0d9488; font-weight: 800; cursor: pointer; margin: 0; }
+.sub-text { font-weight: 300; }
+.nav-btn { background: none; border: none; font-weight: 600; color: #64748b; cursor: pointer; margin-left: 20px; }
+
+.main-layout { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+.page-header h1 { color: #1e293b; font-size: 1.8rem; }
+
+.count-badge { background: #10b981; color: white; padding: 6px 16px; border-radius: 20px; font-size: 0.9rem; font-weight: 600; }
+
+.notif-list { display: flex; flex-direction: column; gap: 15px; }
+
+.notif-item { 
+  background: white; border-radius: 12px; display: flex; align-items: center; 
+  padding: 20px; position: relative; overflow: hidden;
+  border: 1px solid #e2f2f0; transition: 0.2s;
+}
+.notif-item.unread { border-left: 4px solid #10b981; }
+
+.notif-icon { width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 1.4rem; margin-right: 20px; }
+.notif-icon.nueva-cita { background: #ecfdf5; color: #10b981; }
+.notif-icon.cancelada { background: #fef2f2; color: #ef4444; }
+.notif-icon.confirmada { background: #f0fdf4; color: #22c55e; }
+.notif-icon.recordatorio { background: #fffbeb; color: #f59e0b; }
+.notif-icon.resena { background: #eff6ff; color: #3b82f6; }
+
+.notif-body { flex: 1; }
+.notif-top { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+.notif-top h3 { margin: 0; font-size: 1rem; color: #1e293b; }
+.new-tag { background: #d1fae5; color: #065f46; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 4px; text-transform: uppercase; }
+
+.notif-msg { color: #475569; font-size: 0.95rem; margin: 4px 0; }
+.notif-time { color: #94a3b8; font-size: 0.85rem; margin: 0; }
+
+.notif-actions { display: flex; align-items: center; gap: 15px; }
+.btn-read { color: #0d9488; background: none; border: none; font-weight: 600; font-size: 0.9rem; cursor: pointer; }
+.btn-close { color: #cbd5e1; background: none; border: none; font-size: 1.2rem; cursor: pointer; }
+.btn-close:hover { color: #64748b; }

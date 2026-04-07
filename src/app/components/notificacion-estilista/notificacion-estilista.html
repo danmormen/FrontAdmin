@@ -1,0 +1,48 @@
+<div class="notif-page">
+    <nav class="nav-header">
+      <div class="nav-content">
+        <h2 class="logo-text" (click)="onBack()">PonteGuapa - <span class="sub-text">Estilista</span></h2>
+        <div class="nav-actions">
+          <button class="nav-btn" (click)="onBack()">Volver al Panel</button>
+          <button class="nav-btn logout" (click)="onLogout()">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <main class="main-layout">
+      <header class="page-header">
+        <h1>Notificaciones</h1>
+        <span class="count-badge" *ngIf="sinLeerCount > 0">{{sinLeerCount}} sin leer</span>
+      </header>
+  
+      <div class="notif-list">
+        <div class="notif-item" *ngFor="let n of notificaciones" [class.unread]="!n.leida">
+          <div class="type-indicator" [ngClass]="n.tipo"></div>
+          
+          <div class="notif-icon" [ngClass]="n.tipo">
+            <span [ngSwitch]="n.tipo">
+              <span *ngSwitchCase="'nueva-cita'">📅</span>
+              <span *ngSwitchCase="'cancelada'">⚠️</span>
+              <span *ngSwitchCase="'confirmada'">✅</span>
+              <span *ngSwitchCase="'recordatorio'">🔔</span>
+              <span *ngSwitchCase="'resena'">✨</span>
+            </span>
+          </div>
+  
+          <div class="notif-body">
+            <div class="notif-top">
+              <h3>{{n.titulo}}</h3>
+              <span class="new-tag" *ngIf="!n.leida">Nueva</span>
+            </div>
+            <p class="notif-msg">{{n.mensaje}}</p>
+            <p class="notif-time">{{n.fecha}}</p>
+          </div>
+  
+          <div class="notif-actions">
+            <button class="btn-read" *ngIf="!n.leida" (click)="marcarComoLeida(n.id)">Marcar como leída</button>
+            <button class="btn-close" (click)="eliminarNotificacion(n.id)">✕</button>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>

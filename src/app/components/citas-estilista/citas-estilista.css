@@ -1,0 +1,51 @@
+.estilista-container { background-color: #f0fdfa; min-height: 100vh; font-family: 'Inter', sans-serif; }
+
+/* Navbar Estilo Estilista */
+.nav-header { background: white; padding: 0 40px; height: 75px; display: flex; align-items: center; border-bottom: 1px solid #ccfbf1; }
+.nav-content { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+.logo-text { color: #0d9488; font-weight: 800; cursor: pointer; margin: 0; }
+.sub-text { font-weight: 300; }
+.nav-actions { display: flex; gap: 20px; }
+.nav-btn { background: none; border: none; font-weight: 600; color: #475569; cursor: pointer; }
+.logout:hover { color: #ef4444; }
+
+.main-layout { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+.page-info h1 { color: #134e4a; font-size: 1.8rem; margin-bottom: 30px; }
+
+/* Tarjeta Selector */
+.date-card { background: white; padding: 20px 30px; border-radius: 20px; box-shadow: 0 4px 6px rgba(13, 148, 136, 0.05); margin-bottom: 30px; }
+.date-card label { display: block; font-size: 0.8rem; font-weight: 700; color: #64748b; margin-bottom: 8px; }
+.date-control { padding: 12px; border: 1px solid #ccfbf1; border-radius: 12px; outline: none; color: #1e293b; font-size: 1rem; }
+
+/* Cards de Citas */
+.appointment-item { 
+  background: white; border-radius: 24px; padding: 25px; margin-bottom: 15px;
+  display: flex; justify-content: space-between; align-items: center;
+  border: 1px solid #e2f2f0; box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+}
+
+.user-profile { display: flex; align-items: center; gap: 15px; flex: 1; }
+.icon-avatar { width: 55px; height: 55px; background: #99f6e4; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; }
+.user-info h3 { margin: 0; font-size: 1.15rem; color: #0f172a; }
+.phone-sub { margin: 2px 0 0; font-size: 0.85rem; color: #64748b; }
+
+.service-meta { flex: 2; display: flex; gap: 40px; font-size: 0.95rem; color: #334155; }
+.label { font-weight: 600; color: #0d9488; }
+
+.action-status { flex: 1; display: flex; flex-direction: column; align-items: flex-end; gap: 12px; }
+.status-pill { padding: 5px 14px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; }
+.confirmada { background: #d1fae5; color: #065f46; }
+.pendiente { background: #fef9c3; color: #854d0e; }
+
+.complete-btn { 
+  background: #0d9488; color: white; border: none; padding: 12px 22px; 
+  border-radius: 14px; font-weight: 700; cursor: pointer; transition: 0.3s ease;
+}
+.complete-btn:hover { background: #0f766e; box-shadow: 0 4px 12px rgba(13, 148, 136, 0.2); }
+.finished-tag { color: #0d9488; font-weight: 700; }
+
+@media (max-width: 900px) {
+  .appointment-item { flex-direction: column; align-items: flex-start; gap: 20px; }
+  .service-meta { flex-direction: column; gap: 10px; }
+  .action-status { align-items: flex-start; width: 100%; }
+}

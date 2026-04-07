@@ -1,12 +1,186 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+
+// Cliente
+import { LoginComponent } from './components/login/login';
+import { RegistroComponent } from './components/registro/registro';
+import { HomeComponent } from './components/home/home';
+import { PerfilComponent } from './components/perfil/perfil';
+import { ServiciosComponent } from './components/servicios/servicios';
+import { ReservarComponent } from './components/reservar/reservar';
+import { PromocionesComponent } from './components/promociones/promociones';
+import { VerCitaComponent } from './components/ver-cita/ver-cita';
+import { RecompensasComponent } from './components/recompensas/recompensas';
+import { ResenasComponent } from './components/resenas/resenas';
+import { BlogComponent } from './components/blog/blog';
+
+// Admin
+import { PantallaAdminComponent } from './components/pantalla-administrador/pantalla-administrador';
+import { EmpleadosAdminComponent } from './components/empleados-admin/empleados-admin';
+import { ServiciosAdminComponent } from './components/servicios-admin/servicios-admin';
+import { GestionCitasAdminComponent } from './components/gestion-citas-admin/gestion-citas-admin';
+import { PromocionesAdminComponent } from './components/promociones-admin/promociones-admin';
+import { BlogAdminComponent } from './components/blog-admin/blog-admin';
+import { NotificacionesAdminComponent } from './components/notificaciones-admin/notificaciones-admin';
+
+// Estilista
+import { PantallaEstilistaComponent } from './components/pantalla-estilista/pantalla-estilista';
+import { CitasEstilistaComponent } from './components/citas-estilista/citas-estilista';
+import { DetalleCitasComponent } from './components/detalle-citas/detalle-citas';
+import { ResenasEstilistaComponent } from './components/resenas-estilista/resenas-estilista';
+import { NotificacionEstilistaComponent } from './components/notificacion-estilista/notificacion-estilista';
+import { PerfilEstilistaComponent } from './components/perfil-estilista/perfil-estilista';
+import { EstilistaHorarioComponent } from './components/horario-estilista/horario-estilista';
+
+
+type VistaActual =
+  | 'login'
+  | 'registro'
+  | 'home'
+  | 'perfil'
+  | 'servicios'
+  | 'reservar'
+  | 'promociones'
+  | 'ver-cita'
+  | 'recompensas'
+  | 'resenas'
+  | 'blog'
+  | 'admin'
+  | 'empleados-admin'
+  | 'gestion-citas-admin'
+  | 'notificaciones-admin'
+  | 'promociones-admin'
+  | 'servicios-admin'
+  | 'blog-admin'
+  | 'estilista'
+  | 'citas-estilista'
+  | 'detalle-citas'
+  | 'resenas-estilista'
+  | 'notificacion-estilista'
+  | 'perfil-estilista'
+  | 'horario-estilista';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  standalone: true,
+  imports: [
+    CommonModule,
+    LoginComponent,
+    RegistroComponent,
+    HomeComponent,
+    PerfilComponent,
+    ServiciosComponent,
+    ReservarComponent,
+    PromocionesComponent,
+    VerCitaComponent,
+    RecompensasComponent,
+    ResenasComponent,
+    BlogComponent,
+    PantallaAdminComponent,
+    PantallaEstilistaComponent,
+    EmpleadosAdminComponent,
+    ServiciosAdminComponent,
+    GestionCitasAdminComponent,
+    PromocionesAdminComponent,
+    BlogAdminComponent,
+    NotificacionesAdminComponent,
+    CitasEstilistaComponent,
+    DetalleCitasComponent,
+    ResenasEstilistaComponent,
+    NotificacionEstilistaComponent,
+    PerfilEstilistaComponent,
+    EstilistaHorarioComponent
+  ],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
 export class App {
-  protected readonly title = signal('frontend');
+  vistaActual: VistaActual = 'login';
+
+  servicioPreseleccionado = '';
+  esPromocion = false;
+  citaAEditar: any = null;
+
+  // Navegación general
+  onNavigate(section: string): void {
+    const mapa: Record<string, VistaActual> = {
+      login: 'login',
+      registro: 'registro',
+      home: 'home',
+      perfil: 'perfil',
+      servicios: 'servicios',
+      reservar: 'reservar',
+      promociones: 'promociones',
+      ver: 'ver-cita',
+      'ver-cita': 'ver-cita',
+      recompensas: 'recompensas',
+      resenas: 'resenas',
+      blog: 'blog',
+
+      admin: 'admin',
+      'empleados-admin': 'empleados-admin',
+      'gestion-citas-admin': 'gestion-citas-admin',
+      'notificaciones-admin': 'notificaciones-admin',
+      'promociones-admin': 'promociones-admin',
+      'servicios-admin': 'servicios-admin',
+      'blog-admin': 'blog-admin',
+
+      estilista: 'estilista',
+      'citas-estilista': 'citas-estilista',
+      'detalle-citas': 'detalle-citas',
+      'resenas-estilista': 'resenas-estilista',
+      'notificacion-estilista': 'notificacion-estilista',
+      'notificaciones-estilista': 'notificacion-estilista',
+      'perfil-estilista': 'perfil-estilista',
+      'horario-estilista': 'horario-estilista'
+    };
+
+    const destino = mapa[section];
+    if (!destino) {
+      console.warn('Vista no reconocida:', section);
+      return;
+    }
+
+    this.vistaActual = destino;
+
+    if (destino !== 'reservar') {
+      this.resetReserva();
+    }
+  }
+
+  // Login
+  goToRegister(): void {
+    this.vistaActual = 'registro';
+  }
+
+  goToLogin(): void {
+    this.vistaActual = 'login';
+    this.resetReserva();
+  }
+
+  onLogout(): void {
+    this.vistaActual = 'login';
+    this.resetReserva();
+  }
+
+  // Reserva desde servicios o promociones
+  onServiceSelected(servicio: string, dePromo: boolean = false): void {
+    this.servicioPreseleccionado = servicio;
+    this.esPromocion = dePromo;
+    this.citaAEditar = null;
+    this.vistaActual = 'reservar';
+  }
+
+  onModificarCita(cita: any): void {
+    this.citaAEditar = cita;
+    this.servicioPreseleccionado = cita?.servicio ?? '';
+    this.esPromocion = false;
+    this.vistaActual = 'reservar';
+  }
+
+  private resetReserva(): void {
+    this.servicioPreseleccionado = '';
+    this.esPromocion = false;
+    this.citaAEditar = null;
+  }
 }
