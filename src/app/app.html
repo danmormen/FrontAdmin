@@ -156,4 +156,10 @@
   (logout)="onLogout()">
 </app-horarios-administrador>
 
+<app-recompensa-admin
+    *ngIf="vistaActual === 'recompensa-admin'"
+    (back)="onNavigate('admin')"
+    (logout)="onLogout()">
+</app-recompensa-admin>
+
 </div>

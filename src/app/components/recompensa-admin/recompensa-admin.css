@@ -1,0 +1,336 @@
+/* Contenedor Principal */
+.admin-page-container {
+    min-height: 100vh;
+    background-color: #f5f3ff; /* Fondo lila claro */
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  
+  /* Navbar */
+  .admin-navbar {
+    background-color: white;
+    padding: 1rem 2rem;
+  }
+  .navbar-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  .admin-brand {
+    margin: 0;
+    color: #6d28d9;
+    font-size: 1.5rem;
+  }
+  .brand-tag {
+    color: #6d28d9;
+    font-weight: normal;
+  }
+  .logout-link {
+    background: none;
+    border: none;
+    color: #4b5563;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.9rem;
+  }
+  
+  /* Contenido Principal */
+  .content-wrapper {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
+  
+  /* Estilos para el botón de Volver al Panel */
+  .back-navigation {
+    margin-bottom: 1rem;
+  }
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    color: #6b7280; /* Gris sutil */
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.2s;
+  }
+  .btn-back svg {
+    width: 18px;
+    height: 18px;
+  }
+  .btn-back:hover {
+    color: #8b5cf6; /* Cambia al morado de la marca al pasar el mouse */
+  }
+  
+  /* Encabezado */
+  .page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+  }
+  .header-title {
+    font-size: 1.6rem;
+    color: #1f2937;
+    margin: 0;
+    font-weight: 600;
+  }
+  .btn-primary {
+    background-color: #8b5cf6;
+    color: white;
+    border: none;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
+  .btn-primary:hover { background-color: #7c3aed; }
+  
+  /* Grid KPIs */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .kpi-card {
+    padding: 1.5rem;
+    border-radius: 12px;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+  }
+  .kpi-card.purple { background-color: #8b5cf6; }
+  .kpi-card.green { background-color: #10b981; }
+  .kpi-card.orange { background-color: #f97316; }
+  
+  .kpi-info { display: flex; flex-direction: column; }
+  .kpi-label { font-size: 0.85rem; margin-bottom: 0.2rem; font-weight: 500;}
+  .kpi-value { font-size: 2rem; font-weight: bold; line-height: 1;}
+  .kpi-icon svg { width: 40px; height: 40px; opacity: 0.4; }
+  
+  /* Tabla */
+  .table-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+    padding: 1rem 1.5rem;
+    overflow-x: auto;
+  }
+  .admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+  }
+  .admin-table th {
+    padding: 1rem 0.5rem;
+    color: #374151;
+    font-weight: 700;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  .admin-table td {
+    padding: 1rem 0.5rem;
+    border-bottom: 1px solid #f3f4f6;
+    vertical-align: middle;
+  }
+  
+  /* Textos Tabla */
+  .item-title { font-weight: 500; color: #1f2937; margin-bottom: 0.2rem; font-size: 0.95rem; }
+  .item-desc { font-size: 0.8rem; color: #6b7280; }
+  .text-center { text-align: center; color: #4b5563; font-size: 0.95rem;}
+  .text-muted { color: #6b7280; font-size: 0.9rem; }
+  
+  /* Badges (Etiquetas) */
+  .badge-puntos {
+    background-color: #fef3c7;
+    color: #d97706;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+  
+  .badge-estado {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.8rem;
+  }
+  .badge-estado.active {
+    background-color: #d1fae5;
+    color: #059669;
+  }
+  .eye-icon {
+    width: 14px;
+    height: 14px;
+  }
+  
+  /* Botones de Acción */
+  .actions-cell {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .action-btn {
+    background: none;
+    border: none;
+    padding: 0.3rem;
+    cursor: pointer;
+    border-radius: 4px;
+    color: #8b5cf6;
+  }
+  .action-btn svg { width: 18px; height: 18px; }
+  .action-btn.delete { color: #ef4444; }
+
+  /* ========================================== */
+/* ESTILOS DEL MODAL (POP-UP)                 */
+/* ========================================== */
+
+/* Fondo oscuro detrás del modal */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(17, 24, 39, 0.5); /* Efecto opaco */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px); /* Un toque sutil de desenfoque */
+  }
+  
+  /* Contenedor blanco del formulario */
+  .modal-container {
+    background: white;
+    width: 100%;
+    max-width: 450px;
+    border-radius: 12px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    animation: modalIn 0.3s ease-out; /* Animación suave al abrir */
+  }
+  
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(-20px) scale(0.95); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  
+  /* Cabecera del modal */
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem 1.5rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+  }
+  
+  .modal-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #1f2937;
+    font-weight: 600;
+  }
+  
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #9ca3af;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    transition: color 0.2s;
+  }
+  
+  .close-btn:hover {
+    color: #1f2937;
+  }
+  
+  /* Formulario */
+  .modal-form {
+    padding: 1.5rem;
+  }
+  
+  .form-group {
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group.row {
+    flex-direction: row;
+    gap: 1rem;
+  }
+  
+  .form-group.row .col {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #4b5563;
+    margin-bottom: 0.4rem;
+  }
+  
+  .form-group input,
+  .form-group textarea,
+  .form-group select {
+    padding: 0.6rem 0.8rem;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    color: #1f2937;
+    outline: none;
+    transition: all 0.2s;
+    font-family: inherit;
+  }
+  
+  .form-group input:focus,
+  .form-group textarea:focus,
+  .form-group select:focus {
+    border-color: #8b5cf6; /* Morado de PonteGuapa */
+    box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
+  }
+  
+  /* Botones inferiores */
+  .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f3f4f6;
+  }
+  
+  .btn-secondary {
+    background-color: white;
+    color: #374151;
+    border: 1px solid #d1d5db;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .btn-secondary:hover {
+    background-color: #f9fafb;
+    color: #1f2937;
+    border-color: #9ca3af;
+  }

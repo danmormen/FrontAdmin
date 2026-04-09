@@ -22,6 +22,7 @@ import { GestionCitasAdminComponent } from './components/gestion-citas-admin/ges
 import { PromocionesAdminComponent } from './components/promociones-admin/promociones-admin';
 import { BlogAdminComponent } from './components/blog-admin/blog-admin';
 import { NotificacionesAdminComponent } from './components/notificaciones-admin/notificaciones-admin';
+import { RecompensasAdminComponent } from './components/recompensa-admin/recompensa-admin';
 
 // Estilista
 import { PantallaEstilistaComponent } from './components/pantalla-estilista/pantalla-estilista';
@@ -60,6 +61,7 @@ type VistaActual =
   | 'notificacion-estilista'
   | 'perfil-estilista'
   | 'horarios-administrador'
+  | 'recompensa-admin'
   | 'horario-estilista';
 
 @Component({
@@ -92,7 +94,8 @@ type VistaActual =
     NotificacionEstilistaComponent,
     PerfilEstilistaComponent,
     EstilistaHorarioComponent,
-    HorariosAdministradorComponent
+    HorariosAdministradorComponent,
+    RecompensasAdminComponent,
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -126,6 +129,8 @@ export class App {
       'notificaciones-admin': 'notificaciones-admin',
       'promociones-admin': 'promociones-admin',
       'servicios-admin': 'servicios-admin',
+      'recompensas-admin': 'recompensa-admin',
+      'recomensa-admin': 'recompensa-admin',
       'horarios-administrador': 'horarios-administrador',
       'horario-administrador': 'horarios-administrador',
       'blog-admin': 'blog-admin',
