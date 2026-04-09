@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output } from '@angular/core'; // Añadimos Output y EventEmitter
+import { Component, EventEmitter, Output } from '@angular/core'; 
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './perfil.css'
 })
 export class PerfilComponent {
-  // Evento para regresar a la home
+  
   @Output() backToHome = new EventEmitter<void>();
 
   usuario = {
@@ -26,7 +26,6 @@ export class PerfilComponent {
     this.backToHome.emit();
   }
 
-  // Por ahora no hace nada, como pediste
   guardarCambios() {
     console.log('Botón guardar cambios presionado (sin acción aún).');
   }

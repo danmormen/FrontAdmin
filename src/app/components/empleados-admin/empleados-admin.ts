@@ -45,7 +45,7 @@ export class EmpleadosAdminComponent {
 
   abrirModalEditar(emp: Empleado) {
     this.editando = true;
-    this.empleadoForm = { ...emp }; // Clonamos para no modificar la lista original hasta guardar
+    this.empleadoForm = { ...emp }; 
     this.mostrarModal = true;
   }
 

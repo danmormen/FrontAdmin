@@ -20,7 +20,7 @@ interface CitaResena {
 export class ResenasComponent {
   @Output() backToHome = new EventEmitter<void>();
 
-  // Estado del Modal
+  
   mostrarModal: boolean = false;
   citaSeleccionada: CitaResena | null = null;
   
@@ -28,14 +28,14 @@ export class ResenasComponent {
   nuevaCalificacion: number = 0;
   nuevoComentario: string = '';
 
-  // Tus Citas
+  //  Citas
   misCitas: CitaResena[] = [
     { servicio: 'Corte de cabello', fecha: '14 de marzo de 2026', estilista: 'Ana Martínez', completada: true, resenada: true },
     { servicio: 'Manicure', fecha: '9 de marzo de 2026', estilista: 'Carmen López', completada: true, resenada: false },
     { servicio: 'Tratamiento facial', fecha: '4 de marzo de 2026', estilista: 'Ana Martínez', completada: false, resenada: false }
   ];
 
-  // Lista expandida a 4 reseñas para visualizar el grid
+  // Lista de reseñas
   resenasPublicas = [
     { cliente: 'María González', servicio: 'Coloración', estilista: 'Ana Martínez', estrellas: 5, comentario: '¡Excelente servicio! Ana es muy profesional y el resultado quedó increíble. Definitivamente regresaré.', fecha: '19 de marzo de 2026' },
     { cliente: 'Laura Ramírez', servicio: 'Manicure + Pedicure', estilista: 'Carmen López', estrellas: 5, comentario: 'Me encantó la atención al detalle. El lugar es muy limpio y el servicio es excelente.', fecha: '17 de marzo de 2026' },

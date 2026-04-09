@@ -1,4 +1,4 @@
-/* Contenedor principal con fondo rosado tenue */
+/* Contenedor principal  */
 .recompensas-page {
     background-color: #fdf2f8;
     min-height: 100vh;
@@ -11,7 +11,7 @@
     padding: 30px 20px;
   }
   
-  /* --- NUEVA NAVBAR TIPO PANEL --- */
+  
   .nav-header {
     background: white;
     border-bottom: 1px solid #f3e8ff;
@@ -84,7 +84,7 @@
     margin: 0;
   }
   
-  /* Banner de Puntos (Pequeño y Estilizado) */
+  /* Banner de Puntos  */
   .points-banner-compact {
     background: linear-gradient(135deg, #ffb300 0%, #ff8000 100%);
     border-radius: 20px;
@@ -229,14 +229,14 @@
   .puntos-change {
     font-weight: 700;
     font-size: 1rem;
-    color: #dc2626; /* Rojo para canjes */
+    color: #dc2626; 
   }
   
   .puntos-change.suma {
-    color: #059669; /* Verde para visitas */
+    color: #059669; 
   }
   
-  /* Card Informativa e Importante */
+  /* Card Informativa */
   .info-card {
     background: #fffbeb;
     border: 1px solid #fef3c7;

@@ -1,7 +1,7 @@
 /* Contenedor Principal */
 .admin-page-container {
     min-height: 100vh;
-    background-color: #f5f3ff; /* Fondo lila claro */
+    background-color: #f5f3ff; 
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   }
   
@@ -42,7 +42,7 @@
     padding: 0 1rem;
   }
   
-  /* Estilos para el botón de Volver al Panel */
+  
   .back-navigation {
     margin-bottom: 1rem;
   }
@@ -52,7 +52,7 @@
     gap: 0.4rem;
     background: none;
     border: none;
-    color: #6b7280; /* Gris sutil */
+    color: #6b7280; 
     font-weight: 600;
     font-size: 0.95rem;
     cursor: pointer;
@@ -64,7 +64,7 @@
     height: 18px;
   }
   .btn-back:hover {
-    color: #8b5cf6; /* Cambia al morado de la marca al pasar el mouse */
+    color: #8b5cf6; 
   }
   
   /* Encabezado */
@@ -149,7 +149,7 @@
   .text-center { text-align: center; color: #4b5563; font-size: 0.95rem;}
   .text-muted { color: #6b7280; font-size: 0.9rem; }
   
-  /* Badges (Etiquetas) */
+
   .badge-puntos {
     background-color: #fef3c7;
     color: #d97706;
@@ -193,23 +193,20 @@
   .action-btn svg { width: 18px; height: 18px; }
   .action-btn.delete { color: #ef4444; }
 
-  /* ========================================== */
-/* ESTILOS DEL MODAL (POP-UP)                 */
-/* ========================================== */
 
-/* Fondo oscuro detrás del modal */
+
 .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(17, 24, 39, 0.5); /* Efecto opaco */
+    background-color: rgba(17, 24, 39, 0.5); 
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 1000;
-    backdrop-filter: blur(2px); /* Un toque sutil de desenfoque */
+    backdrop-filter: blur(2px); 
   }
   
   /* Contenedor blanco del formulario */
@@ -220,7 +217,7 @@
     border-radius: 12px;
     box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    animation: modalIn 0.3s ease-out; /* Animación suave al abrir */
+    animation: modalIn 0.3s ease-out; 
   }
   
   @keyframes modalIn {
@@ -304,7 +301,7 @@
   .form-group input:focus,
   .form-group textarea:focus,
   .form-group select:focus {
-    border-color: #8b5cf6; /* Morado de PonteGuapa */
+    border-color: #8b5cf6; 
     box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.15);
   }
   

@@ -6,11 +6,11 @@ interface Promocion {
   id: number;
   titulo: string;
   descripcion: string;
-  descuento: number; // Porcentaje (ej. 50)
+  descuento: number; 
   precioOferta: number;
   fechaInicio: string;
   fechaFin: string;
-  estado: boolean; // true = Activo, false = Inactivo
+  estado: boolean; 
 }
 
 @Component({

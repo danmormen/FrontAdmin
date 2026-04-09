@@ -60,7 +60,7 @@
 }
 
 .nav-btn.logout {
-    color: #ef4444; /* Rojo para cerrar sesión */
+    color: #ef4444; 
 }
 
 .nav-btn.logout:hover {

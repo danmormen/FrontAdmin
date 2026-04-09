@@ -19,7 +19,7 @@ export class ServiciosComponent {
   // Evento para volver a la pantalla de inicio
   @Output() backToHome = new EventEmitter<void>();
   
-  // Evento que envía el nombre del servicio para pre-seleccionarlo en la reserva
+  // Evento que envía el nombre del servicio en la reserva
   @Output() reservar = new EventEmitter<string>();
 
   listaServicios: Servicio[] = [
@@ -55,17 +55,12 @@ export class ServiciosComponent {
     }
   ];
 
-  /**
-   * Emite el evento para regresar al Dashboard principal
-   */
+  
   regresar() {
     this.backToHome.emit();
   }
 
-  /**
-   * Toma el nombre del servicio y lo envía al componente padre
-   * para navegar a la pantalla de Reservar Cita.
-   */
+  
   onReservar(servicio: string) {
     this.reservar.emit(servicio);
   }

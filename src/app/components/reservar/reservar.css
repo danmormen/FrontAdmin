@@ -3,7 +3,6 @@
     min-height: 100vh;
   }
   
-  /* --- NUEVA NAVBAR TIPO PANEL --- */
   .nav-header {
     background: white;
     border-bottom: 1px solid #f3e8ff;
@@ -81,9 +80,9 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
   }
   
-  /* --- ESTILOS DEL BANNER DE PROMOCIÓN (NUEVO) --- */
+  
   .promo-banner {
-    background: linear-gradient(135deg, #db2777, #a855f7); /* Degradado de rosa a morado */
+    background: linear-gradient(135deg, #db2777, #a855f7); 
     border-radius: 12px;
     padding: 15px 20px;
     margin-bottom: 25px;
@@ -142,13 +141,13 @@
     box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.1);
   }
   
-  /* --- ESTILO PARA CAMPO BLOQUEADO (NUEVO) --- */
+ 
   select:disabled {
-    background-color: #f3f4f6; /* Gris claro */
+    background-color: #f3f4f6; 
     color: #6b7280;
     cursor: not-allowed;
     border-color: #e5e7eb;
-    opacity: 1; /* Para que el texto sea legible en algunos navegadores */
+    opacity: 1; 
   }
   
   /* Botón Confirmar */
@@ -169,7 +168,7 @@
   .btn-confirm:hover { background-color: #be185d; }
   .btn-confirm:active { transform: scale(0.98); }
   
-  /* Animación sutil para el banner */
+  
   @keyframes fadeIn {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }

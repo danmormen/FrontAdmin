@@ -1,6 +1,6 @@
 .login-container {
     background-color: #fff5f8;
-    /* Cambiamos height por min-height y aseguramos que no haya scroll */
+   
     min-height: 100vh;
     width: 100vw;
     display: flex;
@@ -8,7 +8,7 @@
     align-items: center;
     font-family: sans-serif;
     
-    /* Estas líneas son la clave para que no aparezca nada abajo */
+    
     position: fixed;
     top: 0;
     left: 0;
@@ -23,12 +23,11 @@
     width: 100%;
     max-width: 400px;
     text-align: center;
-    /* Evita que la tarjeta se mueva si intentas hacer scroll */
+   
     position: relative; 
     z-index: 10;
 }
 
-/* El resto de tus estilos se mantienen igual */
 .brand-title { color: #db2777; font-weight: 800; font-size: 28px; margin-bottom: 5px; }
 .brand-subtitle { color: #6b7280; font-size: 14px; margin-bottom: 30px; }
 

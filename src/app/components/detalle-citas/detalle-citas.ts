@@ -27,7 +27,7 @@ export class DetalleCitasComponent {
 
   searchQuery: string = '';
 
-  // Datos basados en tu captura de pantalla
+  
   historialCitas: DetalleCita[] = [
     {
       id: 1,

@@ -2,7 +2,7 @@ import { Component, Output, EventEmitter, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-estilista-horario', // Asegúrate de que este selector coincida con tu app.html
+  selector: 'app-estilista-horario', 
   standalone: true,
   imports: [CommonModule],
   templateUrl: './horario-estilista.html',
@@ -13,7 +13,7 @@ export class EstilistaHorarioComponent implements OnInit {
   @Output() back = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
 
-  // Datos de ejemplo para el diseño de tarjetas
+  // diseño de tarjetas
   horarioSemanal = [
     { nombre: 'Lunes', horas: '09:00 - 18:00', totalHoras: 9, estaActivo: true },
     { nombre: 'Martes', horas: '09:00 - 18:00', totalHoras: 9, estaActivo: true },
@@ -44,7 +44,7 @@ export class EstilistaHorarioComponent implements OnInit {
     this.back.emit();
   }
 
-  // Cierre de sesión enviando evento al padre
+  // Cierre de sesión
   cerrarSesion(): void {
     this.logout.emit();
   }

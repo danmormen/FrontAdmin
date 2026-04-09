@@ -28,7 +28,7 @@ export class RecompensasComponent implements OnInit {
   // Saldo inicial de puntos
   puntosDisponibles: number = 450;
 
-  // Lista de recompensas basada en tu imagen
+  
   recompensas: Recompensa[] = [
     { 
       id: 1, 
@@ -81,25 +81,25 @@ export class RecompensasComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
-    // Aquí podrías cargar los puntos desde un servicio en el futuro
+
   }
 
-  /**
-   * Lógica para canjear puntos
-   */
+  
+  //  Lógica para canjear puntos
+   
   canjear(recompensa: Recompensa): void {
     if (this.puntosDisponibles >= recompensa.puntos) {
       const mensaje = `¿Deseas canjear ${recompensa.puntos} puntos por "${recompensa.titulo}"?\n\n` +
                       `Recuerda: El cupón debe ser validado por el personal del salón al momento de tu pago.`;
       
       if (confirm(mensaje)) {
-        // 1. Restar puntos
+        // Restar puntos
         this.puntosDisponibles -= recompensa.puntos;
 
-        // 2. Generar un código de validación aleatorio
+        // Generar un código de validación aleatorio
         const codigoValidacion = Math.random().toString(36).substring(2, 7).toUpperCase();
 
-        // 3. Agregar al historial (al inicio de la lista)
+        // Agregar al historial (al inicio de la lista)
         const hoy = new Date();
         const fechaFormateada = hoy.toLocaleDateString('es-ES', { 
           day: 'numeric', 
@@ -114,7 +114,7 @@ export class RecompensasComponent implements OnInit {
           tipo: 'resta'
         });
 
-        // 4. Mostrar cupón al usuario
+        //  cupón de usuario
         alert(`¡Canje Exitoso!\n\nTu código es: ${codigoValidacion}\nPresenta esta pantalla en recepción.`);
       }
     } else {
@@ -122,9 +122,7 @@ export class RecompensasComponent implements OnInit {
     }
   }
 
-  /**
-   * Navegación hacia atrás
-   */
+  
   regresar(): void {
     this.backToHome.emit();
   }

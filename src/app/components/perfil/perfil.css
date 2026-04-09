@@ -3,7 +3,7 @@
     min-height: 100vh;
   }
   
-  /* --- NUEVA NAVBAR TIPO PANEL --- */
+  
   .nav-header {
     background: white;
     border-bottom: 1px solid #f3e8ff;
@@ -52,7 +52,7 @@
   }
   
   .nav-btn.logout {
-    color: #dc2626; /* Color rojo para cerrar sesión */
+    color: #dc2626; 
   }
   
   .nav-btn.logout:hover {
@@ -142,7 +142,7 @@
     border-radius: 12px;
     outline: none;
     transition: border-color 0.2s;
-    box-sizing: border-box; /* Evita que el input se salga del contenedor */
+    box-sizing: border-box; 
   }
   
   input:focus {

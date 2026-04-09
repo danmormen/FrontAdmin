@@ -6,7 +6,7 @@ import { CommonModule } from '@angular/common';
   selector: 'app-blog',
   standalone: true,
   imports: [CommonModule],
-  // Asegúrate de que los nombres de los archivos coincidan (blog.html y blog.css)
+  
   templateUrl: './blog.html',
   styleUrl: './blog.css'
 })
@@ -38,39 +38,32 @@ export class BlogComponent {
 
   constructor(private router: Router) {}
 
-  /**
-   * Abre el pop-up con la información del artículo seleccionado
-   */
+ 
   abrirArticulo(post: any) {
     this.selectedPost = post;
-    // Bloqueamos el scroll del fondo para que la experiencia sea mejor
+  
     document.body.style.overflow = 'hidden';
   }
 
-  /**
-   * Cierra el pop-up y limpia la selección
-   */
   cerrarModal() {
     this.selectedPost = null;
-    // Devolvemos el scroll al estado normal
+  
     document.body.style.overflow = 'auto';
   }
 
-  /**
-   * Emite el evento para regresar al panel principal
-   */
+  
   regresar() {
     console.log('Regresando al panel...');
-    // Si el modal está abierto al intentar regresar, lo cerramos primero
+    
     if (this.selectedPost) {
       this.cerrarModal();
     }
     this.backToHome.emit(); 
   }
 
-  /**
-   * Redirige al usuario a la pantalla de login
-   */
+  
+//Redirige al usuario a la pantalla de login
+   
   cerrarSesion() {
     this.router.navigate(['/login']);
   }

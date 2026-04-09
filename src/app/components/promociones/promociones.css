@@ -4,7 +4,7 @@
     width: 100%;
   }
   
-  /* --- NUEVA NAVBAR TIPO PANEL --- */
+  
   .nav-header {
     background: white;
     border-bottom: 1px solid #f3e8ff;
@@ -61,14 +61,13 @@
     background-color: #fee2e2;
   }
   
-  /* --- Contenedor Principal --- */
+  
   .content-container {
     max-width: 850px; 
     margin: 0 auto;
     padding: 40px 20px;
   }
   
-  /* --- Cabecera: Título Centrado --- */
   .top-header {
     display: flex;
     align-items: center;
@@ -84,7 +83,6 @@
     font-weight: 700; 
   }
   
-  /* --- LISTA VERTICAL DE PROMOCIONES --- */
   .promo-grid {
     display: flex;
     flex-direction: column;
@@ -107,7 +105,6 @@
     transform: scale(1.01);
   }
   
-  /* Bloque del porcentaje (Izquierda) */
   .promo-header-gradient {
     background: linear-gradient(135deg, #db2777, #a855f7);
     width: 160px;
@@ -121,8 +118,7 @@
   
   .pct { font-size: 2.5rem; font-weight: 800; line-height: 1; }
   .sub { font-size: 0.85rem; opacity: 0.9; }
-  
-  /* Cuerpo de la información (Centro) */
+
   .promo-body {
     padding: 20px 30px;
     display: flex;
@@ -150,7 +146,7 @@
     margin: 8px 0 0 0; 
   }
   
-  /* Precios y Botón (Derecha) */
+
   .promo-actions {
     display: flex;
     flex-direction: column;

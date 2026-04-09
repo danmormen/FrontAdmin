@@ -7,7 +7,7 @@ interface Servicio {
   nombre: string;
   descripcion: string;
   precio: number;
-  duracion: number; // en minutos
+  duracion: number; 
   estado: 'Activo' | 'Inactivo';
 }
 

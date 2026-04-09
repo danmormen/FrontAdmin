@@ -13,7 +13,7 @@ export class PerfilEstilistaComponent {
   @Output() navigate = new EventEmitter<string>();
   @Output() logout = new EventEmitter<void>();
 
-  // Datos basados en tu captura
+  
   estilista = {
     nombre: 'Carolina Hernández',
     puesto: 'Estilista Senior',
@@ -37,7 +37,7 @@ export class PerfilEstilistaComponent {
   guardarTelefono() {
     this.estilista.telefono = this.nuevoTelefono;
     this.editandoTelefono = false;
-    // Aquí podrías agregar un mensaje de éxito
+   
   }
 
   onBack() { this.navigate.emit('estilista'); }

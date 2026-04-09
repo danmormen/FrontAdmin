@@ -24,11 +24,11 @@ export class NotificacionesAdminComponent {
 
   // Formulario
   destinatarioSeleccionado: string = 'Todos los clientes';
-  correoEspecifico: string = ''; // Nuevo campo para correo individual
+  correoEspecifico: string = ''; 
   asunto: string = '';
   mensaje: string = '';
 
-  // Historial basado en tus capturas
+  
   historial: NotificacionReciente[] = [
     { id: 1, asunto: 'Promoción especial de marzo', mensaje: 'Aprovecha nuestras promociones...', destinatarios: 'Todos los clientes', fecha: '2026-03-19', enviados: 156 },
     { id: 2, asunto: 'Recordatorio de cita', mensaje: 'Tu cita es mañana a las 10:00 AM', destinatarios: 'Clientes con citas', fecha: '2026-03-23', enviados: 12 },

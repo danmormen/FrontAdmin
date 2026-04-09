@@ -3,7 +3,7 @@
     min-height: 100vh;
   }
   
-  /* --- NUEVA NAVBAR TIPO PANEL --- */
+  
   .nav-header {
     background: white;
     border-bottom: 1px solid #f3e8ff;
@@ -61,7 +61,7 @@
   
   /* --- Contenedor Principal --- */
   .content-container {
-    max-width: 850px; /* Ancho reducido como en Promociones */
+    max-width: 850px; 
     margin: 0 auto;
     padding: 40px 20px;
   }
@@ -94,7 +94,7 @@
     background: white;
     border-radius: 20px;
     padding: 25px 30px;
-    display: flex; /* Alineación horizontal */
+    display: flex; 
     justify-content: space-between;
     align-items: center;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -103,7 +103,7 @@
   
   .servicio-card:hover { transform: scale(1.01); }
   
-  /* Lado Izquierdo: Info */
+  
   .servicio-info {
     flex-grow: 1;
     padding-right: 20px;
@@ -121,7 +121,7 @@
   }
   .icon-clock { width: 16px; height: 16px; margin-right: 6px; }
   
-  /* Lado Derecho: Precio y Botón */
+  
   .servicio-actions {
     display: flex;
     flex-direction: column;
@@ -148,7 +148,7 @@
   }
   .btn-reservar:hover { background-color: #be185d; }
   
-  /* --- Sección Informativa --- */
+  
   .info-importante {
     margin-top: 50px;
     background: #fdf2f8;

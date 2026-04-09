@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-horarios-administrador',
   standalone: true,
   imports: [CommonModule, FormsModule], 
-  // 👇 AQUÍ ESTÁ LA CORRECCIÓN: Nombres en singular sin la "s"
+  
   templateUrl: './horario-administrador.html',
   styleUrls: ['./horario-administrador.css']
 })
@@ -18,7 +18,7 @@ export class HorariosAdministradorComponent {
   editando = false;
   seleccionado: any = null;
 
-  // Datos basados en tu diseño de gestión de horarios
+  // gestión de horarios
   listaEstilistas = [
     {
       id: 1,

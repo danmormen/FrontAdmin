@@ -15,7 +15,7 @@ export class ReservarComponent implements OnInit {
   @Input() servicioFijo: string = ''; 
   @Input() esPromo: boolean = false; 
   
-  // NUEVO: Recibe los datos de la cita si venimos desde "Modificar"
+  // Recibe los datos de la cita si venimos desde "Modificar"
   @Input() datosEdicion: any = null; 
 
   fechaMinima: string;
@@ -51,7 +51,7 @@ export class ReservarComponent implements OnInit {
   }
 
   ngOnInit() {
-    // ESCENARIO A: Estamos modificando una cita existente
+    // modificando una cita existente
     if (this.datosEdicion) {
       this.nuevaCita = {
         servicio: this.datosEdicion.servicio,
@@ -60,7 +60,7 @@ export class ReservarComponent implements OnInit {
         notas: this.datosEdicion.notas || ''
       };
     } 
-    // ESCENARIO B: Es una reserva nueva (con o sin promo)
+    // Es una reserva nueva (con o sin promo)
     else if (this.servicioFijo) {
       this.nuevaCita.servicio = this.servicioFijo;
       
@@ -74,16 +74,12 @@ export class ReservarComponent implements OnInit {
     }
   }
 
-  /**
-   * Convierte fechas largas como "Martes, 24 De Marzo..." 
-   * al formato YYYY-MM-DD que requiere el <input type="date">
-   */
+  
   private formatearFechaParaInput(fechaTexto: string): string {
-    // Si la fecha ya viene en formato ISO (2026-03-24), la dejamos igual
+   
     if (fechaTexto.includes('-') && fechaTexto.length === 10) return fechaTexto;
     
-    // Por ahora, si es texto largo, devolvemos la fecha mínima para evitar errores
-    // En una app real, aquí procesarías el string a objeto Date
+    
     return this.fechaMinima;
   }
 

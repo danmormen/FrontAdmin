@@ -18,7 +18,7 @@ export class RegistroComponent {
   pass: string = '';
   fechaNacimiento: string = '';
 
-  // Bloquea cualquier tecla que no sea un número (0-9)
+  // validacion unicamente numeros
   validarSoloNumeros(event: KeyboardEvent) {
     const charCode = event.which ? event.which : event.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
@@ -28,9 +28,9 @@ export class RegistroComponent {
     return true;
   }
 
-  // Inserta los "/" automáticamente: DD/MM/AAAA
+  // Formato  : DD/MM/AAAA
   formatearFecha(event: any) {
-    let input = event.target.value.replace(/\D/g, ''); // Limpia letras si intentan pegar texto
+    let input = event.target.value.replace(/\D/g, ''); 
     let formatted = '';
 
     if (input.length > 0) {
@@ -38,7 +38,7 @@ export class RegistroComponent {
       if (input.length > 2) {
         formatted += '/' + input.substring(2, 4); // Mes
         if (input.length > 4) {
-          formatted += '/' + input.substring(4, 8); // Año (máximo 4 dígitos)
+          formatted += '/' + input.substring(4, 8); // Año
         }
       }
     }
@@ -46,7 +46,7 @@ export class RegistroComponent {
   }
 
   registrar() {
-    // 1. Validar que la fecha esté completa
+    // Validar que la fecha esté completa
     if (this.fechaNacimiento.length < 10) {
       alert('Por favor, ingresa la fecha completa (DD/MM/AAAA)');
       return;
@@ -54,11 +54,11 @@ export class RegistroComponent {
 
     const [dia, mes, anio] = this.fechaNacimiento.split('/').map(Number);
 
-    // 2. Validaciones de lógica de calendario
+    // Validaciones de lógica de calendario
     if (dia < 1 || dia > 31) { alert('Día inválido (01-31)'); return; }
     if (mes < 1 || mes > 12) { alert('Mes inválido (01-12)'); return; }
 
-    // 3. Validación de mayoría de edad (En 2026, debe ser 2008 o antes)
+    //  Validación de mayoría de edad 
     if (anio > 2008) {
       alert('Debes ser mayor de 18 años para registrarte.');
       return;
@@ -68,7 +68,7 @@ export class RegistroComponent {
       return;
     }
 
-    // 4. Validar campos vacíos
+    // Validar campos vacíos
     if (this.nombre && this.apellido && this.email && this.pass) {
       console.log('Registro exitoso:', { nombre: this.nombre, fecha: this.fechaNacimiento });
       alert('¡Cuenta creada con éxito!');

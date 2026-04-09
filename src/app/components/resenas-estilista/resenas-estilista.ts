@@ -6,7 +6,7 @@ interface Resena {
   cliente: string;
   servicio: string;
   comentario: string;
-  calificacion: number; // 1 al 5
+  calificacion: number; 
   fecha: string;
 }
 
@@ -21,11 +21,11 @@ export class ResenasEstilistaComponent {
   @Output() navigate = new EventEmitter<string>();
   @Output() logout = new EventEmitter<void>();
 
-  // Datos de ejemplo basados en tu captura
+  
   promedio: number = 4.8;
   totalResenas: number = 5;
 
-  // Distribución de estrellas (estático para el ejemplo)
+  // Distribución de estrellas 
   estrellasProgreso = [
     { nivel: 5, porcentaje: 80, cantidad: 4 },
     { nivel: 4, porcentaje: 20, cantidad: 1 },
@@ -61,7 +61,7 @@ export class ResenasEstilistaComponent {
     }
   ];
 
-  // Genera un array para pintar las estrellas en el HTML
+  
   getStars(rating: number) {
     return Array(5).fill(0).map((_, i) => i < rating);
   }

@@ -10,7 +10,7 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./login.css']
 })
 export class LoginComponent {
-  // Definimos las salidas para que el componente padre (App) sepa a dónde ir
+  
   @Output() onLogin = new EventEmitter<void>();          // Usuario/Cliente
   @Output() onAdminLogin = new EventEmitter<void>();     // Administrador
   @Output() onEstilistaLogin = new EventEmitter<void>(); // Estilista
@@ -20,7 +20,7 @@ export class LoginComponent {
   pass: string = '';
 
   iniciarSesion() {
-    // Validamos que los campos no estén vacíos
+    // Validamcion de campos vacios
     if (!this.email || !this.pass) {
       alert('Por favor, ingresa tus credenciales');
       return;
@@ -28,18 +28,18 @@ export class LoginComponent {
 
     const emailLower = this.email.toLowerCase();
 
-    // Lógica de ruteo por "rol" basado en el texto del correo
+    // acceso por rol
     if (emailLower.includes('@admin')) {
       console.log('Accediendo como Administrador...');
-      this.onAdminLogin.emit(); 
+      this.onAdminLogin.emit(); //admin
     } 
     else if (emailLower.includes('@estilista')) {
       console.log('Accediendo como Estilista...');
-      this.onEstilistaLogin.emit(); // Emitimos el evento de estilista
+      this.onEstilistaLogin.emit(); // Estilista
     } 
     else {
       console.log('Accediendo como Cliente...');
-      this.onLogin.emit();
+      this.onLogin.emit();//cliente 
     }
   }
 
