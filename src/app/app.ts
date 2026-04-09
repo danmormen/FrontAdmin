@@ -31,6 +31,7 @@ import { ResenasEstilistaComponent } from './components/resenas-estilista/resena
 import { NotificacionEstilistaComponent } from './components/notificacion-estilista/notificacion-estilista';
 import { PerfilEstilistaComponent } from './components/perfil-estilista/perfil-estilista';
 import { EstilistaHorarioComponent } from './components/horario-estilista/horario-estilista';
+import { HorariosAdministradorComponent } from './components/horario-administrador/horario-administrador';
 
 
 type VistaActual =
@@ -58,6 +59,7 @@ type VistaActual =
   | 'resenas-estilista'
   | 'notificacion-estilista'
   | 'perfil-estilista'
+  | 'horarios-administrador'
   | 'horario-estilista';
 
 @Component({
@@ -89,7 +91,8 @@ type VistaActual =
     ResenasEstilistaComponent,
     NotificacionEstilistaComponent,
     PerfilEstilistaComponent,
-    EstilistaHorarioComponent
+    EstilistaHorarioComponent,
+    HorariosAdministradorComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -123,6 +126,8 @@ export class App {
       'notificaciones-admin': 'notificaciones-admin',
       'promociones-admin': 'promociones-admin',
       'servicios-admin': 'servicios-admin',
+      'horarios-administrador': 'horarios-administrador',
+      'horario-administrador': 'horarios-administrador',
       'blog-admin': 'blog-admin',
 
       estilista: 'estilista',

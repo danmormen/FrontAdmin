@@ -1,0 +1,67 @@
+.admin-page { background-color: #f8fafc; min-height: 100vh; font-family: 'Inter', sans-serif; }
+
+/* Navbar y Layout */
+.nav-header { background: white; padding: 1rem 0; border-bottom: 1px solid #e2e8f0; }
+.nav-content { max-width: 1200px; margin: 0 auto; display: flex; justify-content: space-between; padding: 0 1.5rem; align-items: center; }
+.logo-text { color: #7c3aed; cursor: pointer; font-weight: bold; } /* Púrpura Admin */
+.sub-text { color: #6d28d9; font-weight: normal; }
+.nav-actions { display: flex; gap: 1rem; }
+.nav-btn { background: #f1f5f9; border: none; padding: 0.5rem 1.2rem; border-radius: 0.5rem; font-weight: 600; cursor: pointer; }
+.logout { color: #ef4444; }
+
+/* Header de Sección */
+.main-layout { max-width: 1000px; margin: 0 auto; padding: 2rem 1.5rem; }
+.section-header { 
+  display: flex; justify-content: space-between; align-items: center; 
+  background: white; padding: 1.5rem; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); margin-bottom: 2rem;
+}
+.header-left { display: flex; gap: 1rem; align-items: center; }
+.icon-circle.admin-purple { background: #f5f3ff; color: #7c3aed; width: 50px; height: 50px; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.btn-primary { background: #7c3aed; color: white; border: none; padding: 0.7rem 1.5rem; border-radius: 0.6rem; font-weight: 600; cursor: pointer; transition: 0.3s; }
+.btn-primary:hover { background: #6d28d9; transform: translateY(-2px); }
+
+/* Card Estilista */
+.estilista-card { background: #7c3aed; border-radius: 1rem; overflow: hidden; margin-bottom: 2rem; box-shadow: 0 10px 15px -3px rgba(124, 58, 237, 0.2); }
+.card-header-admin { padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; color: white; }
+.estilista-info h3 { margin: 0; font-size: 1.3rem; }
+.estilista-info span { opacity: 0.8; font-size: 0.9rem; }
+.btn-edit-outline { background: white; color: #7c3aed; border: none; padding: 0.5rem 1rem; border-radius: 0.5rem; font-weight: 600; display: flex; gap: 0.5rem; align-items: center; cursor: pointer; }
+
+/* Cuerpo de la Card */
+.card-body-admin { background: white; margin: 0.5rem; border-radius: 0.8rem; padding: 1.5rem; }
+.stats-grid-mini { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; background: #f5f3ff; padding: 1rem; border-radius: 0.7rem; margin-bottom: 1.5rem; }
+.stat-box { display: flex; flex-direction: column; }
+.stat-box .label { font-size: 0.75rem; color: #6b7280; text-transform: uppercase; }
+.stat-box .value { font-size: 1.2rem; font-weight: bold; color: #1f2937; }
+
+/* Mini Calendario */
+.mini-calendar-row { display: grid; grid-template-columns: repeat(7, 1fr); gap: 0.5rem; }
+.day-chip { border: 1px solid #e5e7eb; border-radius: 0.6rem; padding: 0.5rem; text-align: center; }
+.day-label { font-size: 0.7rem; font-weight: bold; color: #7c3aed; display: block; margin-bottom: 4px; }
+.day-content { display: flex; flex-direction: column; font-size: 0.75rem; font-weight: 600; }
+.day-content.off { color: #9ca3af; }
+.descanso-text { font-style: italic; font-size: 0.7rem; margin-top: 10px; }
+
+/* Modal Pop-up */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modal-container { background: white; width: 90%; max-width: 600px; border-radius: 1.5rem; overflow: hidden; animation: slideUp 0.3s ease; }
+.modal-header { padding: 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; }
+.modal-content { padding: 1.5rem; max-height: 60vh; overflow-y: auto; }
+.day-edit-row { display: flex; align-items: center; gap: 1rem; padding: 1rem 0; border-bottom: 1px solid #f1f5f9; }
+.day-name-col { width: 100px; display: flex; align-items: center; gap: 0.5rem; font-weight: 600; color: #7c3aed; }
+.time-inputs { display: flex; gap: 1rem; flex: 1; }
+.input-group label { display: block; font-size: 0.7rem; color: #6b7280; }
+.input-group input { border: 1px solid #e2e8f0; padding: 0.4rem; border-radius: 0.4rem; }
+.time-inputs.disabled { opacity: 0.4; pointer-events: none; }
+
+/* Switch Toggle */
+.switch { position: relative; display: inline-block; width: 40px; height: 20px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider { position: absolute; cursor: pointer; inset: 0; background-color: #e2e8f0; transition: .4s; border-radius: 20px; }
+input:checked + .slider { background-color: #22c55e; }
+.slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 2px; bottom: 2px; background-color: white; transition: .4s; border-radius: 50%; }
+input:checked + .slider:before { transform: translateX(20px); }
+
+.modal-footer { padding: 1.5rem; background: #f8fafc; display: flex; justify-content: flex-end; gap: 1rem; }
+
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }

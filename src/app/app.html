@@ -13,7 +13,6 @@
     (onNavigate)="onNavigate($event)">
   </app-registro>
 
-
   <app-home 
     *ngIf="vistaActual === 'home'" 
     (navigate)="onNavigate($event)" 
@@ -65,7 +64,6 @@
     *ngIf="vistaActual === 'blog'" 
     (backToHome)="onNavigate('home')">
   </app-blog>
-
 
   <app-pantalla-admin 
     *ngIf="vistaActual === 'admin'" 
@@ -147,9 +145,15 @@
   </app-perfil-estilista>
 
   <app-estilista-horario 
-  *ngIf="vistaActual === 'horario-estilista'" 
-  (back)="onNavigate('estilista')" 
+    *ngIf="vistaActual === 'horario-estilista'" 
+    (back)="onNavigate('estilista')" 
+    (logout)="onLogout()">
+  </app-estilista-horario>
+
+  <app-horarios-administrador
+  *ngIf="vistaActual === 'horarios-administrador'"
+  (back)="onNavigate('admin')"
   (logout)="onLogout()">
-</app-estilista-horario>
+</app-horarios-administrador>
 
 </div>

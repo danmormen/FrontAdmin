@@ -1,0 +1,122 @@
+<div class="admin-page">
+    <nav class="nav-header">
+      <div class="nav-content">
+        <h2 class="logo-text" (click)="regresar()">PonteGuapa - <span class="sub-text">Admin</span></h2>
+        <div class="nav-actions">
+          <button class="nav-btn" (click)="regresar()">Volver al Panel</button>
+          <button class="nav-btn logout" (click)="cerrarSesion()">Cerrar Sesión</button>
+        </div>
+      </div>
+    </nav>
+  
+    <main class="main-layout">
+      <header class="section-header">
+        <div class="header-left">
+          <div class="icon-circle admin-purple">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div class="header-info">
+            <h1>Gestión de Horarios</h1>
+            <p>Administra los horarios de trabajo de los estilistas</p>
+          </div>
+        </div>
+        <button class="btn-primary" (click)="abrirModal()">
+          <span class="icon">+</span> Agregar Nuevo Horario
+        </button>
+      </header>
+  
+      <div class="estilista-card" *ngFor="let estilista of listaEstilistas">
+        <div class="card-header-admin">
+          <div class="estilista-info">
+            <h3>{{ estilista.nombre }}</h3>
+            <span>{{ estilista.email }}</span>
+          </div>
+          <button class="btn-edit-outline" (click)="editarHorario(estilista)">
+            <svg viewBox="0 0 24 24" width="16" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Editar Horario
+          </button>
+        </div>
+  
+        <div class="card-body-admin">
+          <div class="stats-grid-mini">
+            <div class="stat-box">
+              <span class="label">Días laborables</span>
+              <span class="value">{{ estilista.diasLaborables }}</span>
+            </div>
+            <div class="stat-box">
+              <span class="label">Horas semanales</span>
+              <span class="value">{{ estilista.horasSemanales }}h</span>
+            </div>
+            <div class="stat-box">
+              <span class="label">Días de descanso</span>
+              <span class="value">{{ estilista.diasDescanso }}</span>
+            </div>
+          </div>
+  
+          <div class="mini-calendar-row">
+            <div class="day-chip" *ngFor="let dia of estilista.horario">
+              <span class="day-label">{{ dia.nombre.substring(0,3) }}</span>
+              <div class="day-content" [class.off]="!dia.activo">
+                <ng-container *ngIf="dia.activo; else descanso">
+                  <span class="time">{{ dia.inicio }}</span>
+                  <span class="time">{{ dia.fin }}</span>
+                </ng-container>
+                <ng-template #descanso><span class="descanso-text">Descanso</span></ng-template>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  
+    <div class="modal-overlay" *ngIf="mostrarModal">
+      <div class="modal-container">
+        <header class="modal-header">
+          <div>
+            <h2>{{ editando ? 'Editar Horario' : 'Nuevo Horario' }}</h2>
+            <p>{{ seleccionado?.nombre }}</p>
+          </div>
+          <button class="close-modal" (click)="cerrarModal()">✕</button>
+        </header>
+  
+        <div class="modal-content">
+          <div class="day-edit-row" *ngFor="let dia of seleccionado?.horario">
+            <div class="day-name-col">
+              <svg class="icon-purple" viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+              </svg>
+              <span>{{ dia.nombre }}</span>
+            </div>
+            
+            <div class="time-inputs" [class.disabled]="!dia.activo">
+              <div class="input-group">
+                <label>Hora inicio</label>
+                <input type="time" [(ngModel)]="dia.inicio" [disabled]="!dia.activo">
+              </div>
+              <div class="input-group">
+                <label>Hora fin</label>
+                <input type="time" [(ngModel)]="dia.fin" [disabled]="!dia.activo">
+              </div>
+            </div>
+  
+            <div class="status-toggle">
+              <label class="switch">
+                <input type="checkbox" [(ngModel)]="dia.activo">
+                <span class="slider"></span>
+              </label>
+              <span class="toggle-text">{{ dia.activo ? 'Activo' : 'Inactivo' }}</span>
+            </div>
+          </div>
+        </div>
+  
+        <footer class="modal-footer">
+          <button class="nav-btn" (click)="cerrarModal()">Cancelar</button>
+          <button class="btn-primary" (click)="guardarCambios()">Guardar Horario</button>
+        </footer>
+      </div>
+    </div>
+  </div>
