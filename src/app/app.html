@@ -5,6 +5,8 @@
     (onLogin)="onNavigate('home')"
     (onAdminLogin)="onNavigate('admin')"
     (onEstilistaLogin)="onNavigate('estilista')"
+    (onRequirePasswordChange)="irACambioPasswordObligatorio()"
+    (onOlvidePassword)="onNavigate('recuperar-password')"
     (onNavigate)="onNavigate($event)">
   </app-login>
 
@@ -12,6 +14,19 @@
     *ngIf="vistaActual === 'registro'" 
     (onNavigate)="onNavigate($event)">
   </app-registro>
+
+  <app-cambio-contrasena
+    *ngIf="vistaActual === 'cambio-password'"
+    (onPasswordChanged)="completarCambioPassword()"
+    (onCancel)="goToLogin()">
+  </app-cambio-contrasena>
+
+  <app-recuperar-contrasena
+    *ngIf="vistaActual === 'recuperar-password'"
+    (onSuccess)="goToLogin()"
+    (onCancel)="goToLogin()">
+  </app-recuperar-contrasena>
+
 
   <app-home 
     *ngIf="vistaActual === 'home'" 
@@ -65,6 +80,7 @@
     (backToHome)="onNavigate('home')">
   </app-blog>
 
+
   <app-pantalla-admin 
     *ngIf="vistaActual === 'admin'" 
     (logout)="onLogout()"
@@ -106,6 +122,18 @@
     (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-notificaciones-admin>
+
+  <app-horarios-administrador
+    *ngIf="vistaActual === 'horarios-administrador'"
+    (back)="onNavigate('admin')"
+    (logout)="onLogout()">
+  </app-horarios-administrador>
+
+  <app-recompensa-admin
+    *ngIf="vistaActual === 'recompensa-admin'"
+    (back)="onNavigate('admin')"
+    (logout)="onLogout()">
+  </app-recompensa-admin>
 
 
   <app-pantalla-estilista 
@@ -149,17 +177,5 @@
     (back)="onNavigate('estilista')" 
     (logout)="onLogout()">
   </app-estilista-horario>
-
-  <app-horarios-administrador
-  *ngIf="vistaActual === 'horarios-administrador'"
-  (back)="onNavigate('admin')"
-  (logout)="onLogout()">
-</app-horarios-administrador>
-
-<app-recompensa-admin
-    *ngIf="vistaActual === 'recompensa-admin'"
-    (back)="onNavigate('admin')"
-    (logout)="onLogout()">
-</app-recompensa-admin>
 
 </div>

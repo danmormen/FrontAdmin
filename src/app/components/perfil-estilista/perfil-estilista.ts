@@ -13,7 +13,6 @@ export class PerfilEstilistaComponent {
   @Output() navigate = new EventEmitter<string>();
   @Output() logout = new EventEmitter<void>();
 
-  
   estilista = {
     nombre: 'Carolina Hernández',
     puesto: 'Estilista Senior',
@@ -23,7 +22,8 @@ export class PerfilEstilistaComponent {
     email: 'carolina.hernandez@ponteguapa.com',
     telefono: '+502 5555-1234',
     especialidades: ['Corte', 'Coloración', 'Tratamiento Facial'],
-    fechaIngreso: '14 de enero de 2024'
+    fechaIngreso: '14 de enero de 2024',
+    fechaCumpleanos: '1992-05-15' 
   };
 
   editandoTelefono: boolean = false;
@@ -37,7 +37,6 @@ export class PerfilEstilistaComponent {
   guardarTelefono() {
     this.estilista.telefono = this.nuevoTelefono;
     this.editandoTelefono = false;
-   
   }
 
   onBack() { this.navigate.emit('estilista'); }

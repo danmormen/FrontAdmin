@@ -34,6 +34,10 @@ import { PerfilEstilistaComponent } from './components/perfil-estilista/perfil-e
 import { EstilistaHorarioComponent } from './components/horario-estilista/horario-estilista';
 import { HorariosAdministradorComponent } from './components/horario-administrador/horario-administrador';
 
+// Autenticación / Seguridad (NUEVO)
+import { CambioContrasenaComponent } from './components/cambio-contrasena/cambio-contrasena';
+import { RecuperarContrasenaComponent } from './components/recuperar-contrasena/recuperar-contrasena'; // <-- NUEVO
+
 
 type VistaActual =
   | 'login'
@@ -62,7 +66,9 @@ type VistaActual =
   | 'perfil-estilista'
   | 'horarios-administrador'
   | 'recompensa-admin'
-  | 'horario-estilista';
+  | 'horario-estilista'
+  | 'cambio-password'
+  | 'recuperar-password'; // <-- NUEVA VISTA AGREGADA
 
 @Component({
   selector: 'app-root',
@@ -96,6 +102,8 @@ type VistaActual =
     EstilistaHorarioComponent,
     HorariosAdministradorComponent,
     RecompensasAdminComponent,
+    CambioContrasenaComponent,
+    RecuperarContrasenaComponent // <-- NUEVO COMPONENTE AGREGADO
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -142,7 +150,10 @@ export class App {
       'notificacion-estilista': 'notificacion-estilista',
       'notificaciones-estilista': 'notificacion-estilista',
       'perfil-estilista': 'perfil-estilista',
-      'horario-estilista': 'horario-estilista'
+      'horario-estilista': 'horario-estilista',
+      
+      'cambio-password': 'cambio-password',
+      'recuperar-password': 'recuperar-password' // <-- NUEVA RUTA AGREGADA
     };
 
     const destino = mapa[section];
@@ -158,7 +169,10 @@ export class App {
     }
   }
 
-  // Login
+  // ==========================================
+  // LÓGICA DE AUTENTICACIÓN Y SEGURIDAD
+  // ==========================================
+
   goToRegister(): void {
     this.vistaActual = 'registro';
   }
@@ -173,7 +187,20 @@ export class App {
     this.resetReserva();
   }
 
-  // Reserva desde servicios o promociones
+  // Se dispara cuando el login detecta que el estilista usa la clave por defecto
+  irACambioPasswordObligatorio(): void {
+    this.vistaActual = 'cambio-password';
+  }
+
+  // Se dispara cuando el estilista cambia su clave con éxito
+  completarCambioPassword(): void {
+    this.vistaActual = 'estilista'; // Lo enviamos a su panel principal
+  }
+
+  // ==========================================
+  // LÓGICA DE RESERVAS
+  // ==========================================
+
   onServiceSelected(servicio: string, dePromo: boolean = false): void {
     this.servicioPreseleccionado = servicio;
     this.esPromocion = dePromo;

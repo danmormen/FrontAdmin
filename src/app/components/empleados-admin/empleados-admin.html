@@ -1,7 +1,8 @@
 <div class="admin-page-layout">
+  
     <nav class="admin-nav">
       <div class="nav-container">
-        <div class="brand" (click)="backToAdmin.emit()">
+        <div class="brand" (click)="backToAdmin.emit()" style="cursor: pointer;">
           PonteGuapa <span class="sub-brand">- Admin</span>
         </div>
         <div class="nav-actions">
@@ -31,13 +32,23 @@
             <p><strong>Especialidades:</strong> {{ emp.especialidades }}</p>
             <p><strong>Teléfono:</strong> {{ emp.telefono }}</p>
             <p><strong>Email:</strong> {{ emp.email }}</p>
+            <p><strong>Nacimiento:</strong> {{ emp.fechaNacimiento }}</p>
           </div>
   
           <div class="card-footer">
+            <button class="action-btn password" (click)="abrirModalPassword(emp)" title="Cambiar Contraseña">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+              Contraseña
+            </button>
+            
             <button class="action-btn edit" (click)="abrirModalEditar(emp)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               Editar
             </button>
+            
             <button class="action-btn delete" (click)="eliminarEmpleado(emp.id)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
               Eliminar
@@ -77,14 +88,25 @@
             </div>
           </div>
   
-          <div class="input-field full-width">
-            <label>Correo Electrónico</label>
-            <input type="email" [(ngModel)]="empleadoForm.email" placeholder="correo@ponteguapa.com">
+          <div class="input-row">
+            <div class="input-field">
+              <label>Correo Electrónico</label>
+              <input type="email" [(ngModel)]="empleadoForm.email" placeholder="correo@ponteguapa.com">
+            </div>
+            <div class="input-field">
+              <label>Fecha de Nacimiento</label>
+              <input type="date" [(ngModel)]="empleadoForm.fechaNacimiento" max="9999-12-31" required>
+            </div>
           </div>
   
           <div class="input-field full-width">
             <label>Especialidades</label>
             <textarea [(ngModel)]="empleadoForm.especialidades" rows="2" placeholder="Corte, Color, Manicure..."></textarea>
+          </div>
+  
+          <div class="input-field full-width" *ngIf="!editando">
+            <label>Contraseña</label>
+            <input type="password" [(ngModel)]="empleadoForm.password" placeholder="Asigna una contraseña (mínimo 6 caracteres)">
           </div>
         </div>
   
@@ -94,4 +116,27 @@
         </div>
       </div>
     </div>
+  
+    <div class="modal-backdrop" *ngIf="mostrarModalPassword">
+      <div class="modal-window">
+        <h2 class="modal-title">Cambiar Contraseña</h2>
+        
+        <p style="margin-bottom: 20px; font-size: 14px; color: #555;">
+          Estableciendo nueva contraseña para: <strong>{{ empleadoPasswordActual }}</strong>
+        </p>
+        
+        <div class="form-container">
+          <div class="input-field full-width">
+            <label>Nueva Contraseña</label>
+            <input type="password" [(ngModel)]="nuevaPassword" placeholder="Mínimo 6 caracteres" minlength="6">
+          </div>
+        </div>
+  
+        <div class="modal-btns">
+          <button class="cancel-btn" (click)="cerrarModalPassword()">Cancelar</button>
+          <button class="save-btn" (click)="guardarPassword()">Actualizar</button>
+        </div>
+      </div>
+    </div>
+  
   </div>

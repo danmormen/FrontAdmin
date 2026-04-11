@@ -18,7 +18,8 @@ export class PerfilComponent {
     apellido: 'García',
     email: 'maria.garcia@email.com',
     telefono: '+34 612 345 678',
-    iniciales: 'MG'
+    iniciales: 'MG',
+    fechaCumpleanos: '1995-08-24' 
   };
 
   // Función para regresar
@@ -27,6 +28,7 @@ export class PerfilComponent {
   }
 
   guardarCambios() {
-    console.log('Botón guardar cambios presionado (sin acción aún).');
+   
+    console.log('Botón guardar cambios presionado. Datos:', this.usuario);
   }
 }
