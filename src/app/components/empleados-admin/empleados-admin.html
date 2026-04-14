@@ -19,20 +19,26 @@
       </header>
   
       <div class="employee-grid">
+        <div *ngIf="empleados.length === 0" class="no-data">
+          <p>No hay empleados registrados o cargando datos...</p>
+        </div>
+  
         <div class="employee-card" *ngFor="let emp of empleados">
           <div class="card-top">
             <div class="info">
-              <h3>{{ emp.nombre }} {{ emp.apellido }}</h3>
-              <p class="role-badge">{{ emp.rol }}</p>
+              <h3>{{ emp.nombre }}</h3>
+              <p class="role-badge">{{ emp.rol | titlecase }}</p>
             </div>
-            <span class="status-tag">Activo</span>
+            <span class="status-tag" [ngClass]="emp.activo ? 'activo' : 'inactivo'">
+              {{ emp.activo ? 'Activo' : 'Inactivo' }}
+            </span>
           </div>
           
           <div class="card-details">
-            <p><strong>Especialidades:</strong> {{ emp.especialidades }}</p>
-            <p><strong>Teléfono:</strong> {{ emp.telefono }}</p>
+            <p><strong>Especialidad:</strong> {{ emp.especialidad || 'N/A' }}</p>
+            <p><strong>Teléfono:</strong> {{ emp.telefono || 'Sin teléfono' }}</p>
             <p><strong>Email:</strong> {{ emp.email }}</p>
-            <p><strong>Nacimiento:</strong> {{ emp.fechaNacimiento }}</p>
+            <p><strong>Nacimiento:</strong> {{ emp.fecha_nacimiento | date:'dd/MM/yyyy':'UTC' }}</p>
           </div>
   
           <div class="card-footer">
@@ -78,13 +84,21 @@
             <div class="input-field">
               <label>Rol de Sistema</label>
               <select [(ngModel)]="empleadoForm.rol">
-                <option value="Estilista">Estilista</option>
-                <option value="Administrador">Administrador</option>
+                <option value="estilista">Estilista</option>
+                <option value="admin">Administrador</option>
               </select>
             </div>
             <div class="input-field">
               <label>Teléfono</label>
-              <input type="text" [(ngModel)]="empleadoForm.telefono" placeholder="+502 0000-0000">
+              <div class="phone-input-wrapper" style="display: flex; align-items: center; background: #f4f4f4; border: 1px solid #ccc; border-radius: 4px; overflow: hidden;">
+                <span style="padding: 0 10px; color: #666; font-weight: bold; background: #e9e9e9; height: 38px; display: flex; align-items: center; border-right: 1px solid #ccc;">+502</span>
+                <input type="text" 
+                       [ngModel]="empleadoForm.telefono.replace('+502 ', '')" 
+                       (input)="onTelefonoInput($event)"
+                       placeholder="0000-0000"
+                       maxlength="9"
+                       style="border: none; outline: none; flex: 1; padding: 0 10px; background: transparent; height: 38px;">
+              </div>
             </div>
           </div>
   
@@ -95,18 +109,28 @@
             </div>
             <div class="input-field">
               <label>Fecha de Nacimiento</label>
-              <input type="date" [(ngModel)]="empleadoForm.fechaNacimiento" max="9999-12-31" required>
+              <input type="date" 
+                     [(ngModel)]="empleadoForm.fecha_nacimiento" 
+                     min="1940-01-01" 
+                     max="2026-12-31">
             </div>
           </div>
   
           <div class="input-field full-width">
             <label>Especialidades</label>
-            <textarea [(ngModel)]="empleadoForm.especialidades" rows="2" placeholder="Corte, Color, Manicure..."></textarea>
+            <textarea [(ngModel)]="empleadoForm.especialidad" rows="2" placeholder="Corte, Color, Manicure..."></textarea>
           </div>
   
           <div class="input-field full-width" *ngIf="!editando">
             <label>Contraseña</label>
-            <input type="password" [(ngModel)]="empleadoForm.password" placeholder="Asigna una contraseña (mínimo 6 caracteres)">
+            <input type="password" [(ngModel)]="empleadoForm.password" placeholder="Mínimo 6 caracteres">
+          </div>
+  
+          <div class="input-field full-width active-status-container" *ngIf="editando" style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-top: 10px; border: 1px dashed #cbd5e0;">
+            <label class="checkbox-label" style="display: flex; align-items: center; gap: 12px; cursor: pointer; font-weight: 600; color: #2d3748;">
+              <input type="checkbox" [(ngModel)]="empleadoForm.activo" style="width: 20px; height: 20px; accent-color: #8b5cf6;">
+              <span>Usuario con acceso activo al sistema</span>
+            </label>
           </div>
         </div>
   
@@ -121,14 +145,14 @@
       <div class="modal-window">
         <h2 class="modal-title">Cambiar Contraseña</h2>
         
-        <p style="margin-bottom: 20px; font-size: 14px; color: #555;">
+        <p class="modal-subtitle" style="margin-bottom: 20px; font-size: 0.9rem; color: #666;">
           Estableciendo nueva contraseña para: <strong>{{ empleadoPasswordActual }}</strong>
         </p>
         
         <div class="form-container">
           <div class="input-field full-width">
             <label>Nueva Contraseña</label>
-            <input type="password" [(ngModel)]="nuevaPassword" placeholder="Mínimo 6 caracteres" minlength="6">
+            <input type="password" [(ngModel)]="nuevaPassword" placeholder="Mínimo 6 caracteres">
           </div>
         </div>
   

@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http'; 
 
 @Component({
   selector: 'app-registro',
@@ -18,7 +19,8 @@ export class RegistroComponent {
   pass: string = '';
   fechaNacimiento: string = '';
 
-  // validacion unicamente numeros
+  constructor(private http: HttpClient) {}
+
   validarSoloNumeros(event: KeyboardEvent) {
     const charCode = event.which ? event.which : event.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
@@ -28,7 +30,7 @@ export class RegistroComponent {
     return true;
   }
 
-  // Formato  : DD/MM/AAAA
+ 
   formatearFecha(event: any) {
     let input = event.target.value.replace(/\D/g, ''); 
     let formatted = '';
@@ -58,7 +60,7 @@ export class RegistroComponent {
     if (dia < 1 || dia > 31) { alert('Día inválido (01-31)'); return; }
     if (mes < 1 || mes > 12) { alert('Mes inválido (01-12)'); return; }
 
-    //  Validación de mayoría de edad 
+    // Validación de mayoría de edad 
     if (anio > 2008) {
       alert('Debes ser mayor de 18 años para registrarte.');
       return;
@@ -70,9 +72,45 @@ export class RegistroComponent {
 
     // Validar campos vacíos
     if (this.nombre && this.apellido && this.email && this.pass) {
-      console.log('Registro exitoso:', { nombre: this.nombre, fecha: this.fechaNacimiento });
-      alert('¡Cuenta creada con éxito!');
-      this.onNavigate.emit('login');
+      
+      // 3. Preparamos el payload mapeando tus variables locales a lo que espera el backend
+      const datosRegistro = {
+        nombre: this.nombre,
+        apellido: this.apellido,
+        email: this.email,
+        password: this.pass, // ¡Atención aquí! Mapeamos 'pass' a 'password'
+        fechaNacimiento: this.fechaNacimiento
+      };
+
+      // 4. Enviamos la petición POST al backend
+      this.http.post('http://localhost:3000/api/auth/registro', datosRegistro)
+        .subscribe({
+          next: (respuesta: any) => {
+            console.log('Registro exitoso desde Angular:', respuesta);
+            
+            // Opcional: Guardar el token si decides loguear al usuario inmediatamente
+            if(respuesta.token) {
+              localStorage.setItem('token', respuesta.token);
+            }
+
+            alert('¡Cuenta creada con éxito!');
+            this.onNavigate.emit('login');
+          },
+          error: (errorRes) => {
+            console.error('Error de registro:', errorRes);
+            
+            // Manejamos los mensajes de error que vengan de express-validator o la BD
+            if (errorRes.error && errorRes.error.errores) {
+              const mensajes = errorRes.error.errores.map((e: any) => e.msg).join('\n');
+              alert('Revisa tus datos:\n' + mensajes);
+            } else if (errorRes.error && errorRes.error.message) {
+              alert('Error: ' + errorRes.error.message);
+            } else {
+              alert('Ocurrió un error de conexión con el servidor. Verifica que el backend esté corriendo.');
+            }
+          }
+        });
+
     } else {
       alert('Por favor, completa todos los campos.');
     }
