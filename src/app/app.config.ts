@@ -1,12 +1,12 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideRouter } from '@angular/router';
-
-import { routes} from './app.routes';
-import { NavbarComponent } from './components/navbar/navbar';
+import { provideHttpClient } from '@angular/common/http'; // ← Agrega este import
+import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes)
+    provideRouter(routes),
+    provideHttpClient() // ← Agrega esta línea
   ]
 };

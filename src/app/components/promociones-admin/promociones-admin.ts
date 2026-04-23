@@ -1,17 +1,7 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-
-interface Promocion {
-  id: number;
-  titulo: string;
-  descripcion: string;
-  descuento: number; 
-  precioOferta: number;
-  fechaInicio: string;
-  fechaFin: string;
-  estado: boolean; 
-}
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-promociones-admin',
@@ -20,50 +10,161 @@ interface Promocion {
   templateUrl: './promociones-admin.html',
   styleUrls: ['./promociones-admin.css']
 })
-export class PromocionesAdminComponent {
+export class PromocionesAdminComponent implements OnInit {
   @Output() backToAdmin = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
 
-  promociones: Promocion[] = [
-    { id: 1, titulo: 'Manicure + Pedicure', descripcion: '2x1 en servicios de manicure y pedicure', descuento: 50, precioOferta: 225, fechaInicio: '2026-02-28', fechaFin: '2026-03-30', estado: true },
-    { id: 2, titulo: 'Tratamiento Facial', descripcion: 'Descuento especial en tratamientos faciales', descuento: 30, precioOferta: 280, fechaInicio: '2026-02-28', fechaFin: '2026-03-30', estado: true },
-    { id: 3, titulo: 'Coloración', descripcion: 'Promoción especial en servicios de coloración', descuento: 25, precioOferta: 375, fechaInicio: '2026-03-31', fechaFin: '2026-04-29', estado: false }
-  ];
-
+  promociones: any[] = [];
   mostrarModal = false;
   editando = false;
-  promoForm: Promocion = this.getNuevaPromo();
+  guardando = false;
+  cargando = true; // ← Estado de carga para feedback visual
+  promoForm: any = this.getNuevaPromo();
 
-  getNuevaPromo(): Promocion {
-    return { id: 0, titulo: '', descripcion: '', descuento: 0, precioOferta: 0, fechaInicio: '', fechaFin: '', estado: true };
+  private apiUrl = 'http://localhost:3000/api/promociones';
+
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef // ← Inyectamos el detector
+  ) {}
+
+  ngOnInit() {
+    this.cargarPromociones();
+  }
+
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
+  cargarPromociones() {
+    this.cargando = true;
+    this.http.get<any[]>(this.apiUrl).subscribe({
+      next: (data) => {
+        this.promociones = data;
+        this.cargando = false;
+        this.cdr.detectChanges(); // ← Fuerza actualización de la vista
+      },
+      error: (err) => {
+        console.error('Error al cargar promociones:', err);
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  getNuevaPromo() {
+    return {
+      id: 0,
+      titulo: '',
+      descripcion: '',
+      codigo: '',
+      tipo_descuento: 'porcentaje',
+      valor_descuento: 0,
+      fecha_inicio: '',
+      fecha_fin: '',
+      limite_usos: null,
+      activo: 1
+    };
   }
 
   abrirModalNuevo() {
     this.editando = false;
+    this.guardando = false;
     this.promoForm = this.getNuevaPromo();
     this.mostrarModal = true;
   }
 
-  abrirModalEditar(promo: Promocion) {
+  abrirModalEditar(promo: any) {
     this.editando = true;
-    this.promoForm = { ...promo };
+    this.guardando = false;
+    this.promoForm = {
+      ...promo,
+      fecha_inicio: promo.fecha_inicio ? promo.fecha_inicio.split('T')[0] : '',
+      fecha_fin: promo.fecha_fin ? promo.fecha_fin.split('T')[0] : ''
+    };
     this.mostrarModal = true;
   }
 
   guardarPromo() {
-    if (this.editando) {
-      const index = this.promociones.findIndex(p => p.id === this.promoForm.id);
-      if (index !== -1) this.promociones[index] = this.promoForm;
-    } else {
-      this.promoForm.id = Date.now();
-      this.promociones.push(this.promoForm);
+    if (this.guardando) return;
+
+    if (!this.promoForm.titulo?.trim()) {
+      return alert('El título es obligatorio.');
     }
-    this.mostrarModal = false;
+    if (!this.promoForm.codigo?.trim()) {
+      return alert('El código de cupón es obligatorio.');
+    }
+    if (!this.promoForm.valor_descuento || this.promoForm.valor_descuento <= 0) {
+      return alert('El descuento debe ser mayor a 0.');
+    }
+    if (this.promoForm.valor_descuento > 100) {
+      return alert('El descuento no puede ser mayor a 100%.');
+    }
+    if (!this.promoForm.fecha_inicio || !this.promoForm.fecha_fin) {
+      return alert('Las fechas de inicio y fin son obligatorias.');
+    }
+
+    const inicio = new Date(this.promoForm.fecha_inicio);
+    const fin    = new Date(this.promoForm.fecha_fin);
+
+    if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) {
+      return alert('Una o ambas fechas no son válidas.');
+    }
+    if (fin < inicio) {
+      return alert('La fecha de fin no puede ser anterior a la fecha de inicio.');
+    }
+
+    const payload = {
+      ...this.promoForm,
+      codigo:          this.promoForm.codigo.trim().toUpperCase(),
+      valor_descuento: Math.round(Number(this.promoForm.valor_descuento)),
+      limite_usos:     this.promoForm.limite_usos ? Number(this.promoForm.limite_usos) : null,
+      activo:          Number(this.promoForm.activo)
+    };
+
+    const headers  = this.getAuthHeaders();
+    this.guardando = true;
+
+    if (this.editando) {
+      this.http.put(`${this.apiUrl}/${payload.id}`, payload, { headers }).subscribe({
+        next: () => {
+          this.mostrarModal = false;
+          this.promoForm    = this.getNuevaPromo();
+          this.guardando    = false;
+          this.cargarPromociones();
+        },
+        error: (err) => {
+          this.guardando = false;
+          alert('Error al actualizar: ' + (err.error?.error || err.message));
+        }
+      });
+    } else {
+      this.http.post(this.apiUrl, payload, { headers }).subscribe({
+        next: () => {
+          this.mostrarModal = false;
+          this.promoForm    = this.getNuevaPromo();
+          this.guardando    = false;
+          this.cargarPromociones();
+        },
+        error: (err) => {
+          this.guardando = false;
+          alert('Error al crear: ' + (err.error?.error || err.message));
+        }
+      });
+    }
   }
 
   eliminarPromo(id: number) {
-    if(confirm('¿Seguro que deseas eliminar esta promoción?')) {
-      this.promociones = this.promociones.filter(p => p.id !== id);
+    if (confirm('¿Seguro que deseas eliminar esta promoción?')) {
+      const headers = this.getAuthHeaders();
+      this.http.delete(`${this.apiUrl}/${id}`, { headers }).subscribe({
+        next: () => this.cargarPromociones(),
+        error: (err) => alert('Error al eliminar: ' + (err.error?.error || err.message))
+      });
     }
   }
 
