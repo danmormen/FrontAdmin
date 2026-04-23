@@ -14,7 +14,7 @@ export class CambioContrasenaComponent implements OnInit {
   @Output() onPasswordChanged = new EventEmitter<void>();
   @Output() onCancel = new EventEmitter<void>();
 
-  private apiUrl = 'http://localhost:3000/api/usuarios'; // Ajusta a tu URL de backend
+  private apiUrl = 'http://localhost:3000/api/usuarios'; 
   
   nuevaPassword = '';
   confirmarPassword = '';
@@ -24,31 +24,45 @@ export class CambioContrasenaComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    // Recuperamos el ID del usuario que se acaba de loguear
+    // Recuperamos el ID del usuario desde el localStorage
     const userStr = localStorage.getItem('usuario');
+    console.log('Datos en LocalStorage al cargar:', userStr);
+
     if (userStr) {
-      const user = JSON.parse(userStr);
-      this.usuarioId = user.id;
+      try {
+        const user = JSON.parse(userStr);
+        this.usuarioId = user.id;
+        console.log('ID de usuario detectado:', this.usuarioId);
+      } catch (error) {
+        console.error('Error al parsear el usuario del localStorage:', error);
+        this.errorMsg = 'Error al recuperar los datos del usuario. Intenta iniciar sesión nuevamente.';
+      }
     }
 
     if (!this.usuarioId) {
-      this.errorMsg = 'Error de sesión. Por favor, intenta loguearte de nuevo.';
+      this.errorMsg = 'Error de sesión. No se encontró tu ID. Intenta loguearte de nuevo.';
     }
   }
 
   getHeaders() {
     const token = localStorage.getItem('token');
+    if (!token) {
+      console.error('Token no encontrado en localStorage.');
+      this.errorMsg = 'Error de autenticación. Intenta iniciar sesión nuevamente.';
+      return null;
+    }
     return new HttpHeaders({
       'Authorization': `Bearer ${token}`
     });
   }
 
   guardarPassword() {
+    console.log('Intentando guardar contraseña...');
     this.errorMsg = '';
 
-    // 1. Validaciones de cliente
+    // Validaciones básicas
     if (!this.usuarioId) {
-      this.errorMsg = 'No se encontró el ID del usuario.';
+      this.errorMsg = 'Error: ID de usuario no válido.';
       return;
     }
 
@@ -62,20 +76,35 @@ export class CambioContrasenaComponent implements OnInit {
       return;
     }
 
-    // 2. Llamada al servidor (usamos PATCH porque solo actualizamos un campo)
-    // Usamos el mismo endpoint que creamos para el administrador, pero para el usuario actual
+    const headers = this.getHeaders();
+    if (!headers) {
+      return; // Si no hay headers, detenemos la ejecución
+    }
+
+    console.log('Enviando petición PATCH al servidor...');
+
+    // Llamada al servidor
     this.http.patch(`${this.apiUrl}/${this.usuarioId}/cambiar-password`, 
       { password: this.nuevaPassword }, 
-      { headers: this.getHeaders() }
+      { headers }
     ).subscribe({
-      next: () => {
-        console.log('Contraseña actualizada en DB');
-        alert('Contraseña actualizada con éxito. ¡Bienvenido!');
+      next: (res: any) => {
+        console.log('Respuesta del servidor:', res);
+        alert('Contraseña actualizada con éxito.');
+        // Emitimos el evento al componente padre
         this.onPasswordChanged.emit();
       },
       error: (err) => {
-        console.error('Error al guardar:', err);
-        this.errorMsg = err.error?.error || 'No se pudo actualizar la contraseña en el servidor.';
+        console.error('Error en la petición PATCH:', err);
+        if (err.status === 401) {
+          this.errorMsg = 'No autorizado. Verifica tus credenciales.';
+        } else if (err.status === 404) {
+          this.errorMsg = 'Usuario no encontrado. Intenta iniciar sesión nuevamente.';
+        } else if (err.status === 500) {
+          this.errorMsg = 'Error interno del servidor. Intenta más tarde.';
+        } else {
+          this.errorMsg = err.error?.error || 'Error al conectar con el servidor.';
+        }
       }
     });
   }

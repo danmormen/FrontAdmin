@@ -1,14 +1,17 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 interface Servicio {
-  id: number;
+  id?: number;
   nombre: string;
   descripcion: string;
   precio: number;
   duracion: number; 
-  estado: 'Activo' | 'Inactivo';
+  categoria: 'cabello' | 'uñas' | 'maquillaje' | 'tratamientos' | 'otros';
+  imagen?: string;
+  activo: boolean | number;
 }
 
 @Component({
@@ -18,24 +21,57 @@ interface Servicio {
   templateUrl: './servicios-admin.html',
   styleUrls: ['./servicios-admin.css']
 })
-export class ServiciosAdminComponent {
+export class ServiciosAdminComponent implements OnInit {
   @Output() backToAdmin = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
 
-  servicios: Servicio[] = [
-    { id: 1, nombre: 'Manicure', descripcion: 'Cuidado completo de uñas de las manos', precio: 200, duracion: 45, estado: 'Activo' },
-    { id: 2, nombre: 'Pedicure', descripcion: 'Cuidado completo de uñas de los pies', precio: 250, duracion: 60, estado: 'Activo' },
-    { id: 3, nombre: 'Corte de cabello', descripcion: 'Corte personalizado según tu estilo', precio: 280, duracion: 45, estado: 'Activo' },
-    { id: 4, nombre: 'Coloración', descripcion: 'Coloración completa del cabello', precio: 500, duracion: 120, estado: 'Activo' },
-    { id: 5, nombre: 'Tratamiento facial', descripcion: 'Limpieza profunda y cuidado de la piel', precio: 400, duracion: 90, estado: 'Activo' }
-  ];
-
+  private apiUrl = 'http://localhost:3000/api/servicios';
+  servicios: Servicio[] = [];
+  
   mostrarModal = false;
   editando = false;
   servicioForm: Servicio = this.getNuevoServicio();
 
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef // Agregado para forzar la vista
+  ) {}
+
+  ngOnInit() {
+    this.cargarServicios();
+  }
+
+  getHeaders() {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
   getNuevoServicio(): Servicio {
-    return { id: 0, nombre: '', descripcion: '', precio: 0, duracion: 0, estado: 'Activo' };
+    return { 
+      nombre: '', 
+      descripcion: '', 
+      precio: 0, 
+      duracion: 0, 
+      categoria: 'otros',
+      activo: 1 
+    };
+  }
+
+  // --- CARGA DE DATOS (Misma lógica que empleados) ---
+  cargarServicios() {
+    this.http.get<Servicio[]>(this.apiUrl) // Quitamos headers aquí porque la ruta es pública según tu servicios.js
+      .subscribe({
+        next: (res) => {
+          this.servicios = res;
+          this.cdr.detectChanges(); // Forzamos a Angular a pintar los cambios
+        },
+        error: (err) => {
+          console.error('Error al cargar servicios:', err);
+          alert('Error al obtener la lista de servicios.');
+        }
+      });
   }
 
   abrirModalNuevo() {
@@ -44,30 +80,69 @@ export class ServiciosAdminComponent {
     this.mostrarModal = true;
   }
 
-  abrirModalEditar(serv: Servicio) {
+  abrirModalEditar(s: Servicio) {
     this.editando = true;
-    this.servicioForm = { ...serv };
+    // Clonamos para no editar la fila de la tabla directamente
+    this.servicioForm = { ...s };
     this.mostrarModal = true;
   }
 
   guardarServicio() {
-    if (this.editando) {
-      const index = this.servicios.findIndex(s => s.id === this.servicioForm.id);
-      if (index !== -1) this.servicios[index] = this.servicioForm;
-    } else {
-      this.servicioForm.id = Date.now();
-      this.servicios.push(this.servicioForm);
+    if (!this.servicioForm.nombre || !this.servicioForm.precio || !this.servicioForm.duracion) {
+      alert('Nombre, Precio y Duración son obligatorios.');
+      return;
     }
-    this.mostrarModal = false;
+
+    const payload = {
+      ...this.servicioForm,
+      activo: this.servicioForm.activo ? 1 : 0
+    };
+
+    if (this.editando) {
+      this.http.put(`${this.apiUrl}/${this.servicioForm.id}`, payload, { headers: this.getHeaders() })
+        .subscribe({
+          next: () => {
+            alert('Servicio actualizado correctamente');
+            this.cerrarYRefrescar();
+          },
+          error: (err) => alert('Error al actualizar: ' + (err.error?.error || 'Error desconocido'))
+        });
+    } else {
+      this.http.post(this.apiUrl, payload, { headers: this.getHeaders() })
+        .subscribe({
+          next: () => {
+            alert('Servicio creado con éxito');
+            this.cerrarYRefrescar();
+          },
+          error: (err) => alert('Error al crear: ' + (err.error?.error || 'Error desconocido'))
+        });
+    }
   }
 
-  eliminarServicio(id: number) {
-    if(confirm('¿Seguro que deseas eliminar este servicio?')) {
-      this.servicios = this.servicios.filter(s => s.id !== id);
+  eliminarServicio(id: number | undefined) {
+    if(!id) return;
+    if(confirm('¿Estás seguro de eliminar este servicio?')) {
+      this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() })
+        .subscribe({
+          next: () => {
+            alert('Servicio eliminado');
+            this.cargarServicios();
+          },
+          error: (err) => alert('Error al eliminar')
+        });
     }
+  }
+
+  cerrarYRefrescar() {
+    this.mostrarModal = false; 
+    this.editando = false;
+    this.servicioForm = this.getNuevoServicio();
+    this.cargarServicios();
   }
 
   cerrarSesion() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
     this.logout.emit();
   }
 }

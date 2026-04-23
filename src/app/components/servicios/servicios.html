@@ -3,8 +3,7 @@
       <div class="nav-content">
         <h2 class="logo-text" (click)="regresar()">PonteGuapa</h2>
         <div class="nav-actions">
-          <button class="nav-btn" (click)="regresar()">Volver al Panel</button>
-          <button class="nav-btn logout">Cerrar Sesión</button>
+          <button class="nav-btn" (click)="regresar()">Inicio</button>
         </div>
       </div>
     </nav>
@@ -12,6 +11,9 @@
     <div class="content-container">
       <div class="top-header">
         <h1 class="title">Nuestros Servicios</h1>
+        <p *ngIf="listaServicios.length === 0 && !cargando" style="text-align: center; margin-top: 20px;">
+          Por el momento no hay servicios disponibles.
+        </p>
       </div>
   
       <div class="servicios-grid">
@@ -19,6 +21,7 @@
           
           <div class="servicio-info">
             <div class="info-principal">
+              <span class="categoria-tag">{{ s.categoria }}</span>
               <h3>{{ s.nombre }}</h3>
               <p class="desc">{{ s.descripcion }}</p>
             </div>
@@ -28,12 +31,12 @@
                 <circle cx="12" cy="12" r="10"></circle>
                 <polyline points="12 6 12 12 16 14"></polyline>
               </svg>
-              <span>Duración: {{ s.duracion }}</span>
+              <span>Duración: {{ s.duracion }} min</span>
             </div>
           </div>
           
           <div class="servicio-actions">
-            <span class="precio">{{ s.precio }}</span>
+            <span class="precio">Q{{ s.precio }}</span>
             <button class="btn-reservar" (click)="onReservar(s.nombre)">
               Reservar Cita
             </button>
@@ -42,7 +45,7 @@
         </div>
       </div>
   
-      <section class="info-importante">
+      <section class="info-importante" *ngIf="listaServicios.length > 0">
         <h3>Información Importante</h3>
         <div class="info-list">
           <div class="info-item">
@@ -55,14 +58,10 @@
           </div>
           <div class="info-item">
             <span class="dot">•</span>
-            <p>Por cada servicio acumulas puntos en nuestro programa de recompensas.</p>
-          </div>
-          <div class="info-item">
-            <span class="dot">•</span>
             <p>Si necesitas cancelar, hazlo con al menos 24 horas de anticipación.</p>
           </div>
         </div>
       </section>
       
     </div>
-  </div>
+</div>

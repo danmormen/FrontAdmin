@@ -1,11 +1,11 @@
-/* Contenedor Principal (Usa la misma clase que notificaciones) */
+/* Contenedor Principal */
 .notif-page {
-    background-color: #f0fdfa;
+    background-color: #f0fdfa; /* Un tono turquesa muy suave */
     min-height: 100vh;
     font-family: 'Inter', system-ui, -apple-system, sans-serif;
 }
 
-/* --- NAVBAR (IDÉNTICA A NOTIFICACIONES) --- */
+/* --- NAVBAR --- */
 .nav-header {
     background: white;
     padding: 1rem 0;
@@ -42,7 +42,7 @@
     gap: 1rem; 
 }
 
-/* --- BOTONES DE NAVEGACIÓN (IDÉNTICOS A NOTIFICACIONES) --- */
+/* --- BOTONES DE NAVEGACIÓN --- */
 .nav-btn {
     background: #f1f5f9;
     border: none;
@@ -98,6 +98,11 @@
     align-items: center;
     padding: 1.25rem 1.5rem;
     border-bottom: 1px solid #f1f5f9;
+    transition: background 0.2s;
+}
+
+.day-row:hover {
+    background: #fcfdfd;
 }
 
 .day-row:last-child { 
@@ -114,8 +119,8 @@
 .mini-icon {
     width: 40px;
     height: 40px;
-    background: #f8fafc;
-    color: #94a3b8;
+    background: #f0fdfa; /* Fondo sutil para el icono */
+    color: #0d9488;
     border-radius: 10px;
     display: flex;
     align-items: center;
@@ -123,33 +128,21 @@
     flex-shrink: 0;
 }
 
-.day-text .name { 
+/* Estilo cuando el día es de descanso */
+.day-row.descanso .mini-icon {
+    background: #f1f5f9;
+    color: #94a3b8;
+}
+
+.day-text span:first-child { 
     display: block; 
     font-weight: 600; 
     color: #1e293b; 
 }
 
-.day-text .hours { 
+.day-text span:last-child { 
     font-size: 0.875rem; 
     color: #64748b; 
-}
-
-.day-stats { 
-    text-align: right; 
-    margin-right: 2rem; 
-}
-
-.stats-label { 
-    display: block; 
-    font-size: 0.7rem; 
-    color: #94a3b8; 
-    text-transform: uppercase; 
-}
-
-.stats-value { 
-    font-weight: 700; 
-    color: #0d9488; 
-    font-size: 1.1rem; 
 }
 
 /* --- BADGES DE ESTADO --- */
@@ -158,8 +151,9 @@
     border-radius: 2rem;
     font-size: 0.75rem;
     font-weight: 700;
-    min-width: 80px;
+    min-width: 90px;
     text-align: center;
+    text-transform: uppercase;
 }
 
 .status-badge.active { 
@@ -186,17 +180,32 @@
     border-radius: 1rem;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
     text-align: center;
+    border: 1px solid transparent;
 }
 
-.summary-item .label { 
+.summary-item:hover {
+    border-color: #ccf3ed;
+}
+
+.summary-item span:first-child { 
     display: block; 
     font-size: 0.875rem; 
     color: #64748b; 
     margin-bottom: 6px; 
 }
 
-.summary-item .value { 
+.summary-item span:last-child { 
     font-size: 1.75rem; 
     font-weight: 800; 
-    color: #1e293b; 
+    color: #0d9488; /* Color esmeralda para los valores */
+}
+
+/* Banner de Error */
+.error-banner {
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from { transform: translateY(-10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
 }

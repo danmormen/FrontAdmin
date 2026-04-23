@@ -13,22 +13,33 @@
   
     <div class="main-content">
       <header class="page-header">
-        <h1 class="page-title">Gestión de Servicios</h1>
+        <div class="header-text">
+          <h1 class="page-title">Gestión de Servicios</h1>
+          <p class="subtitle">Administra el catálogo de servicios y precios para tus clientes.</p>
+        </div>
         <button class="add-btn" (click)="abrirModalNuevo()">+ Agregar Servicio</button>
       </header>
   
-      <div class="service-grid">
+      <div *ngIf="servicios.length === 0" class="empty-state">
+        <p>No hay servicios registrados o el servidor no responde.</p>
+      </div>
+  
+      <div class="service-grid" *ngIf="servicios.length > 0">
         <div class="service-card" *ngFor="let s of servicios">
+          <div class="category-badge" *ngIf="s.categoria">{{ s.categoria | titlecase }}</div>
+          
           <div class="card-top">
             <div class="info">
               <h3>{{ s.nombre }}</h3>
             </div>
-            <span class="status-tag" [class.inactive]="s.estado === 'Inactivo'">{{ s.estado }}</span>
+            <span class="status-tag" [class.inactive]="!s.activo">
+              {{ s.activo ? 'Activo' : 'Inactivo' }}
+            </span>
           </div>
           
           <div class="card-details">
             <p class="description">{{ s.descripcion }}</p>
-            <div class="meta-info">
+            <div class="meta-info dual-grid"> 
               <div class="price-box">
                 <span class="label">Precio:</span>
                 <span class="value main-color">Q{{ s.precio }}</span>
@@ -74,11 +85,29 @@
             </div>
           </div>
   
+          <div class="input-row">
+            <div class="input-field full-width"> 
+              <label>Categoría</label>
+              <select [(ngModel)]="servicioForm.categoria">
+                <option value="cabello">Cabello</option>
+                <option value="uñas">Uñas</option>
+                <option value="maquillaje">Maquillaje</option>
+                <option value="tratamientos">Tratamientos</option>
+                <option value="otros">Otros</option>
+              </select>
+            </div>
+          </div>
+  
+          <div class="input-field full-width">
+            <label>URL de la Imagen (Opcional)</label>
+            <input type="text" [(ngModel)]="servicioForm.imagen" placeholder="https://ejemplo.com/foto.jpg">
+          </div>
+  
           <div class="input-field full-width">
             <label>Estado del Servicio</label>
-            <select [(ngModel)]="servicioForm.estado">
-              <option value="Activo">Activo</option>
-              <option value="Inactivo">Inactivo</option>
+            <select [(ngModel)]="servicioForm.activo">
+              <option [ngValue]="1">Activo</option>
+              <option [ngValue]="0">Inactivo</option>
             </select>
           </div>
         </div>

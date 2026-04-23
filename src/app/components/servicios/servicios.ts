@@ -1,11 +1,16 @@
-import { Component, EventEmitter, Output } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 
 interface Servicio {
+  id?: number;
   nombre: string;
   descripcion: string;
-  precio: string;
-  duracion: string;
+  precio: number | string;
+  duracion: number | string;
+  categoria: string;
+  imagen?: string;
+  activo: number | boolean;
 }
 
 @Component({
@@ -15,52 +20,50 @@ interface Servicio {
   templateUrl: './servicios.html',
   styleUrl: './servicios.css'
 })
-export class ServiciosComponent {
-  // Evento para volver a la pantalla de inicio
+export class ServiciosComponent implements OnInit {
   @Output() backToHome = new EventEmitter<void>();
-  
-  // Evento que envía el nombre del servicio en la reserva
   @Output() reservar = new EventEmitter<string>();
 
-  listaServicios: Servicio[] = [
-    { 
-      nombre: 'Manicure', 
-      descripcion: 'Cuidado completo de tus manos con esmaltado profesional.', 
-      precio: 'Q200', 
-      duracion: '45 min' 
-    },
-    { 
-      nombre: 'Pedicure', 
-      descripcion: 'Tratamiento integral para tus pies con acabado perfecto.', 
-      precio: 'Q250', 
-      duracion: '60 min' 
-    },
-    { 
-      nombre: 'Corte de Cabello', 
-      descripcion: 'Corte personalizado según tu estilo y preferencias.', 
-      precio: 'Q280', 
-      duracion: '45 min' 
-    },
-    { 
-      nombre: 'Coloración', 
-      descripcion: 'Coloración profesional con productos de alta calidad.', 
-      precio: 'Q500', 
-      duracion: '120 min' 
-    },
-    { 
-      nombre: 'Tratamiento Facial', 
-      descripcion: 'Limpieza profunda e hidratación para tu rostro.', 
-      precio: 'Q400', 
-      duracion: '75 min' 
-    }
-  ];
-
+  // URL de tu API
+  private apiUrl = 'http://localhost:3000/api/servicios';
   
+  // Inicializamos la lista vacía para llenarla desde la base de datos
+  listaServicios: Servicio[] = [];
+  cargando: boolean = false;
+
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    this.obtenerServicios();
+  }
+
+  /**
+   * Obtiene los servicios desde el backend.
+   * Nota: Esta ruta es pública, por lo que no necesita Headers de Token.
+   */
+  obtenerServicios() {
+    this.cargando = true;
+    this.http.get<Servicio[]>(this.apiUrl).subscribe({
+      next: (data) => {
+        // Filtramos para que el cliente solo vea servicios marcados como ACTIVOS
+        this.listaServicios = data.filter(s => s.activo == 1 || s.activo == true);
+        this.cargando = false;
+        this.cdr.detectChanges(); // Asegura que la vista se actualice
+      },
+      error: (err) => {
+        console.error('Error al cargar servicios para clientes:', err);
+        this.cargando = false;
+      }
+    });
+  }
+
   regresar() {
     this.backToHome.emit();
   }
 
-  
   onReservar(servicio: string) {
     this.reservar.emit(servicio);
   }
