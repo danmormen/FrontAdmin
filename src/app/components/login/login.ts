@@ -11,17 +11,16 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./login.css']
 })
 export class LoginComponent {
-  
-  @Output() onLogin = new EventEmitter<void>();          
-  @Output() onAdminLogin = new EventEmitter<void>();     
-  @Output() onEstilistaLogin = new EventEmitter<void>(); 
-  @Output() onRequirePasswordChange = new EventEmitter<void>(); 
-  @Output() onNavigate = new EventEmitter<string>();     
-  @Output() onOlvidePassword = new EventEmitter<void>(); 
+  @Output() onLogin                   = new EventEmitter<void>();
+  @Output() onAdminLogin              = new EventEmitter<void>();
+  @Output() onEstilistaLogin          = new EventEmitter<void>();
+  @Output() onRequirePasswordChange   = new EventEmitter<void>(); // ← Usado por estilistas Y clientes
+  @Output() onNavigate                = new EventEmitter<string>();
+  @Output() onOlvidePassword          = new EventEmitter<void>();
 
-  email: string = '';
-  pass: string = '';
-  cargando: boolean = false; 
+  email    = '';
+  pass     = '';
+  cargando = false;
 
   constructor(private http: HttpClient) {}
 
@@ -33,58 +32,62 @@ export class LoginComponent {
 
     this.cargando = true;
 
-    const credenciales = {
-      email: this.email,
-      password: this.pass
-    };
+    const credenciales = { email: this.email, password: this.pass };
 
-    // Llamada al endpoint que actualizamos en authController.js
-    this.http.post('http://localhost:3000/api/auth/login', credenciales)
-      .subscribe({
-        next: (respuesta: any) => {
-          this.cargando = false;
-          console.log('Login exitoso:', respuesta);
+    this.http.post('http://localhost:3000/api/auth/login', credenciales).subscribe({
+      next: (respuesta: any) => {
+        this.cargando = false;
+        console.log('Login exitoso:', respuesta);
 
-          // 1. Guardamos el Token para futuras peticiones con interceptores
-          localStorage.setItem('token', respuesta.token);
+        // Guardamos token para futuras peticiones
+        localStorage.setItem('token', respuesta.token);
 
-          // 2. GUARDADO CRÍTICO: Guardamos el ID que viene del backend.
-          
-          localStorage.setItem('usuario', JSON.stringify({
-            id: respuesta.id,
-            nombre: respuesta.nombre,
-            rol: respuesta.rol
-          }));
+        // Guardamos datos del usuario incluyendo requiere_cambio
+        localStorage.setItem('usuario', JSON.stringify({
+          id:              respuesta.id,
+          nombre:          respuesta.nombre,
+          rol:             respuesta.rol,
+          requiere_cambio: respuesta.requiere_cambio // ← Guardamos para usarlo en cambio-contrasena
+        }));
 
-          // 3. Redirección basada en el flag 'requiere_cambio' que añadimos al Backend
-          const rol = respuesta.rol;
+        const rol             = respuesta.rol;
+        const requiereCambio  = respuesta.requiere_cambio === 1 || respuesta.requiere_cambio === true;
 
-          if (rol === 'admin') {
-            this.onAdminLogin.emit();
-          } 
-          else if (rol === 'estilista') {
-            // flag que viene de la base de datos
-            if (respuesta.requiere_cambio === 1 || respuesta.requiere_cambio === true) {
-              console.log('Usuario nuevo detectado: Redirigiendo a cambio de contraseña');
-              this.onRequirePasswordChange.emit();
-            } else {
-              this.onEstilistaLogin.emit();
-            }
-          } 
-          else {
-            this.onLogin.emit(); // Clientes
-          }
-        },
-        error: (errorRes) => {
-          this.cargando = false;
-          console.error('Error en el login:', errorRes);
-          if (errorRes.status === 401) {
-            alert(errorRes.error?.message || 'Correo o contraseña incorrectos.');
+        // ── Redirección según rol y estado de contraseña ──────────
+        if (rol === 'admin') {
+          // El admin nunca necesita cambiar contraseña desde aquí
+          this.onAdminLogin.emit();
+
+        } else if (rol === 'estilista') {
+          if (requiereCambio) {
+            // Estilista nuevo con contraseña asignada por el admin
+            console.log('Estilista nuevo: redirigiendo a cambio de contraseña');
+            this.onRequirePasswordChange.emit();
           } else {
-            alert('Error de conexión. Asegúrate de que el servidor esté encendido.');
+            this.onEstilistaLogin.emit();
+          }
+
+        } else {
+          // Cliente
+          if (requiereCambio) {
+            // Cliente que usó contraseña temporal de recuperación
+            console.log('Cliente con contraseña temporal: redirigiendo a cambio de contraseña');
+            this.onRequirePasswordChange.emit();
+          } else {
+            this.onLogin.emit();
           }
         }
-      });
+      },
+      error: (errorRes) => {
+        this.cargando = false;
+        console.error('Error en el login:', errorRes);
+        if (errorRes.status === 401) {
+          alert(errorRes.error?.message || 'Correo o contraseña incorrectos.');
+        } else {
+          alert('Error de conexión. Asegúrate de que el servidor esté encendido.');
+        }
+      }
+    });
   }
 
   irARegistro() {

@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-recuperar-contrasena',
@@ -10,56 +11,49 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./recuperar-contrasena.css']
 })
 export class RecuperarContrasenaComponent {
-  @Output() onCancel = new EventEmitter<void>();
+  @Output() onCancel  = new EventEmitter<void>();
   @Output() onSuccess = new EventEmitter<void>();
 
-  pasoActual: number = 1; // 1: Pedir correo, 2: Nueva contraseña
-  
-  email: string = '';
-  nuevaPassword: string = '';
-  confirmarPassword: string = '';
-  
-  errorMsg: string = '';
-  successMsg: string = '';
+  email      = '';
+  errorMsg   = '';
+  successMsg = '';
+  cargando   = false;
 
-  // PASO 1: Validar el correo
-  enviarCodigo() {
-    this.errorMsg = '';
-    
+  private apiUrl = 'http://localhost:3000/api/auth';
+
+  constructor(private http: HttpClient) {}
+
+  // ── Paso único: envía el email al backend ─────────────────────────
+  // El backend genera una contraseña temporal, la guarda en BD
+  // con requiere_cambio = 1 y la envía al correo del usuario
+  enviarPasswordTemporal() {
+    this.errorMsg   = '';
+    this.successMsg = '';
+
+    // Validación básica del email
     if (!this.email || !this.email.includes('@')) {
-      this.errorMsg = 'Por favor, ingresa un correo electrónico válido.';
+      this.errorMsg = 'Por favor ingresa un correo electrónico válido.';
       return;
     }
 
-    // Simulación: aquí harías la petición a tu backend
-    this.successMsg = 'Verificando cuenta...';
-    
-    setTimeout(() => {
-      this.successMsg = '';
-      this.pasoActual = 2; // Avanzamos al paso de cambiar la contraseña
-    }, 1500);
-  }
+    this.cargando = true;
 
-  // PASO 2: Guardar la nueva contraseña
-  guardarPassword() {
-    this.errorMsg = '';
-    
-    if (this.nuevaPassword.trim().length < 6) {
-      this.errorMsg = 'La contraseña debe tener al menos 6 caracteres.';
-      return;
-    }
-    
-    if (this.nuevaPassword !== this.confirmarPassword) {
-      this.errorMsg = 'Las contraseñas no coinciden. Inténtalo de nuevo.';
-      return;
-    }
-
-    // Simulación de éxito
-    alert('Tu contraseña ha sido restablecida con éxito. Ya puedes iniciar sesión con tu nueva clave.');
-    this.onSuccess.emit(); // Lo mandamos de vuelta al login
+    this.http.post(`${this.apiUrl}/recuperar-password`, { email: this.email }).subscribe({
+      next: (res: any) => {
+        this.cargando   = false;
+        // Siempre mostramos el mismo mensaje por seguridad
+        // (no revelamos si el email existe o no)
+        this.successMsg = 'Si el correo existe, recibirás tu contraseña temporal en breve. Revisa tu bandeja de entrada.';
+      },
+      error: (err) => {
+        this.cargando = false;
+        console.error('Error al recuperar contraseña:', err);
+        this.errorMsg = 'Error al procesar la solicitud. Intenta más tarde.';
+      }
+    });
   }
 
   cancelar() {
-    this.onCancel.emit(); // Vuelve al login sin hacer nada
+    this.onCancel.emit();
   }
 }

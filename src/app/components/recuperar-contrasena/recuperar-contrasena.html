@@ -1,60 +1,49 @@
 <div class="auth-layout">
     <div class="auth-card">
-      
+  
       <div class="brand-header">
         <h2>PonteGuapa</h2>
         <p class="subtitle">Recuperación de Cuenta</p>
       </div>
   
       <div class="icon-container">
-        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+          stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
           <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path>
         </svg>
       </div>
   
       <h1 class="card-title">Recupera tu acceso</h1>
-      
-      <div *ngIf="pasoActual === 1">
-        <p class="instruction-text">
-          Ingresa el correo electrónico asociado a tu cuenta y te ayudaremos a restablecer tu contraseña.
-        </p>
   
-        <div class="error-box" *ngIf="errorMsg">{{ errorMsg }}</div>
-        <div class="success-box" *ngIf="successMsg">{{ successMsg }}</div>
+      <p class="instruction-text">
+        Ingresa tu correo electrónico y te enviaremos una contraseña temporal 
+        para que puedas ingresar a tu cuenta.
+      </p>
   
-        <div class="form-container">
-          <div class="input-field">
-            <label>Correo Electrónico</label>
-            <input type="email" [(ngModel)]="email" placeholder="ejemplo@correo.com">
-          </div>
+      <!-- Mensaje de error -->
+      <div class="error-box" *ngIf="errorMsg">{{ errorMsg }}</div>
   
-          <button class="primary-btn" (click)="enviarCodigo()">Buscar cuenta</button>
-          <button class="text-btn" (click)="cancelar()">Cancelar y volver al Login</button>
+      <!-- Mensaje de éxito — se muestra después de enviar -->
+      <div class="success-box" *ngIf="successMsg">{{ successMsg }}</div>
+  
+      <div class="form-container" *ngIf="!successMsg">
+        <div class="input-field">
+          <label>Correo Electrónico</label>
+          <input type="email" [(ngModel)]="email" placeholder="ejemplo@correo.com">
         </div>
+  
+        <!-- Botón deshabilitado mientras carga -->
+        <button class="primary-btn" (click)="enviarPasswordTemporal()" [disabled]="cargando">
+          {{ cargando ? 'Enviando...' : 'Enviar contraseña temporal' }}
+        </button>
+  
+        <button class="text-btn" (click)="cancelar()">Cancelar y volver al Login</button>
       </div>
   
-      <div *ngIf="pasoActual === 2">
-        <p class="instruction-text">
-          ¡Cuenta verificada! Ahora puedes establecer tu nueva contraseña segura.
-        </p>
-  
-        <div class="error-box" *ngIf="errorMsg">{{ errorMsg }}</div>
-  
-        <div class="form-container">
-          <div class="input-field">
-            <label>Nueva Contraseña</label>
-            <input type="password" [(ngModel)]="nuevaPassword" placeholder="Mínimo 6 caracteres" minlength="6">
-          </div>
-  
-          <div class="input-field">
-            <label>Confirmar Contraseña</label>
-            <input type="password" [(ngModel)]="confirmarPassword" placeholder="Repite la contraseña">
-          </div>
-  
-          <button class="primary-btn" (click)="guardarPassword()">Restablecer Contraseña</button>
-          <button class="text-btn" (click)="cancelar()">Cancelar</button>
-        </div>
+      <!-- Botón para ir al login una vez enviado el correo -->
+      <div *ngIf="successMsg">
+        <button class="primary-btn" (click)="cancelar()">Ir al Login</button>
       </div>
-      
+  
     </div>
   </div>
