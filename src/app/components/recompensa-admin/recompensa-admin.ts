@@ -1,6 +1,8 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms'; 
+import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+
 @Component({
   selector: 'app-recompensa-admin',
   standalone: true,
@@ -8,95 +10,165 @@ import { FormsModule } from '@angular/forms';
   templateUrl: './recompensa-admin.html',
   styleUrls: ['./recompensa-admin.css']
 })
-export class RecompensasAdminComponent {
-  @Output() back = new EventEmitter<void>();
+export class RecompensasAdminComponent implements OnInit {
+  @Output() back   = new EventEmitter<void>();
   @Output() logout = new EventEmitter<void>();
 
-  recompensas = [
-    { id: 1, titulo: 'Descuento 10%', descripcion: '10% de descuento en tu próxima visita', puntos: 200, estado: 'Activa', canjes: 45, fecha: '2025-01-14' },
-    { id: 2, titulo: 'Descuento 15%', descripcion: '15% de descuento en tu próxima visita', puntos: 400, estado: 'Activa', canjes: 28, fecha: '2025-01-14' },
-    { id: 3, titulo: 'Descuento 20%', descripcion: '20% de descuento en tu próxima visita', puntos: 600, estado: 'Activa', canjes: 15, fecha: '2025-01-14' },
-    { id: 4, titulo: 'Manicure Gratis', descripcion: 'Manicure de cortesía', puntos: 1000, estado: 'Activa', canjes: 8, fecha: '2025-01-14' },
-  ];
+  recompensas: any[] = [];
+  mostrarModal = false;
+  esEdicion    = false;
+  cargando     = true;
+  guardando    = false;
 
-  
-  mostrarModal: boolean = false;
-  esEdicion: boolean = false;
-  
-  recompensaForm: any = {
-    id: null,
-    titulo: '',
-    descripcion: '',
-    puntos: null,
-    estado: 'Activa',
-    canjes: 0,
-    fecha: ''
-  };
- // Calculos (KPIS)
-  
+  private apiUrl = 'http://localhost:3000/api/recompensas';
+
+  recompensaForm: any = this.getNuevaRecompensa();
+
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    this.cargarRecompensas();
+  }
+
+  // ── Headers con token JWT ─────────────────────────────────────────
+  private getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    });
+  }
+
+  // ── Formulario vacío ──────────────────────────────────────────────
+  getNuevaRecompensa() {
+    return {
+      id:                null,
+      nombre:            '',
+      descripcion:       '',
+      puntos_requeridos: null,
+      activo:            1,
+      canjes:            0
+    };
+  }
+
+  // ── KPIs calculados automáticamente ──────────────────────────────
   get totalRecompensas() {
     return this.recompensas.length;
   }
 
   get recompensasActivas() {
-    return this.recompensas.filter(r => r.estado === 'Activa').length;
+    return this.recompensas.filter(r => r.activo === 1).length;
   }
 
   get totalCanjes() {
-    return this.recompensas.reduce((acc, curr) => acc + curr.canjes, 0);
+    return this.recompensas.reduce((acc, curr) => acc + (curr.canjes || 0), 0);
   }
 
-
-  regresar() { this.back.emit(); }
-  cerrarSesion() { this.logout.emit(); }
-
-  
-  nuevaRecompensa() { 
-    this.esEdicion = false;
-    this.recompensaForm = {
-      id: null,
-      titulo: '',
-      descripcion: '',
-      puntos: null,
-      estado: 'Activa',
-      canjes: 0,
-      fecha: new Date().toISOString().split('T')[0] // Asigna la fecha de hoy por defecto
-    };
-    this.mostrarModal = true;
+  // ── Carga las recompensas del backend ─────────────────────────────
+  cargarRecompensas() {
+    this.cargando = true;
+    this.http.get<any[]>(this.apiUrl).subscribe({
+      next: (data) => {
+        this.recompensas = data;
+        this.cargando    = false;
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar recompensas:', err);
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
-  editarRecompensa(recompensa: any) { 
-    this.esEdicion = true;
-    this.recompensaForm = { ...recompensa }; 
-    this.mostrarModal = true;
+  // ── Abre modal para nueva recompensa ──────────────────────────────
+  nuevaRecompensa() {
+    this.esEdicion      = false;
+    this.guardando      = false;
+    this.recompensaForm = this.getNuevaRecompensa();
+    this.mostrarModal   = true;
+  }
+
+  // ── Abre modal para editar recompensa existente ───────────────────
+  editarRecompensa(recompensa: any) {
+    this.esEdicion      = true;
+    this.guardando      = false;
+    this.recompensaForm = { ...recompensa };
+    this.mostrarModal   = true;
   }
 
   cerrarModal() {
     this.mostrarModal = false;
   }
 
+  // ── Guarda o actualiza la recompensa ──────────────────────────────
   guardarRecompensa() {
+    if (this.guardando) return;
+
+    // Validaciones
+    if (!this.recompensaForm.nombre?.trim()) {
+      return alert('El nombre es obligatorio.');
+    }
+    if (!this.recompensaForm.puntos_requeridos || this.recompensaForm.puntos_requeridos <= 0) {
+      return alert('Los puntos requeridos deben ser mayor a 0.');
+    }
+
+    // Payload limpio
+    const payload = {
+      ...this.recompensaForm,
+      nombre:            this.recompensaForm.nombre.trim(),
+      puntos_requeridos: Number(this.recompensaForm.puntos_requeridos),
+      activo:            Number(this.recompensaForm.activo)
+    };
+
+    const headers  = this.getAuthHeaders();
+    this.guardando = true;
+
     if (this.esEdicion) {
-      // Actualizar recompensa existente
-      const index = this.recompensas.findIndex(r => r.id === this.recompensaForm.id);
-      if (index !== -1) {
-        this.recompensas[index] = { ...this.recompensaForm };
-      }
+      this.http.put(`${this.apiUrl}/${payload.id}`, payload, { headers }).subscribe({
+        next: () => {
+          this.mostrarModal   = false;
+          this.recompensaForm = this.getNuevaRecompensa();
+          this.guardando      = false;
+          this.cdr.detectChanges(); // ← Fuerza cierre del modal
+          this.cargarRecompensas();
+        },
+        error: (err) => {
+          this.guardando = false;
+          alert('Error al actualizar: ' + (err.error?.error || err.message));
+        }
+      });
     } else {
-      // Crear nueva recompensa
-      const nuevoId = this.recompensas.length > 0 ? Math.max(...this.recompensas.map(r => r.id)) + 1 : 1;
-      this.recompensas.push({
-        ...this.recompensaForm,
-        id: nuevoId
+      this.http.post(this.apiUrl, payload, { headers }).subscribe({
+        next: () => {
+          this.mostrarModal   = false;
+          this.recompensaForm = this.getNuevaRecompensa();
+          this.guardando      = false;
+          this.cdr.detectChanges(); // ← Fuerza cierre del modal
+          this.cargarRecompensas();
+        },
+        error: (err) => {
+          this.guardando = false;
+          alert('Error al crear: ' + (err.error?.error || err.message));
+        }
       });
     }
-    this.cerrarModal();
   }
 
-  eliminarRecompensa(id: number) { 
-  
-    if(confirm('¿Estás seguro de que deseas eliminar esta recompensa?')) {
-      this.recompensas = this.recompensas.filter(r => r.id !== id);
+  // ── Elimina una recompensa ────────────────────────────────────────
+  eliminarRecompensa(id: number) {
+    if (confirm('¿Estás seguro de que deseas eliminar esta recompensa?')) {
+      const headers = this.getAuthHeaders();
+      this.http.delete(`${this.apiUrl}/${id}`, { headers }).subscribe({
+        next: () => this.cargarRecompensas(),
+        error: (err) => alert('Error al eliminar: ' + (err.error?.error || err.message))
+      });
     }
   }
+
+  regresar()     { this.back.emit(); }
+  cerrarSesion() { this.logout.emit(); }
 }

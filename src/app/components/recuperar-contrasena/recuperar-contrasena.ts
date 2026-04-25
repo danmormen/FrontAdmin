@@ -1,4 +1,4 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
@@ -18,19 +18,22 @@ export class RecuperarContrasenaComponent {
   errorMsg   = '';
   successMsg = '';
   cargando   = false;
+  contador   = 3; // ← Cuenta regresiva visible para el usuario
 
   private apiUrl = 'http://localhost:3000/api/auth';
 
-  constructor(private http: HttpClient) {}
+  constructor(
+    private http: HttpClient,
+    private cdr: ChangeDetectorRef
+  ) {}
 
-  // ── Paso único: envía el email al backend ─────────────────────────
-  // El backend genera una contraseña temporal, la guarda en BD
-  // con requiere_cambio = 1 y la envía al correo del usuario
+  // ── Envía el email al backend ─────────────────────────────────────
+  // El backend genera contraseña temporal, la guarda con requiere_cambio = 1
+  // y la envía al correo del usuario
   enviarPasswordTemporal() {
     this.errorMsg   = '';
     this.successMsg = '';
 
-    // Validación básica del email
     if (!this.email || !this.email.includes('@')) {
       this.errorMsg = 'Por favor ingresa un correo electrónico válido.';
       return;
@@ -41,9 +44,18 @@ export class RecuperarContrasenaComponent {
     this.http.post(`${this.apiUrl}/recuperar-password`, { email: this.email }).subscribe({
       next: (res: any) => {
         this.cargando   = false;
-        // Siempre mostramos el mismo mensaje por seguridad
-        // (no revelamos si el email existe o no)
-        this.successMsg = 'Si el correo existe, recibirás tu contraseña temporal en breve. Revisa tu bandeja de entrada.';
+        this.successMsg = '¡Correo enviado! Revisa tu bandeja de entrada.';
+        this.cdr.detectChanges();
+
+        // Cuenta regresiva de 3 segundos antes de ir al login
+        const intervalo = setInterval(() => {
+          this.contador--;
+          this.cdr.detectChanges();
+          if (this.contador === 0) {
+            clearInterval(intervalo);
+            this.onSuccess.emit(); // ← Redirige al login
+          }
+        }, 1000);
       },
       error: (err) => {
         this.cargando = false;

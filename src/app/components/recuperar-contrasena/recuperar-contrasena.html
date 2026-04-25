@@ -15,34 +15,40 @@
   
       <h1 class="card-title">Recupera tu acceso</h1>
   
-      <p class="instruction-text">
-        Ingresa tu correo electrónico y te enviaremos una contraseña temporal 
-        para que puedas ingresar a tu cuenta.
-      </p>
+      <!-- Formulario — se oculta después de enviar -->
+      <div *ngIf="!successMsg">
+        <p class="instruction-text">
+          Ingresa tu correo electrónico y te enviaremos una contraseña temporal
+          para que puedas ingresar a tu cuenta.
+        </p>
   
-      <!-- Mensaje de error -->
-      <div class="error-box" *ngIf="errorMsg">{{ errorMsg }}</div>
+        <div class="error-box" *ngIf="errorMsg">{{ errorMsg }}</div>
   
-      <!-- Mensaje de éxito — se muestra después de enviar -->
-      <div class="success-box" *ngIf="successMsg">{{ successMsg }}</div>
+        <div class="form-container">
+          <div class="input-field">
+            <label>Correo Electrónico</label>
+            <input type="email" [(ngModel)]="email" placeholder="ejemplo@correo.com">
+          </div>
   
-      <div class="form-container" *ngIf="!successMsg">
-        <div class="input-field">
-          <label>Correo Electrónico</label>
-          <input type="email" [(ngModel)]="email" placeholder="ejemplo@correo.com">
+          <button class="primary-btn" (click)="enviarPasswordTemporal()" [disabled]="cargando">
+            {{ cargando ? 'Enviando...' : 'Enviar contraseña temporal' }}
+          </button>
+  
+          <button class="text-btn" (click)="cancelar()">Cancelar y volver al Login</button>
         </div>
-  
-        <!-- Botón deshabilitado mientras carga -->
-        <button class="primary-btn" (click)="enviarPasswordTemporal()" [disabled]="cargando">
-          {{ cargando ? 'Enviando...' : 'Enviar contraseña temporal' }}
-        </button>
-  
-        <button class="text-btn" (click)="cancelar()">Cancelar y volver al Login</button>
       </div>
   
-      <!-- Botón para ir al login una vez enviado el correo -->
-      <div *ngIf="successMsg">
-        <button class="primary-btn" (click)="cancelar()">Ir al Login</button>
+      <!-- Mensaje de éxito con cuenta regresiva -->
+      <div *ngIf="successMsg" style="text-align: center;">
+        <div class="success-box">{{ successMsg }}</div>
+  
+        <p style="color: #888; margin-top: 12px; font-size: 14px;">
+          Redirigiendo al login en <strong>{{ contador }}</strong> segundos...
+        </p>
+  
+        <button class="primary-btn" (click)="cancelar()" style="margin-top: 16px;">
+          Ir al Login ahora
+        </button>
       </div>
   
     </div>
