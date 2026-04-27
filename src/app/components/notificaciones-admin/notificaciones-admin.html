@@ -1,7 +1,9 @@
 <div class="admin-page-container">
     <nav class="admin-navbar">
       <div class="navbar-content">
-        <h2 class="admin-brand" (click)="onBack()">PonteGuapa <span class="brand-tag">Admin</span></h2>
+        <h2 class="admin-brand" (click)="onBack()">
+          PonteGuapa <span class="brand-tag">Admin</span>
+        </h2>
         <div class="nav-actions">
           <button class="nav-link-btn" (click)="onBack()">Volver al Panel</button>
           <button class="logout-link" (click)="onLogout()">Cerrar Sesión</button>
@@ -15,68 +17,128 @@
       </header>
   
       <div class="notif-layout">
+  
         <section class="send-panel">
           <div class="glass-card">
             <h3 class="card-subtitle">Enviar Notificación</h3>
-            
+  
+            <!-- Destinatarios -->
             <div class="form-group">
               <label>Destinatarios</label>
               <select [(ngModel)]="destinatarioSeleccionado" class="custom-input">
-                <option value="Todos los clientes">Todos los clientes</option>
-                <option value="Clientes con citas">Clientes con citas</option>
-                <option value="Cliente específico (Individual)">Cliente específico (Individual)</option>
+                <option value="todos">Todos los clientes</option>
+                <option value="citas">Clientes con citas hoy</option>
+                <option value="especifico">Cliente específico</option>
               </select>
             </div>
   
-            <div class="form-group" *ngIf="destinatarioSeleccionado === 'Cliente específico (Individual)'">
-              <label>Correo del Cliente</label>
-              <input type="email" [(ngModel)]="correoEspecifico" placeholder="ejemplo@correo.com" class="custom-input">
+            <!-- Dropdown de clientes — solo aparece si es específico -->
+            <div class="form-group" *ngIf="destinatarioSeleccionado === 'especifico'">
+              <label>Seleccionar Cliente</label>
+              <select [(ngModel)]="clienteSeleccionado"
+                (ngModelChange)="onClienteSeleccionado()"
+                class="custom-input">
+                <option value="">-- Selecciona un cliente --</option>
+                <option *ngFor="let c of listaClientes" [value]="c.id">
+                  {{ c.nombre }} — {{ c.email }}
+                </option>
+              </select>
             </div>
   
+            <!-- Asunto -->
             <div class="form-group">
               <label>Asunto</label>
-              <input type="text" [(ngModel)]="asunto" placeholder="Ej: Promoción especial" class="custom-input">
+              <input type="text" [(ngModel)]="asunto"
+                placeholder="Ej: Promoción especial" class="custom-input">
             </div>
   
+            <!-- Mensaje -->
             <div class="form-group">
               <label>Mensaje</label>
-              <textarea [(ngModel)]="mensaje" rows="5" placeholder="Escribe tu mensaje aquí..." class="custom-input"></textarea>
+              <textarea [(ngModel)]="mensaje" rows="5"
+                placeholder="Escribe tu mensaje aquí..." class="custom-input"></textarea>
             </div>
   
-            <button class="submit-btn" (click)="enviarNotificacion()" 
-                    [disabled]="!asunto || !mensaje || (destinatarioSeleccionado.includes('Individual') && !correoEspecifico)">
-              <span class="icon"></span> Enviar Notificación vía Email
+            <!-- Imagen opcional -->
+            <div class="form-group">
+              <label>Imagen (opcional)</label>
+              <input type="text" [(ngModel)]="imagenUrl"
+                placeholder="https://drive.google.com/file/d/..." class="custom-input">
+              <small style="color: #888; font-size: 12px;">
+                Pega el link de Google Drive o Imgur
+              </small>
+            </div>
+  
+            <!-- Posición de imagen -->
+            <div class="form-group" *ngIf="imagenUrl">
+              <label>¿Dónde va la imagen en el correo?</label>
+              <select [(ngModel)]="posicionImagen" class="custom-input">
+                <option value="arriba">Arriba del mensaje</option>
+                <option value="medio">Entre el mensaje y el cierre</option>
+                <option value="abajo">Al final del correo</option>
+              </select>
+            </div>
+  
+            <!-- Mensaje de cierre -->
+            <div class="form-group">
+              <label>Mensaje de cierre (opcional)</label>
+              <input type="text" [(ngModel)]="mensajeCierre"
+                placeholder="Ej: ¡Gracias por preferirnos! 💅" class="custom-input">
+            </div>
+  
+            <button class="submit-btn" (click)="enviarNotificacion()" [disabled]="enviando">
+              {{ enviando ? 'Enviando...' : '✉️ Enviar Notificación vía Email' }}
             </button>
           </div>
   
+          <!-- Alcance estimado -->
           <div class="reach-info">
             <div class="reach-content">
               <div class="reach-icon">👥</div>
               <div class="reach-text">
                 <p class="reach-label">Alcance estimado</p>
-                <h2 class="reach-number">156 clientes</h2>
+                <h2 class="reach-number">{{ totalClientes }} clientes</h2>
                 <p class="reach-sub">Total de clientes registrados en el sistema</p>
               </div>
             </div>
           </div>
         </section>
   
+        <!-- Historial -->
         <section class="history-panel">
-          <h3 class="section-title">Notificaciones Recientes</h3>
-          <div class="history-scroll">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+            <h3 class="section-title" style="margin: 0;">Notificaciones Recientes</h3>
+            <!-- Botón limpiar historial -->
+            <button *ngIf="historial.length > 0"
+              (click)="limpiarHistorial()"
+              style="background: none; border: 1px solid #e74c3c; color: #e74c3c; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 13px;">
+              🗑 Limpiar historial
+            </button>
+          </div>
+  
+          <div *ngIf="cargando" class="loading-state">
+            <p>Cargando historial...</p>
+          </div>
+  
+          <div *ngIf="!cargando && historial.length === 0" class="empty-state">
+            <p>No hay notificaciones enviadas aún.</p>
+          </div>
+  
+          <div class="history-scroll" *ngIf="!cargando && historial.length > 0">
             <article class="history-item" *ngFor="let item of historial">
               <div class="item-header">
-                <h4>{{item.asunto}}</h4>
-                <span class="item-date">{{item.fecha | date:'d/M/yyyy'}}</span>
+                <h4>{{ item.asunto }}</h4>
+                <span class="item-date">{{ item.created_at | date:'d/M/yyyy' }}</span>
               </div>
-              <p class="item-body">{{item.mensaje}}</p>
+              <p class="item-body">{{ item.mensaje }}</p>
               <div class="item-footer">
-                <span class="target-tag">{{item.destinatarios}}</span>
-                <span class="count-tag"><strong>{{item.enviados}}</strong> enviados</span>
+                <span class="target-tag">{{ item.destinatarios }}</span>
+                <span class="count-tag"><strong>{{ item.enviados }}</strong> enviados</span>
               </div>
             </article>
           </div>
         </section>
+  
       </div>
     </div>
   </div>
