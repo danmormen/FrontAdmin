@@ -1,16 +1,9 @@
 <div class="admin-page-layout">
-  
-    <nav class="admin-nav">
-      <div class="nav-container">
-        <div class="brand" (click)="backToAdmin.emit()" style="cursor: pointer;">
-          PonteGuapa <span class="sub-brand">- Admin</span>
-        </div>
-        <div class="nav-actions">
-          <button class="text-btn" (click)="backToAdmin.emit()">Volver al Panel</button>
-          <button class="text-btn logout-btn" (click)="cerrarSesion()">Cerrar Sesión</button>
-        </div>
-      </div>
-    </nav>
+  <app-admin-navbar
+    [active]="'empleados'"
+    (navigate)="onNavigate($event)"
+    (logout)="cerrarSesion()">
+  </app-admin-navbar>
   
     <div class="main-content">
       <header class="page-header">

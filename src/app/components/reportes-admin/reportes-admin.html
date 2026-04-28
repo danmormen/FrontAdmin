@@ -1,0 +1,156 @@
+<div class="reportes-page">
+  <app-admin-navbar
+    [active]="'reportes'"
+    (navigate)="onNavigate($event)"
+    (logout)="cerrarSesion()">
+  </app-admin-navbar>
+
+  <div class="container">
+
+    <!-- Header -->
+    <header class="page-header">
+      <div class="header-left">
+        <div class="header-icon">
+          <svg viewBox="0 0 24 24" width="20" fill="none" stroke="currentColor" stroke-width="2">
+            <line x1="18" y1="20" x2="18" y2="10"/>
+            <line x1="12" y1="20" x2="12" y2="4"/>
+            <line x1="6" y1="20" x2="6" y2="14"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Reportes</h1>
+          <p class="header-sub">Métricas del negocio</p>
+        </div>
+      </div>
+      <select [(ngModel)]="periodoSeleccionado" class="periodo-select">
+        <option value="semana">Esta Semana</option>
+        <option value="mes">Este Mes</option>
+        <option value="trimestre">Este Trimestre</option>
+        <option value="año">Este Año</option>
+      </select>
+    </header>
+
+    <!-- 3 KPIs principales -->
+    <div class="kpis-grid">
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icono">
+            <svg viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor" stroke-width="2">
+              <line x1="12" y1="1" x2="12" y2="23"/>
+              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+          </div>
+          <span class="kpi-badge"
+            [class.positivo]="esCambioPositivo(kpis.ingresosTotales, kpis.ingresosAnterior)">
+            +{{ getPorcentajeCambio(kpis.ingresosTotales, kpis.ingresosAnterior) }}%
+          </span>
+        </div>
+        <p class="kpi-label">Ingresos Totales</p>
+        <p class="kpi-valor">Q{{ kpis.ingresosTotales | number }}</p>
+        <p class="kpi-sub">vs Q{{ kpis.ingresosAnterior | number }} período anterior</p>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icono">
+            <svg viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <span class="kpi-badge positivo">
+            +{{ getPorcentajeCambio(kpis.citasCompletadas, kpis.citasAnterior) }}%
+          </span>
+        </div>
+        <p class="kpi-label">Citas Completadas</p>
+        <p class="kpi-valor">{{ kpis.citasCompletadas }}</p>
+        <p class="kpi-sub">vs {{ kpis.citasAnterior }} período anterior</p>
+      </div>
+
+      <div class="kpi-card">
+        <div class="kpi-top">
+          <div class="kpi-icono">
+            <svg viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+            </svg>
+          </div>
+          <span class="kpi-badge positivo">
+            +{{ getPorcentajeCambio(kpis.satisfaccion * 10, kpis.satisfaccionAnterior * 10) }}%
+          </span>
+        </div>
+        <p class="kpi-label">Satisfacción</p>
+        <p class="kpi-valor">{{ kpis.satisfaccion }} / 5.0</p>
+        <p class="kpi-sub">vs {{ kpis.satisfaccionAnterior }} período anterior</p>
+      </div>
+    </div>
+
+    <!-- Gráfica de citas por día -->
+    <div class="chart-card">
+      <div class="chart-header">
+        <h3>Citas por Día</h3>
+        <p class="chart-sub">Distribución semanal</p>
+      </div>
+      <div class="bar-chart">
+        <div class="bar-group" *ngFor="let d of citasPorDia">
+          <span class="bar-total">{{ d.total }}</span>
+          <div class="bar"
+            [style.height.px]="getAlturaBarra(d.total)"
+            [class.pico]="esDiaPico(d.total)">
+          </div>
+          <span class="bar-label">{{ d.dia }}</span>
+        </div>
+      </div>
+      <div class="chart-legend">
+        <span class="legend-dot pico"></span><span class="legend-text">Día pico</span>
+        <span class="legend-dot regular"></span><span class="legend-text">Días regulares</span>
+      </div>
+    </div>
+
+    <!-- Servicios y Estilistas -->
+    <div class="bottom-grid">
+
+      <!-- Servicios populares -->
+      <div class="section-card">
+        <h3>Servicios Populares</h3>
+        <p class="chart-sub">Más solicitados este período</p>
+        <div class="servicio-row" *ngFor="let s of serviciosPopulares; let i = index">
+          <span class="servicio-num">{{ i + 1 }}</span>
+          <div class="servicio-info">
+            <div class="servicio-top-row">
+              <span class="servicio-nombre">{{ s.nombre }}</span>
+              <span class="servicio-total">{{ s.total }}</span>
+            </div>
+            <div class="progreso-bar">
+              <div class="progreso-fill" [style.width.%]="getAnchoServicio(s.total)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estilistas más activos -->
+      <div class="section-card">
+        <h3>Estilistas Activos</h3>
+        <p class="chart-sub">Desempeño este período</p>
+        <div class="estilista-row" *ngFor="let e of estilistas; let i = index">
+          <div class="estilista-rank"
+            [class.rank1]="i === 0"
+            [class.rank2]="i === 1"
+            [class.rank3]="i === 2">
+            {{ i + 1 }}
+          </div>
+          <div class="estilista-data">
+            <p class="estilista-nombre">{{ e.nombre }}</p>
+            <div class="estilista-stats">
+              <span>{{ e.citas }} citas</span>
+              <span>Q{{ e.ingresos | number }}</span>
+              <span>⭐ {{ e.satisfaccion }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>

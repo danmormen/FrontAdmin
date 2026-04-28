@@ -11,6 +11,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 })
 export class RecompensasComponent implements OnInit {
   @Output() backToHome = new EventEmitter<void>();
+  @Output() logout     = new EventEmitter<void>();
 
   recompensas:       any[] = [];
   historial:         any[] = [];
@@ -123,5 +124,9 @@ export class RecompensasComponent implements OnInit {
 
   regresar(): void {
     this.backToHome.emit();
+  }
+
+  cerrarSesion(): void {
+    this.logout.emit();
   }
 }

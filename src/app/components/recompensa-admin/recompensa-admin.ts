@@ -2,17 +2,18 @@ import { Component, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AdminNavbarComponent } from '../admin-navbar/admin-navbar';
 
 @Component({
   selector: 'app-recompensa-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminNavbarComponent],
   templateUrl: './recompensa-admin.html',
   styleUrls: ['./recompensa-admin.css']
 })
 export class RecompensasAdminComponent implements OnInit {
-  @Output() back   = new EventEmitter<void>();
-  @Output() logout = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
+  @Output() logout   = new EventEmitter<void>();
 
   recompensas: any[] = [];
   mostrarModal = false;
@@ -169,6 +170,6 @@ export class RecompensasAdminComponent implements OnInit {
     }
   }
 
-  regresar()     { this.back.emit(); }
-  cerrarSesion() { this.logout.emit(); }
+  onNavigate(dest: string) { this.navigate.emit(dest); }
+  cerrarSesion()           { this.logout.emit(); }
 }

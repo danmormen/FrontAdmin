@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AdminNavbarComponent } from '../admin-navbar/admin-navbar';
 
 interface Servicio {
   id?: number;
@@ -17,13 +18,13 @@ interface Servicio {
 @Component({
   selector: 'app-servicios-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminNavbarComponent],
   templateUrl: './servicios-admin.html',
   styleUrls: ['./servicios-admin.css']
 })
 export class ServiciosAdminComponent implements OnInit {
-  @Output() backToAdmin = new EventEmitter<void>();
-  @Output() logout = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
+  @Output() logout   = new EventEmitter<void>();
 
   private apiUrl = 'http://localhost:3000/api/servicios';
   servicios: Servicio[] = [];
@@ -139,6 +140,8 @@ export class ServiciosAdminComponent implements OnInit {
     this.servicioForm = this.getNuevoServicio();
     this.cargarServicios();
   }
+
+  onNavigate(dest: string) { this.navigate.emit(dest); }
 
   cerrarSesion() {
     localStorage.removeItem('token');

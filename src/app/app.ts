@@ -12,7 +12,7 @@ import { PromocionesComponent } from './components/promociones/promociones';
 import { VerCitaComponent } from './components/ver-cita/ver-cita';
 import { RecompensasComponent } from './components/recompensas/recompensas';
 import { ResenasComponent } from './components/resenas/resenas';
-import { BlogComponent } from './components/blog/blog';
+// import { BlogComponent } from './components/blog/blog'; // blog deshabilitado
 
 // ── Componentes Admin ──────────────────────────────────────────────
 import { PantallaAdminComponent } from './components/pantalla-administrador/pantalla-administrador';
@@ -20,9 +20,10 @@ import { EmpleadosAdminComponent } from './components/empleados-admin/empleados-
 import { ServiciosAdminComponent } from './components/servicios-admin/servicios-admin';
 import { GestionCitasAdminComponent } from './components/gestion-citas-admin/gestion-citas-admin';
 import { PromocionesAdminComponent } from './components/promociones-admin/promociones-admin';
-import { BlogAdminComponent } from './components/blog-admin/blog-admin';
+//import { BlogAdminComponent } from './components/reportes-admin/reportes-admin';
 import { NotificacionesAdminComponent } from './components/notificaciones-admin/notificaciones-admin';
 import { RecompensasAdminComponent } from './components/recompensa-admin/recompensa-admin';
+import { ReportesAdminComponent } from './components/reportes-admin/reportes-admin';
 
 // ── Componentes Estilista ──────────────────────────────────────────
 import { PantallaEstilistaComponent } from './components/pantalla-estilista/pantalla-estilista';
@@ -42,7 +43,7 @@ import { RecuperarContrasenaComponent } from './components/recuperar-contrasena/
 type VistaActual =
   | 'login' | 'registro' | 'home' | 'perfil' | 'servicios'
   | 'reservar' | 'promociones' | 'ver-cita' | 'recompensas'
-  | 'resenas' | 'blog'
+  | 'resenas' /* | 'blog' */
   | 'admin' | 'empleados-admin' | 'gestion-citas-admin'
   | 'notificaciones-admin' | 'promociones-admin' | 'servicios-admin'
   | 'blog-admin' | 'recompensa-admin' | 'horarios-administrador'
@@ -58,10 +59,10 @@ type VistaActual =
     CommonModule,
     LoginComponent, RegistroComponent, HomeComponent, PerfilComponent,
     ServiciosComponent, ReservarComponent, PromocionesComponent,
-    VerCitaComponent, RecompensasComponent, ResenasComponent, BlogComponent,
+    VerCitaComponent, RecompensasComponent, ResenasComponent, /* BlogComponent, */
     PantallaAdminComponent, PantallaEstilistaComponent, EmpleadosAdminComponent,
     ServiciosAdminComponent, GestionCitasAdminComponent, PromocionesAdminComponent,
-    BlogAdminComponent, NotificacionesAdminComponent, CitasEstilistaComponent,
+    ReportesAdminComponent, NotificacionesAdminComponent, CitasEstilistaComponent,
     DetalleCitasComponent, ResenasEstilistaComponent, NotificacionEstilistaComponent,
     PerfilEstilistaComponent, EstilistaHorarioComponent, HorariosAdministradorComponent,
     RecompensasAdminComponent, CambioContrasenaComponent, RecuperarContrasenaComponent
@@ -87,7 +88,7 @@ export class App {
       login: 'login', registro: 'registro', home: 'home',
       perfil: 'perfil', servicios: 'servicios', reservar: 'reservar',
       promociones: 'promociones', ver: 'ver-cita', 'ver-cita': 'ver-cita',
-      recompensas: 'recompensas', resenas: 'resenas', blog: 'blog',
+      recompensas: 'recompensas', resenas: 'resenas', /* blog: 'blog', */
 
       admin: 'admin',
       'empleados-admin':      'empleados-admin',

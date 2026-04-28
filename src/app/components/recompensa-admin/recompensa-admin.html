@@ -1,16 +1,9 @@
 <div class="admin-page-container">
-
-    <nav class="admin-navbar">
-      <div class="navbar-content">
-        <h2 class="admin-brand" (click)="regresar()" style="cursor: pointer;">
-          PonteGuapa <span class="brand-tag">- Admin</span>
-        </h2>
-        <div style="display: flex; gap: 1.5rem; align-items: center;">
-          <button class="logout-link" (click)="regresar()">Volver al Panel</button>
-          <button class="logout-link" (click)="cerrarSesion()">Cerrar Sesión</button>
-        </div>
-      </div>
-    </nav>
+  <app-admin-navbar
+    [active]="'recompensas'"
+    (navigate)="onNavigate($event)"
+    (logout)="cerrarSesion()">
+  </app-admin-navbar>
   
     <div class="content-wrapper">
       <header class="page-header">

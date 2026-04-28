@@ -10,8 +10,9 @@ import { HttpClient } from '@angular/common/http';
   styleUrl: './promociones.css'
 })
 export class PromocionesComponent implements OnInit {
-  @Output() backToHome = new EventEmitter<void>();
+  @Output() backToHome       = new EventEmitter<void>();
   @Output() seleccionarPromo = new EventEmitter<string>();
+  @Output() logout           = new EventEmitter<void>();
 
   promociones: any[] = [];
   cargando = true;
@@ -45,6 +46,10 @@ export class PromocionesComponent implements OnInit {
 
   regresar() {
     this.backToHome.emit();
+  }
+
+  cerrarSesion() {
+    this.logout.emit();
   }
 
   irAReservar(nombreServicio: string) {

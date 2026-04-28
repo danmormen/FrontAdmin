@@ -2,11 +2,12 @@ import { Component, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AdminNavbarComponent } from '../admin-navbar/admin-navbar';
 
 @Component({
   selector: 'app-notificaciones-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminNavbarComponent],
   templateUrl: './notificaciones-admin.html',
   styleUrls: ['./notificaciones-admin.css']
 })

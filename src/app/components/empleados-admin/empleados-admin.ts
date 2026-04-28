@@ -2,6 +2,7 @@ import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AdminNavbarComponent } from '../admin-navbar/admin-navbar';
 
 interface Empleado {
   id: number;
@@ -19,13 +20,13 @@ interface Empleado {
 @Component({
   selector: 'app-empleados-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminNavbarComponent],
   templateUrl: './empleados-admin.html',
   styleUrls: ['./empleados-admin.css']
 })
 export class EmpleadosAdminComponent implements OnInit {
-  @Output() backToAdmin = new EventEmitter<void>();
-  @Output() logout = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
+  @Output() logout   = new EventEmitter<void>();
 
   private apiUrl = 'http://localhost:3000/api/usuarios'; 
   empleados: Empleado[] = [];
@@ -161,7 +162,11 @@ export class EmpleadosAdminComponent implements OnInit {
             alert('Empleado actualizado correctamente');
             this.cerrarYRefrescar();
           },
-          error: (err) => alert('Error al actualizar: ' + (err.error?.error || 'Error desconocido'))
+          error: (err) => {
+            const mensaje = err.error?.error || 'Error desconocido';
+            const detalle = err.error?.detalle ? `\n\nDetalle: ${err.error.detalle}` : '';
+            alert('Error al actualizar: ' + mensaje + detalle);
+          }
         });
     } else {
       if (!this.empleadoForm.password || this.empleadoForm.password.length < 6) {
@@ -230,6 +235,8 @@ export class EmpleadosAdminComponent implements OnInit {
     this.mostrarModalPassword = false;
     this.nuevaPassword = '';
   }
+
+  onNavigate(dest: string) { this.navigate.emit(dest); }
 
   cerrarSesion() {
     localStorage.removeItem('token');

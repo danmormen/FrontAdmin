@@ -1,20 +1,17 @@
 <div class="admin-page">
-    <nav class="nav-header">
-      <div class="nav-content">
-        <h2 class="logo-text" (click)="regresar()">PonteGuapa - <span class="sub-text">Admin</span></h2>
-        <div class="nav-actions">
-          <button class="nav-btn" (click)="regresar()">Volver al Panel</button>
-          <button class="nav-btn logout" (click)="cerrarSesion()">Cerrar Sesión</button>
-        </div>
-      </div>
-    </nav>
+  <app-admin-navbar
+    [active]="'horarios'"
+    (navigate)="onNavigate($event)"
+    (logout)="cerrarSesion()">
+  </app-admin-navbar>
   
     <main class="main-layout">
       <header class="section-header">
         <div class="header-left">
           <div class="icon-circle admin-purple">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            <svg viewBox="0 0 24 24" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
             </svg>
           </div>
           <div class="header-info">
@@ -27,24 +24,38 @@
         </button>
       </header>
   
+      <!-- Navegador de semana -->
+      <div class="week-navigator">
+        <button class="week-nav-btn" (click)="semanaAnterior()">‹</button>
+        <div class="week-info">
+          <p class="week-label">Semana del</p>
+          <h3 class="week-title">{{ tituloSemana }}</h3>
+          <button class="week-today-btn" *ngIf="!esSemanaActual" (click)="volverSemanaActual()">
+            Volver a esta semana
+          </button>
+        </div>
+        <button class="week-nav-btn" (click)="semanaSiguiente()">›</button>
+      </div>
+  
+      <!-- Cards de estilistas -->
       <div class="estilista-card" *ngFor="let estilista of listaEstilistas">
         <div class="card-header-admin">
           <div class="estilista-info">
             <h3>{{ estilista.nombre }}</h3>
-            <span>{{ estilista.email }}</span>
+            <span class="rol-badge">{{ estilista.rol | titlecase }}</span>
           </div>
           <div class="header-actions">
             <button class="btn-edit-outline" (click)="editarHorario(estilista)">
               <svg viewBox="0 0 24 24" width="16" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
               </svg>
               Editar
             </button>
-            
-            <button class="btn-delete-icon" (click)="eliminarHorario(estilista.id)" title="Eliminar todo el horario">
+            <button class="btn-delete-icon" (click)="eliminarHorario(estilista.id)">
               <svg viewBox="0 0 24 24" width="16" fill="none" stroke="currentColor" stroke-width="2">
-                <polyline points="3 6 5 6 21 6"></polyline>
-                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                <polyline points="3 6 5 6 21 6"/>
+                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
               </svg>
             </button>
           </div>
@@ -69,13 +80,14 @@
           <div class="mini-calendar-row">
             <div class="day-chip" *ngFor="let h of estilista.horarios">
               <span class="day-label">{{ h.dia.substring(0,3) }}</span>
+              <span class="day-date">{{ getFechaDia(h.dia) }}</span>
               <div class="day-content" [class.off]="h.descanso">
                 <ng-container *ngIf="!h.descanso; else tplDescanso">
                   <span class="time">{{ h.inicio?.substring(0,5) }}</span>
                   <span class="time">{{ h.fin?.substring(0,5) }}</span>
                 </ng-container>
                 <ng-template #tplDescanso>
-                  <span class="descanso-text">DESC.</span>
+                  <span class="descanso-text">—</span>
                 </ng-template>
               </div>
             </div>
@@ -88,6 +100,7 @@
       </div>
     </main>
   
+    <!-- Modal -->
     <div class="modal-overlay" *ngIf="mostrarModal">
       <div class="modal-container">
         <header class="modal-header">
@@ -102,12 +115,11 @@
           <div class="selector-empleado" *ngIf="!editando">
             <div class="selector-header">
               <svg viewBox="0 0 24 24" width="18" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                <circle cx="12" cy="7" r="4"></circle>
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
               </svg>
               <label>Seleccionar Estilista:</label>
             </div>
-            
             <div class="select-wrapper">
               <select [(ngModel)]="seleccionado.id" class="form-select">
                 <option [value]="null" disabled selected>Selecciona un empleado disponible...</option>
@@ -116,7 +128,7 @@
                 </option>
               </select>
             </div>
-            <p class="info-text" *ngIf="listaEmpleadosSinHorario.length === 0 && !editando">
+            <p class="info-text" *ngIf="listaEmpleadosSinHorario.length === 0">
               ⚠️ Todos los estilistas ya tienen horarios asignados.
             </p>
           </div>
@@ -125,7 +137,6 @@
             <div class="day-name-col">
               <span class="day-full-name">{{ dia.dia }}</span>
             </div>
-            
             <div class="time-inputs" [class.disabled]="dia.descanso">
               <div class="input-group">
                 <label>Inicio</label>
@@ -136,16 +147,15 @@
                 <input type="time" [(ngModel)]="dia.fin" [disabled]="dia.descanso">
               </div>
             </div>
-  
             <div class="status-selection">
-              <button type="button" class="status-btn laboral" 
-                      [class.active]="!dia.descanso" 
-                      (click)="dia.descanso = false; toggleDescanso(dia)">
+              <button type="button" class="status-btn laboral"
+                [class.active]="!dia.descanso"
+                (click)="dia.descanso = false; toggleDescanso(dia)">
                 Laboral
               </button>
-              <button type="button" class="status-btn descanso" 
-                      [class.active]="dia.descanso" 
-                      (click)="dia.descanso = true; toggleDescanso(dia)">
+              <button type="button" class="status-btn descanso"
+                [class.active]="dia.descanso"
+                (click)="dia.descanso = true; toggleDescanso(dia)">
                 Descanso
               </button>
             </div>

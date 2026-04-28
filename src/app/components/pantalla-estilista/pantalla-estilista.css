@@ -21,13 +21,16 @@
   .brand-logo { color: #0d9488; font-size: 1.4rem; margin: 0; }
   .role-tag { font-weight: 300; }
   
-  .btn-logout {
+  /* Cerrar Sesion (clase global compartida) */
+  .nav-btn {
     background: none;
     border: none;
     color: #64748b;
     font-weight: 600;
     cursor: pointer;
   }
+
+  .nav-btn.logout:hover { color: #ef4444; }
   
   .main-container {
     max-width: 1100px;

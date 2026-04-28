@@ -1,15 +1,9 @@
 <div class="admin-page-container">
-    <nav class="admin-navbar">
-      <div class="navbar-content">
-        <h2 class="admin-brand" (click)="onBack()">
-          PonteGuapa <span class="brand-tag">Admin</span>
-        </h2>
-        <div class="nav-actions">
-          <button class="nav-link-btn" (click)="onBack()">Volver al Panel</button>
-          <button class="logout-link" (click)="onLogout()">Cerrar Sesión</button>
-        </div>
-      </div>
-    </nav>
+  <app-admin-navbar
+    [active]="'notificaciones'"
+    (navigate)="navigate.emit($event)"
+    (logout)="onLogout()">
+  </app-admin-navbar>
   
     <div class="content-wrapper">
       <header class="header-section">

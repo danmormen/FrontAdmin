@@ -1,6 +1,7 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { AdminNavbarComponent } from '../admin-navbar/admin-navbar';
 
 interface Cita {
   cliente: string;
@@ -15,13 +16,13 @@ interface Cita {
 @Component({
   selector: 'app-gestion-citas-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminNavbarComponent],
   templateUrl: './gestion-citas-admin.html',
   styleUrls: ['./gestion-citas-admin.css']
 })
 export class GestionCitasAdminComponent {
-  @Output() backToAdmin = new EventEmitter<void>();
-  @Output() logout = new EventEmitter<void>();
+  @Output() navigate    = new EventEmitter<string>();
+  @Output() logout      = new EventEmitter<void>();
 
   filtroBusqueda: string = '';
   filtroEstado: string = 'Todas';
@@ -42,7 +43,6 @@ export class GestionCitasAdminComponent {
     });
   }
 
-  cerrarSesion() {
-    this.logout.emit();
-  }
+  onNavigate(dest: string) { this.navigate.emit(dest); }
+  cerrarSesion()           { this.logout.emit(); }
 }

@@ -34,51 +34,61 @@
     (logout)="onLogout()">
   </app-home>
 
-  <app-perfil 
-    *ngIf="vistaActual === 'perfil'" 
-    (backToHome)="onNavigate('home')">
+  <app-perfil
+    *ngIf="vistaActual === 'perfil'"
+    (backToHome)="onNavigate('home')"
+    (logout)="onLogout()">
   </app-perfil>
 
-  <app-servicios 
-    *ngIf="vistaActual === 'servicios'" 
+  <app-servicios
+    *ngIf="vistaActual === 'servicios'"
     (backToHome)="onNavigate('home')"
-    (reservar)="onServiceSelected($event, false)"> 
+    (reservar)="onServiceSelected($event, false)"
+    (logout)="onLogout()">
   </app-servicios>
 
-  <app-promociones 
-    *ngIf="vistaActual === 'promociones'" 
-    (seleccionarPromo)="onServiceSelected($event, true)" 
-    (backToHome)="onNavigate('home')">
+  <app-promociones
+    *ngIf="vistaActual === 'promociones'"
+    (seleccionarPromo)="onServiceSelected($event, true)"
+    (backToHome)="onNavigate('home')"
+    (logout)="onLogout()">
   </app-promociones>
 
-  <app-ver-cita 
-    *ngIf="vistaActual === 'ver-cita'" 
+  <app-ver-cita
+    *ngIf="vistaActual === 'ver-cita'"
     (backToHome)="onNavigate('home')"
-    (modificar)="onModificarCita($event)">
+    (modificar)="onModificarCita($event)"
+    (logout)="onLogout()">
   </app-ver-cita>
 
-  <app-reservar 
-    *ngIf="vistaActual === 'reservar'" 
+  <app-reservar
+    *ngIf="vistaActual === 'reservar'"
     [servicioFijo]="servicioPreseleccionado"
     [esPromo]="esPromocion"
     [datosEdicion]="citaAEditar"
-    (backToHome)="onNavigate('home')">
+    (backToHome)="onNavigate('home')"
+    (logout)="onLogout()">
   </app-reservar>
-  
+
   <app-recompensas
-    *ngIf="vistaActual === 'recompensas'" 
-    (backToHome)="onNavigate('home')">
+    *ngIf="vistaActual === 'recompensas'"
+    (backToHome)="onNavigate('home')"
+    (logout)="onLogout()">
   </app-recompensas>
 
   <app-resenas
-    *ngIf="vistaActual === 'resenas'" 
-    (backToHome)="onNavigate('home')">
+    *ngIf="vistaActual === 'resenas'"
+    (backToHome)="onNavigate('home')"
+    (logout)="onLogout()">
   </app-resenas>
 
+  <!-- Blog deshabilitado -->
+  <!--
   <app-blog
-    *ngIf="vistaActual === 'blog'" 
+    *ngIf="vistaActual === 'blog'"
     (backToHome)="onNavigate('home')">
   </app-blog>
+  -->
 
 
   <app-pantalla-admin 
@@ -87,51 +97,51 @@
     (navigate)="onNavigate($event)">
   </app-pantalla-admin>
 
-  <app-empleados-admin 
-    *ngIf="vistaActual === 'empleados-admin'" 
-    (backToAdmin)="onNavigate('admin')"
+  <app-empleados-admin
+    *ngIf="vistaActual === 'empleados-admin'"
+    (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-empleados-admin>
 
-  <app-servicios-admin 
-    *ngIf="vistaActual === 'servicios-admin'" 
-    (backToAdmin)="onNavigate('admin')"
+  <app-servicios-admin
+    *ngIf="vistaActual === 'servicios-admin'"
+    (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-servicios-admin>
 
-  <app-gestion-citas-admin 
-    *ngIf="vistaActual === 'gestion-citas-admin'" 
-    (backToAdmin)="onNavigate('admin')"
+  <app-gestion-citas-admin
+    *ngIf="vistaActual === 'gestion-citas-admin'"
+    (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-gestion-citas-admin>
 
-  <app-promociones-admin 
-    *ngIf="vistaActual === 'promociones-admin'" 
-    (backToAdmin)="onNavigate('admin')"
+  <app-promociones-admin
+    *ngIf="vistaActual === 'promociones-admin'"
+    (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-promociones-admin>
 
-  <app-blog-admin 
-    *ngIf="vistaActual === 'blog-admin'" 
+  <app-reportes-admin
+    *ngIf="vistaActual === 'blog-admin'"
     (navigate)="onNavigate($event)"
     (logout)="onLogout()">
-  </app-blog-admin>
+  </app-reportes-admin>
 
-  <app-notificaciones-admin 
-    *ngIf="vistaActual === 'notificaciones-admin'" 
+  <app-notificaciones-admin
+    *ngIf="vistaActual === 'notificaciones-admin'"
     (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-notificaciones-admin>
 
   <app-horarios-administrador
     *ngIf="vistaActual === 'horarios-administrador'"
-    (back)="onNavigate('admin')"
+    (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-horarios-administrador>
 
   <app-recompensa-admin
     *ngIf="vistaActual === 'recompensa-admin'"
-    (back)="onNavigate('admin')"
+    (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-recompensa-admin>
 

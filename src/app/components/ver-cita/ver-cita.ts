@@ -18,7 +18,8 @@ interface Cita {
 })
 export class VerCitaComponent {
   @Output() backToHome = new EventEmitter<void>();
-  @Output() modificar = new EventEmitter<Cita>();
+  @Output() modificar  = new EventEmitter<Cita>();
+  @Output() logout     = new EventEmitter<void>();
 
   listaCitas: Cita[] = [
     { 
@@ -39,6 +40,10 @@ export class VerCitaComponent {
 
   regresar() {
     this.backToHome.emit();
+  }
+
+  cerrarSesion() {
+    this.logout.emit();
   }
 
   onModificar(cita: Cita) {

@@ -18,9 +18,10 @@ export class LoginComponent {
   @Output() onNavigate                = new EventEmitter<string>();
   @Output() onOlvidePassword          = new EventEmitter<void>();
 
-  email    = '';
-  pass     = '';
-  cargando = false;
+  email       = '';
+  pass        = '';
+  cargando    = false;
+  mostrarPass = false; // toggle del ojito en el input de password
 
   constructor(private http: HttpClient) {}
 

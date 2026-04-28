@@ -11,6 +11,7 @@ import { FormsModule } from '@angular/forms';
 })
 export class ReservarComponent implements OnInit {
   @Output() backToHome = new EventEmitter<void>();
+  @Output() logout     = new EventEmitter<void>();
   
   @Input() servicioFijo: string = ''; 
   @Input() esPromo: boolean = false; 
@@ -85,6 +86,10 @@ export class ReservarComponent implements OnInit {
 
   regresar() {
     this.backToHome.emit();
+  }
+
+  cerrarSesion() {
+    this.logout.emit();
   }
 
   confirmarReserva() {

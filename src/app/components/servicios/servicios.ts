@@ -22,7 +22,8 @@ interface Servicio {
 })
 export class ServiciosComponent implements OnInit {
   @Output() backToHome = new EventEmitter<void>();
-  @Output() reservar = new EventEmitter<string>();
+  @Output() reservar   = new EventEmitter<string>();
+  @Output() logout     = new EventEmitter<void>();
 
   // URL de tu API
   private apiUrl = 'http://localhost:3000/api/servicios';
@@ -62,6 +63,10 @@ export class ServiciosComponent implements OnInit {
 
   regresar() {
     this.backToHome.emit();
+  }
+
+  cerrarSesion() {
+    this.logout.emit();
   }
 
   onReservar(servicio: string) {

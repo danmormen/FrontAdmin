@@ -2,17 +2,18 @@ import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { AdminNavbarComponent } from '../admin-navbar/admin-navbar';
 
 @Component({
   selector: 'app-promociones-admin',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, AdminNavbarComponent],
   templateUrl: './promociones-admin.html',
   styleUrls: ['./promociones-admin.css']
 })
 export class PromocionesAdminComponent implements OnInit {
-  @Output() backToAdmin = new EventEmitter<void>();
-  @Output() logout = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
+  @Output() logout   = new EventEmitter<void>();
 
   promociones: any[] = [];
   mostrarModal = false;
@@ -168,7 +169,6 @@ export class PromocionesAdminComponent implements OnInit {
     }
   }
 
-  cerrarSesion() {
-    this.logout.emit();
-  }
+  onNavigate(dest: string) { this.navigate.emit(dest); }
+  cerrarSesion()           { this.logout.emit(); }
 }

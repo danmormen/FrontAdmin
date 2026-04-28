@@ -1,100 +1,130 @@
-<div class="admin-page-container">
-    <nav class="admin-navbar">
-      <div class="navbar-content">
-        <h2 class="admin-brand">PonteGuapa <span class="brand-tag">Admin</span></h2>
-        <button class="logout-link" (click)="cerrarSesion()">Cerrar Sesión</button>
-      </div>
-    </nav>
-  
-    <div class="content-wrapper">
-      <header class="header-card">
-        <h1 class="header-title">Panel Administrativo</h1>
-        <p class="header-subtitle">Bienvenido al panel de administración de PonteGuapa.</p>
-      </header>
-  
-      <main class="management-grid">
-        
-        <article class="management-card" (click)="navegarA('empleados-admin')">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-            </svg>
-          </div>
-          <h3 class="card-title">Gestión de Empleados</h3>
-          <p class="card-description">Administra el personal del salón</p>
-        </article>
-  
-        <article class="management-card" (click)="navegarA('servicios-admin')">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M9.937 15.5A2 2 0 0 0 8.5 14.063l-6.135-1.582a.5.5 0 0 1 0-.962L8.5 9.937A2 2 0 0 0 9.937 8.5l1.582-6.135a.5.5 0 0 1 .962 0L14.063 8.5A2 2 0 0 0 15.5 9.937l6.135 1.582a.5.5 0 0 1 0 .962L15.5 14.063A2 2 0 0 0 14.063 15.5l-1.582 6.135a.5.5 0 0 1-.962 0L9.937 15.5Z"/>
-            </svg>
-          </div>
-          <h3 class="card-title">Gestión de Servicios</h3>
-          <p class="card-description">Administra los servicios ofrecidos</p>
-        </article>
-  
-        <article class="management-card" (click)="navegarA('gestion-citas-admin')">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-          </div>
-          <h3 class="card-title">Gestión de Citas</h3>
-          <p class="card-description">Visualiza y administra todas las citas</p>
-        </article>
-  
-        <article class="management-card" (click)="navegarA('horarios-administrador')">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10"/>
-              <polyline points="12 6 12 12 16 14"/>
-            </svg>
-          </div>
-          <h3 class="card-title">Gestión de Horarios</h3>
-          <p class="card-description">Configura turnos y descansos del personal</p>
-        </article>
-  
-        <article class="management-card" (click)="navegarA('promociones-admin')">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/>
-            </svg>
-          </div>
-          <h3 class="card-title">Gestión de Promociones</h3>
-          <p class="card-description">Crea ofertas especiales</p>
-        </article>
-  
-        <article class="management-card" (click)="navegarA('recompensas-admin')">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="20 12 20 22 4 22 4 12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
-            </svg>
-          </div>
-          <h3 class="card-title">Gestión de Recompensas</h3>
-          <p class="card-description">Administra puntos y premios para clientes</p>
-        </article>
-        
-        <article class="management-card" (click)="navegarA('blog-admin')">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M2 3h6a4 4 0 0 1 4 4v14a4 4 0 0 0-4-4H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a4 4 0 0 1 4-4h6z"/>
-            </svg>
-          </div>
-          <h3 class="card-title">Gestión de Blog</h3>
-          <p class="card-description">Publica consejos y novedades</p>
-        </article>
-  
-        <article class="management-card" (click)="navegarA('notificaciones-admin')">
-          <div class="icon-circle">
-            <svg xmlns="http://www.w3.org/2000/svg" class="admin-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-            </svg>
-          </div>
-          <h3 class="card-title">Notificaciones</h3>
-          <p class="card-description">Envía avisos a clientes y empleados</p>
-        </article>
-  
-      </main>
+<!-- Panel principal del admin: dashboard liquid glass tono almendra -->
+<div class="admin-page">
+
+  <!-- Circulos decorativos de fondo -->
+  <div class="bg-circle circle-1"></div>
+  <div class="bg-circle circle-2"></div>
+  <div class="bg-circle circle-3"></div>
+
+  <app-admin-navbar
+    [active]="'inicio'"
+    (navigate)="navegarA($event)"
+    (logout)="cerrarSesion()">
+  </app-admin-navbar>
+
+  <main class="dashboard">
+
+    <!-- Card grande de bienvenida -->
+    <header class="hero-card">
+      <h1 class="hero-title">Panel Administrativo</h1>
+      <p class="hero-sub">Bienvenido, aquí tienes un resumen de la actividad del día</p>
+    </header>
+
+    <!-- Stats: citas hoy + clientes atendidos -->
+    <div class="stats-row">
+      <article class="stat-card">
+        <div class="stat-info">
+          <span class="stat-label">Citas Hoy</span>
+          <span class="stat-value">{{ citasHoyTotal }}</span>
+        </div>
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+            <rect x="4" y="5" width="16" height="15" rx="2"/>
+            <path d="M8 3v4M16 3v4M4 9h16"/>
+          </svg>
+        </div>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-info">
+          <span class="stat-label">Clientes Atendidos</span>
+          <span class="stat-value">{{ clientesAtendidos }}</span>
+        </div>
+        <div class="stat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+            <circle cx="9" cy="8" r="3.5"/>
+            <path d="M3 20a6 6 0 0 1 12 0M16 11a3 3 0 1 0 0-6M21 20a5 5 0 0 0-4-4.9"/>
+          </svg>
+        </div>
+      </article>
     </div>
-  </div>
+
+    <!-- Fila inferior: citas de hoy + grafica semanal -->
+    <div class="bottom-row">
+
+      <!-- Columna izq: citas de hoy -->
+      <section class="dash-section citas-hoy-section">
+        <div class="section-header">
+          <h2 class="section-title">Citas de Hoy</h2>
+          <div class="badges">
+            <span class="badge badge-confirmada">{{ confirmadasHoy }} confirmadas</span>
+            <span class="badge badge-pendiente">{{ pendientesHoy }} pendientes</span>
+          </div>
+        </div>
+
+        <div class="citas-list">
+          <article class="cita-card" *ngFor="let cita of citasHoy">
+            <div class="cita-time">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+                <circle cx="12" cy="12" r="9"/>
+                <path d="M12 7v5l3 2"/>
+              </svg>
+              <span>{{ cita.hora }}</span>
+            </div>
+
+            <div class="cita-info">
+              <div class="cita-title-row">
+                <h3 class="cita-cliente">{{ cita.cliente }}</h3>
+                <span class="cita-status" [class.status-confirmada]="cita.estado === 'confirmada'"
+                                          [class.status-pendiente]="cita.estado === 'pendiente'">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" *ngIf="cita.estado === 'confirmada'">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M8 12l3 3l5-6"/>
+                  </svg>
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" *ngIf="cita.estado === 'pendiente'">
+                    <circle cx="12" cy="12" r="9"/>
+                    <path d="M12 8v4M12 16h.01"/>
+                  </svg>
+                  {{ cita.estado }}
+                </span>
+              </div>
+              <p class="cita-detail">{{ cita.servicio }} · {{ cita.estilista }}</p>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- Columna der: grafica semanal -->
+      <section class="dash-section semana-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg class="title-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+              <path d="M4 20h16M7 16V10M12 16V6M17 16v-8"/>
+            </svg>
+            Citas Esta Semana
+          </h2>
+        </div>
+
+        <div class="glass-card semana-card">
+          <div class="total-block">
+            <span class="total-label">Total Semanal</span>
+            <span class="total-value">{{ totalSemana }}</span>
+          </div>
+
+          <div class="dias-list">
+            <div class="dia-row" *ngFor="let dia of semana">
+              <span class="dia-name">{{ dia.nombre }}</span>
+              <div class="dia-bar-wrapper">
+                <div class="dia-bar-track">
+                  <div class="dia-bar-fill" [style.width.%]="porcentajeBarra(dia.citas)"></div>
+                </div>
+              </div>
+              <span class="dia-count">{{ dia.citas }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>

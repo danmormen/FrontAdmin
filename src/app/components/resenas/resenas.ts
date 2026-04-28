@@ -19,6 +19,7 @@ interface CitaResena {
 })
 export class ResenasComponent {
   @Output() backToHome = new EventEmitter<void>();
+  @Output() logout     = new EventEmitter<void>();
 
   
   mostrarModal: boolean = false;
@@ -45,6 +46,10 @@ export class ResenasComponent {
 
   regresar(): void {
     this.backToHome.emit();
+  }
+
+  cerrarSesion(): void {
+    this.logout.emit();
   }
 
   abrirModal(cita: CitaResena): void {

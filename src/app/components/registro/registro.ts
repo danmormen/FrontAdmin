@@ -13,11 +13,12 @@ import { HttpClient } from '@angular/common/http';
 export class RegistroComponent {
   @Output() onNavigate = new EventEmitter<string>();
 
-  nombre: string = '';
-  apellido: string = '';
-  email: string = '';
-  pass: string = '';
-  fechaNacimiento: string = '';
+  nombre:          string  = '';
+  apellido:        string  = '';
+  email:           string  = '';
+  pass:            string  = '';
+  fechaNacimiento: string  = '';
+  mostrarPass:     boolean = false; // toggle del ojito
 
   constructor(private http: HttpClient) {}
 
