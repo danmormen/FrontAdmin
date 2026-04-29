@@ -16,11 +16,17 @@ export class CambioContrasenaComponent implements OnInit {
 
   private apiUrl = 'http://localhost:3000/api/usuarios';
 
-  nuevaPassword    = '';
+  nuevaPassword     = '';
   confirmarPassword = '';
-  errorMsg         = '';
+  errorMsg          = '';
   usuarioId: number | null = null;
-  rol: string = ''; // ← Guardamos el rol para personalizar el mensaje
+  rol: string = '';
+
+  // UI state
+  mostrarNueva     = false;
+  mostrarConfirmar = false;
+  guardando        = false;
+  exito            = false;
 
   constructor(private http: HttpClient) {}
 
@@ -46,14 +52,33 @@ export class CambioContrasenaComponent implements OnInit {
     }
   }
 
-  // ── Mensaje de instrucción personalizado según el rol ─────────────
-  // Los estilistas reciben contraseña del admin
-  // Los clientes reciben contraseña temporal por correo
+  // ── Mensaje personalizado según rol ──────────────────────────────
   getMensajeInstruccion(): string {
     if (this.rol === 'estilista') {
-      return 'Estás ingresando por primera vez. Por motivos de seguridad, debes cambiar la contraseña provisional que te asignó el administrador.';
+      return 'Es tu primer ingreso. Por seguridad debes cambiar la contraseña provisional que te asignó el administrador.';
     }
-    return 'Ingresaste con una contraseña temporal. Por seguridad, establece una nueva contraseña para tu cuenta.';
+    return 'Ingresaste con una contraseña temporal. Establece una nueva contraseña para proteger tu cuenta.';
+  }
+
+  // ── Indicador de fortaleza ────────────────────────────────────────
+  get fortalezaClass(): string {
+    const len = this.nuevaPassword.length;
+    if (len < 6)  return 'debil';
+    if (len < 10) return 'media';
+    return 'fuerte';
+  }
+  get fortalezaAncho(): string {
+    const len = this.nuevaPassword.length;
+    if (len === 0)  return '0%';
+    if (len < 6)   return '33%';
+    if (len < 10)  return '66%';
+    return '100%';
+  }
+  get fortalezaTexto(): string {
+    const c = this.fortalezaClass;
+    if (c === 'debil')  return 'Débil';
+    if (c === 'media')  return 'Media';
+    return 'Fuerte';
   }
 
   // ── Construye los headers con el token JWT ────────────────────────
@@ -71,12 +96,10 @@ export class CambioContrasenaComponent implements OnInit {
 
   // ── Guarda la nueva contraseña ────────────────────────────────────
   guardarPassword() {
-    console.log('Intentando guardar contraseña...');
     this.errorMsg = '';
 
-    // Validaciones
     if (!this.usuarioId) {
-      this.errorMsg = 'Error: ID de usuario no válido.';
+      this.errorMsg = 'Error de sesión. Intenta iniciar sesión nuevamente.';
       return;
     }
     if (this.nuevaPassword.trim().length < 6) {
@@ -84,26 +107,25 @@ export class CambioContrasenaComponent implements OnInit {
       return;
     }
     if (this.nuevaPassword !== this.confirmarPassword) {
-      this.errorMsg = 'Las contraseñas no coinciden.';
+      this.errorMsg = 'Las contraseñas no coinciden. Verifícalas e intenta de nuevo.';
       return;
     }
 
     const headers = this.getHeaders();
     if (!headers) return;
 
-    console.log('Enviando petición PATCH al servidor...');
+    this.guardando = true;
 
     this.http.patch(
       `${this.apiUrl}/${this.usuarioId}/cambiar-password`,
       { password: this.nuevaPassword },
       { headers }
     ).subscribe({
-      next: (res: any) => {
-        console.log('Respuesta del servidor:', res);
-        alert('¡Contraseña actualizada con éxito!');
+      next: () => {
+        this.guardando = false;
+        this.exito     = true;
 
-        // Actualizamos requiere_cambio en localStorage para que
-        // el frontend sepa que ya no necesita redirigir al cambio
+        // Actualizar localStorage
         const userStr = localStorage.getItem('usuario');
         if (userStr) {
           const user = JSON.parse(userStr);
@@ -111,17 +133,15 @@ export class CambioContrasenaComponent implements OnInit {
           localStorage.setItem('usuario', JSON.stringify(user));
         }
 
-        // Emitimos el evento al componente padre para que navegue
-        this.onPasswordChanged.emit();
+        // Navegar después de un breve delay para que el usuario vea el mensaje
+        setTimeout(() => this.onPasswordChanged.emit(), 1200);
       },
       error: (err) => {
-        console.error('Error en la petición PATCH:', err);
+        this.guardando = false;
         if (err.status === 401) {
           this.errorMsg = 'No autorizado. Verifica tus credenciales.';
         } else if (err.status === 404) {
           this.errorMsg = 'Usuario no encontrado. Intenta iniciar sesión nuevamente.';
-        } else if (err.status === 500) {
-          this.errorMsg = 'Error interno del servidor. Intenta más tarde.';
         } else {
           this.errorMsg = err.error?.error || 'Error al conectar con el servidor.';
         }

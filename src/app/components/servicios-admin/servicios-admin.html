@@ -71,11 +71,11 @@
           <div class="input-row">
             <div class="input-field">
               <label>Precio (Q)</label>
-              <input type="number" [(ngModel)]="servicioForm.precio">
+              <input type="number" [(ngModel)]="servicioForm.precio" min="0" step="0.01">
             </div>
             <div class="input-field">
               <label>Duración (Minutos)</label>
-              <input type="number" [(ngModel)]="servicioForm.duracion">
+              <input type="number" [(ngModel)]="servicioForm.duracion" min="1" step="1">
             </div>
           </div>
   

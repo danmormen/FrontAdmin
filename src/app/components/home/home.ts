@@ -1,24 +1,10 @@
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Output, OnInit } from '@angular/core';
+import { Component, EventEmitter, Output, OnInit, ChangeDetectorRef } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
-// Secciones a las que el cliente puede entrar desde el home
 type HomeSection =
-  | 'perfil'
-  | 'servicios'
-  | 'reservar'
-  | 'promociones'
-  | 'ver'
-  | 'recompensas'
-  | 'resenas';
-
-// === Tipos para los datos del dashboard (mock por ahora) ===
-interface ProximaCita {
-  servicio:  string;
-  estilista: string;
-  fecha:     string;
-  hora:      string;
-  duracion:  string;
-}
+  | 'perfil' | 'servicios' | 'reservar' | 'promociones'
+  | 'ver' | 'recompensas' | 'resenas';
 
 interface ServicioPopular {
   nombre:      string;
@@ -36,33 +22,18 @@ interface ServicioPopular {
   styleUrl: './home.css'
 })
 export class HomeComponent implements OnInit {
-  // El padre (app) escucha estos eventos y se encarga de la navegacion real
   @Output() navigate = new EventEmitter<HomeSection>();
   @Output() logout   = new EventEmitter<void>();
 
-  // Nombre del usuario, se rellena desde localStorage en ngOnInit
   nombreUsuario = 'Cliente';
 
-  // === Datos del dashboard (TODO: conectar con la API real) ===
-  puntos                  = 850;
-  puntosProximaRecompensa = 150;
+  // Citas reales del backend
+  proximasCitas: any[] = [];
+  cargandoCitas = true;
 
-  proximasCitas: ProximaCita[] = [
-    {
-      servicio:  'Manicure & Pedicure',
-      estilista: 'María González',
-      fecha:     'viernes, 1 de mayo de 2026',
-      hora:      '14:30',
-      duracion:  '90 min'
-    },
-    {
-      servicio:  'Corte y Brushing',
-      estilista: 'Ana Martínez',
-      fecha:     'jueves, 7 de mayo de 2026',
-      hora:      '10:00',
-      duracion:  '60 min'
-    }
-  ];
+  // Puntos (mock por ahora)
+  puntos                  = 0;
+  puntosProximaRecompensa = 500;
 
   serviciosPopulares: ServicioPopular[] = [
     { nombre: 'Manicure Gel',                  popularidad: 98, precio: 450,  duracion: '60 min'                  },
@@ -71,34 +42,98 @@ export class HomeComponent implements OnInit {
     { nombre: 'Balayage Completo',             popularidad: 89, precio: 1200, duracion: '180 min'                 }
   ];
 
+  private apiUrl = 'http://localhost:3000/api';
+
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+
   ngOnInit(): void {
-    // Tomamos el primer nombre del usuario logueado para el saludo
     const userStr = localStorage.getItem('usuario');
     if (userStr) {
       try {
         const user = JSON.parse(userStr);
         const partes = (user.nombre || '').split(' ');
         this.nombreUsuario = partes[0] || 'Cliente';
-      } catch {
-        // si el JSON esta corrupto, dejamos el default
-      }
+      } catch { /* ignorar */ }
     }
+    this.cargarCitas();
   }
 
-  // Porcentaje de progreso para la barra de "proxima recompensa"
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({ 'Authorization': 'Bearer ' + token });
+  }
+
+  cargarCitas() {
+    this.cargandoCitas = true;
+    this.http.get<any[]>(this.apiUrl + '/citas/mis-citas', { headers: this.getHeaders() }).subscribe({
+      next: (data) => {
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+
+        // Solo citas futuras que no estén canceladas
+        this.proximasCitas = data
+          .filter(c => {
+            if (c.estado === 'cancelada' || c.estado === 'completada') return false;
+            const soloFecha = c.fecha.includes('T') ? c.fecha.split('T')[0] : c.fecha;
+            const [y, m, d] = soloFecha.split('-').map(Number);
+            const fechaCita = new Date(y, m - 1, d);
+            return fechaCita >= hoy;
+          })
+          .sort((a, b) => {
+            const fa = a.fecha.split('T')[0] + 'T' + a.hora;
+            const fb = b.fecha.split('T')[0] + 'T' + b.hora;
+            return fa.localeCompare(fb);
+          })
+          .slice(0, 4); // máximo 4 en el home
+
+        this.cargandoCitas = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.proximasCitas = [];
+        this.cargandoCitas = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  formatearFecha(fechaStr: string): string {
+    if (!fechaStr) return '';
+    const soloFecha = fechaStr.includes('T') ? fechaStr.split('T')[0] : fechaStr;
+    const [y, m, d] = soloFecha.split('-').map(Number);
+    const fecha = new Date(y, m - 1, d);
+    return fecha.toLocaleDateString('es-ES', {
+      weekday: 'long', day: 'numeric', month: 'long'
+    }).replace(/^\w/, c => c.toUpperCase());
+  }
+
+  formatearHora(hora: string): string {
+    if (!hora) return '';
+    const [hh, mm] = hora.split(':').map(Number);
+    const ampm = hh >= 12 ? 'PM' : 'AM';
+    const h12  = hh % 12 || 12;
+    return `${h12}:${String(mm).padStart(2, '0')} ${ampm}`;
+  }
+
   get porcentajeProgreso(): number {
     const meta = this.puntos + this.puntosProximaRecompensa;
     if (meta <= 0) return 0;
     return Math.min(100, Math.round((this.puntos / meta) * 100));
   }
 
-  goTo(section: HomeSection): void {
-    this.navigate.emit(section);
+  estadoLabel(estado: string): string {
+    const map: Record<string, string> = {
+      pendiente:  'Pendiente',
+      confirmada: 'Confirmada',
+      completada: 'Completada',
+      cancelada:  'Cancelada'
+    };
+    return map[estado] ?? estado;
   }
 
+  goTo(section: HomeSection): void { this.navigate.emit(section); }
+
   cerrarSesion(): void {
-    // TODO: quitar el log cuando ya este probado
-    console.log('Cerrando sesión desde Home...');
     this.logout.emit();
   }
 }

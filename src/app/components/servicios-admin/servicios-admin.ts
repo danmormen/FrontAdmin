@@ -93,6 +93,14 @@ export class ServiciosAdminComponent implements OnInit {
       alert('Nombre, Precio y Duración son obligatorios.');
       return;
     }
+    if (this.servicioForm.precio < 0) {
+      alert('El precio no puede ser negativo.');
+      return;
+    }
+    if (this.servicioForm.duracion < 1) {
+      alert('La duración debe ser de al menos 1 minuto.');
+      return;
+    }
 
     const payload = {
       ...this.servicioForm,

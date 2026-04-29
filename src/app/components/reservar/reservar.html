@@ -15,62 +15,148 @@
       <p class="page-subtitle">{{ datosEdicion ? 'Actualiza los detalles de tu cita' : 'Agenda tu próxima visita' }}</p>
     </div>
 
-    <div class="booking-card glass-card">
+    <!-- Cargando servicios -->
+    <div class="loading-state" *ngIf="cargando">
+      <p>Cargando información...</p>
+    </div>
 
-      <div class="promo-banner" *ngIf="servicioFijo && esPromo && !datosEdicion">
-        <div class="promo-banner-content">
-          <span class="promo-tag">Promoción Especial</span>
-          <p class="promo-detail">
-            {{ servicioFijo }} — {{ textoPromoActual }} ({{ porcentajePromoActual }} de descuento)
-          </p>
+    <div class="booking-card glass-card" *ngIf="!cargando">
+
+      <!-- Banner promo -->
+      <div class="promo-banner" *ngIf="esPromo && servicioFijo && !datosEdicion">
+        <div class="promo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"/>
+          </svg>
         </div>
+        <div>
+          <span class="promo-tag">Promoción Especial</span>
+          <p class="promo-detail">{{ servicioFijo }} — {{ textoPromoActual }} ({{ porcentajePromoActual }} de descuento)</p>
+        </div>
+      </div>
+
+      <!-- Error global -->
+      <div class="alert-error" *ngIf="error">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        {{ error }}
       </div>
 
       <form (ngSubmit)="confirmarReserva()">
 
-        <div class="form-group">
-          <label>Servicio</label>
-          <select [(ngModel)]="nuevaCita.servicio" name="servicio" [disabled]="servicioFijo !== '' || datosEdicion" required>
-            <option value="" disabled selected>Elige un servicio...</option>
-            <ng-container *ngIf="!servicioFijo && !datosEdicion">
-              <option *ngFor="let s of servicios" [value]="s">{{ s }}</option>
-            </ng-container>
-            <option *ngIf="servicioFijo || datosEdicion" [value]="nuevaCita.servicio">{{ nuevaCita.servicio }}</option>
-          </select>
+        <!-- PASO 1: Servicio -->
+        <div class="form-step">
+          <span class="step-badge">1</span>
+          <div class="form-group step-content">
+            <label>Servicio</label>
+            <select [(ngModel)]="nuevaCita.servicio_id"
+                    name="servicio_id"
+                    [disabled]="!!servicioFijo || !!datosEdicion"
+                    required>
+              <option value="" disabled selected>Elige un servicio...</option>
+              <option *ngFor="let s of servicios" [value]="s.id">
+                {{ s.nombre }} — Q{{ s.precio }} ({{ s.duracion }} min)
+              </option>
+            </select>
+            <small class="field-hint price-hint" *ngIf="precioServicio !== null">
+              Total estimado: <strong>Q{{ precioServicio | number:'1.2-2' }}</strong>
+            </small>
+          </div>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
+        <!-- PASO 2: Fecha -->
+        <div class="form-step">
+          <span class="step-badge">2</span>
+          <div class="form-group step-content">
             <label>Fecha</label>
-            <input
-              type="date"
-              [(ngModel)]="nuevaCita.fecha"
-              [min]="fechaMinima"
-              name="fecha"
-              required>
+            <input type="date"
+                   [(ngModel)]="nuevaCita.fecha"
+                   [min]="fechaMinima"
+                   [max]="fechaMaxima"
+                   name="fecha"
+                   (change)="onFechaChange()"
+                   required>
           </div>
+        </div>
 
-          <div class="form-group">
+        <!-- PASO 3: Estilista (se carga según la fecha) -->
+        <div class="form-step">
+          <span class="step-badge">3</span>
+          <div class="form-group step-content">
+            <label>Estilista disponible</label>
+
+            <!-- Cargando estilistas -->
+            <div class="estilista-loading" *ngIf="cargandoEstilistas">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+              </svg>
+              Buscando disponibilidad...
+            </div>
+
+            <!-- Sin estilistas ese día -->
+            <div class="alert-warning" *ngIf="!cargandoEstilistas && avisoEstilistas">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                <line x1="12" y1="9" x2="12" y2="13"></line>
+                <line x1="12" y1="17" x2="12.01" y2="17"></line>
+              </svg>
+              {{ avisoEstilistas }}
+            </div>
+
+            <!-- Select estilistas -->
+            <select *ngIf="!cargandoEstilistas && estilistas.length > 0"
+                    [(ngModel)]="nuevaCita.estilista_id"
+                    name="estilista_id"
+                    [disabled]="!!datosEdicion"
+                    required>
+              <option value="" disabled selected>Elige un estilista...</option>
+              <option *ngFor="let e of estilistas" [value]="e.id">
+                {{ e.nombre }}<ng-container *ngIf="e.especialidad"> — {{ e.especialidad }}</ng-container>
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- PASO 4: Hora -->
+        <div class="form-step">
+          <span class="step-badge">4</span>
+          <div class="form-group step-content">
             <label>Hora</label>
-            <select [(ngModel)]="nuevaCita.hora" name="hora" required>
-              <option value="" disabled selected>Selecciona una hora...</option>
+            <select [(ngModel)]="nuevaCita.hora" name="hora" required
+                    [disabled]="!nuevaCita.estilista_id">
+              <option value="" disabled selected>
+                {{ nuevaCita.estilista_id ? 'Selecciona una hora...' : 'Primero elige un estilista' }}
+              </option>
               <option *ngFor="let h of horarios" [value]="h">{{ h }}</option>
             </select>
           </div>
         </div>
 
-        <div class="form-group">
+        <!-- Notas -->
+        <div class="form-group" style="margin-top: 4px;">
           <label>Notas adicionales (opcional)</label>
-          <textarea
-            [(ngModel)]="nuevaCita.notas"
-            name="notas"
-            placeholder="¿Alguna preferencia o comentario especial?"
-            rows="4"></textarea>
+          <textarea [(ngModel)]="nuevaCita.notas"
+                    name="notas"
+                    placeholder="¿Alguna preferencia o comentario especial?"
+                    rows="3"></textarea>
         </div>
 
-        <button type="submit" class="btn-confirm">
-          {{ datosEdicion ? 'Guardar Cambios' : 'Confirmar Reserva' }}
+        <!-- Resumen precio -->
+        <div class="price-summary" *ngIf="precioServicio !== null">
+          <span class="price-label">Total estimado</span>
+          <span class="price-value">Q{{ precioServicio | number:'1.2-2' }}</span>
+        </div>
+
+        <button type="submit" class="btn-confirm" [disabled]="enviando || estilistas.length === 0">
+          <svg *ngIf="!enviando" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+          {{ enviando ? 'Agendando...' : (datosEdicion ? 'Guardar Cambios' : 'Confirmar Reserva') }}
         </button>
+
       </form>
     </div>
   </div>

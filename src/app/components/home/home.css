@@ -333,6 +333,30 @@
   flex-shrink: 0;
 }
 
+/* Badge de estado en home */
+.estado-badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.badge-pendiente  { background: rgba(251, 191, 36, 0.15); color: #B45309; }
+.badge-confirmada { background: rgba(52, 211, 153, 0.15); color: #065F46; }
+
+.appt-price {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #B76E79;
+  margin-top: 2px;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
 .appt-stylist {
   margin: 0;
   color: #7A6F6F;
