@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ClientNavbarComponent } from '../client-navbar/client-navbar';
 
 interface CitaResena {
   servicio: string;
@@ -13,13 +14,13 @@ interface CitaResena {
 @Component({
   selector: 'app-resenas',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ClientNavbarComponent],
   templateUrl: './resenas.html',
   styleUrl: './resenas.css'
 })
 export class ResenasComponent {
-  @Output() backToHome = new EventEmitter<void>();
-  @Output() logout     = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
+  @Output() logout   = new EventEmitter<void>();
 
   
   mostrarModal: boolean = false;
@@ -44,9 +45,13 @@ export class ResenasComponent {
     { cliente: 'Patricia Torres', servicio: 'Tratamiento facial', estilista: 'Carmen López', estrellas: 5, comentario: 'Mi piel quedó increíble después del tratamiento. Súper relajante.', fecha: '12 de marzo de 2026' }
   ];
 
-  regresar(): void {
-    this.backToHome.emit();
-  }
+  private readonly MAPA: Record<string,string> = {
+    inicio:'home', reservar:'reservar', ver:'ver-cita',
+    servicios:'servicios', promociones:'promociones',
+    recompensas:'recompensas', resenas:'resenas', perfil:'perfil'
+  };
+
+  onNavigate(section: string) { this.navigate.emit(this.MAPA[section] ?? section); }
 
   cerrarSesion(): void {
     this.logout.emit();

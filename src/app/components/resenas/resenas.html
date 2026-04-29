@@ -1,95 +1,105 @@
 <div class="resenas-page">
-    <nav class="nav-header">
-      <div class="nav-content">
-        <h2 class="logo-text" (click)="regresar()">PonteGuapa</h2>
-        <div class="nav-actions">
-          <button class="nav-btn" (click)="regresar()">Volver al Panel</button>
-          <button class="nav-btn logout" (click)="cerrarSesion()">Cerrar Sesión</button>
-        </div>
-      </div>
-    </nav>
-  
-    <div class="content-container">
-      <div class="top-header">
-        <h1 class="title">Reseñas</h1>
-      </div>
-  
-      <section class="section">
-        <h3 class="sub-title">Mis Citas Confirmadas</h3>
-        <div class="citas-list">
-          <div class="cita-card" *ngFor="let cita of misCitas">
-            <div class="cita-info">
-              <h4>{{ cita.servicio }}</h4>
-              <p>{{ cita.fecha }}</p>
-              <p class="stylist-bold">Estilista: {{ cita.estilista }}</p>
-            </div>
-            <div class="cita-actions">
-              <span class="tag-enviada" *ngIf="cita.resenada">✓ Reseña enviada</span>
-              
-              <button 
-                *ngIf="!cita.resenada && cita.completada"
-                class="btn-dejar-resena" 
-                (click)="abrirModal(cita)">
-                Dejar Reseña
-              </button>
-  
-              <button 
-                *ngIf="!cita.resenada && !cita.completada"
-                class="btn-dejar-resena btn-pendiente" 
-                disabled>
-                Pendiente
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-  
-      <section class="section">
-        <h3 class="sub-title">Lo que dicen nuestros clientes</h3>
-        <div class="resenas-grid">
-          <div class="resena-publica-card" *ngFor="let r of resenasPublicas">
-            <div class="card-top">
-              <div class="user-meta">
-                <h4>{{ r.cliente }}</h4>
-                <p class="service-tag-pink">{{ r.servicio }}</p>
-                <p class="stylist-subtext">Estilista: {{ r.estilista }}</p>
-              </div>
-              <div class="stars-display">
-                <span *ngFor="let s of [1,2,3,4,5]" [class.filled]="s <= r.estrellas">★</span>
-              </div>
-            </div>
-            <p class="comment-text">"{{ r.comentario }}"</p>
-            <p class="resena-date">{{ r.fecha }}</p>
-          </div>
-        </div>
-      </section>
+  <div class="bg-circle circle-1"></div>
+  <div class="bg-circle circle-2"></div>
+  <div class="bg-circle circle-3"></div>
+
+  <app-client-navbar
+    [active]="'resenas'"
+    (navigate)="onNavigate($event)"
+    (logout)="cerrarSesion()">
+  </app-client-navbar>
+
+  <div class="content-container">
+    <div class="top-header">
+      <h1 class="page-title">Reseñas</h1>
+      <p class="page-subtitle">Tu opinión nos ayuda a mejorar</p>
     </div>
-  
-    <div class="modal-overlay" *ngIf="mostrarModal">
-      <div class="modal-box">
-        <h2 class="modal-title">Dejar una Reseña</h2>
-        <div class="modal-body">
-          <div class="form-group">
-            <label>Calificación</label>
-            <div class="star-picker">
-              <span *ngFor="let n of [1,2,3,4,5]" 
-                    (click)="seleccionarEstrellas(n)"
-                    [class.active]="n <= nuevaCalificacion">★</span>
+
+    <!-- Mis citas confirmadas -->
+    <section class="section-block">
+      <h3 class="section-title">Mis Citas Confirmadas</h3>
+      <div class="citas-list">
+        <div class="cita-card glass-card" *ngFor="let cita of misCitas">
+          <div class="cita-info">
+            <h4 class="cita-servicio">{{ cita.servicio }}</h4>
+            <p class="cita-fecha">{{ cita.fecha }}</p>
+            <p class="cita-estilista">Estilista: {{ cita.estilista }}</p>
+          </div>
+          <div class="cita-actions">
+            <span class="tag-enviada" *ngIf="cita.resenada">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"></polyline></svg>
+              Reseña enviada
+            </span>
+
+            <button
+              *ngIf="!cita.resenada && cita.completada"
+              class="btn-dejar-resena"
+              (click)="abrirModal(cita)">
+              Dejar Reseña
+            </button>
+
+            <button
+              *ngIf="!cita.resenada && !cita.completada"
+              class="btn-dejar-resena btn-pendiente"
+              disabled>
+              Pendiente
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Reseñas públicas -->
+    <section class="section-block">
+      <h3 class="section-title">Lo que dicen nuestros clientes</h3>
+      <div class="resenas-grid">
+        <div class="resena-publica-card glass-card" *ngFor="let r of resenasPublicas">
+          <div class="card-top">
+            <div class="user-meta">
+              <h4 class="resena-cliente">{{ r.cliente }}</h4>
+              <p class="service-tag">{{ r.servicio }}</p>
+              <p class="stylist-sub">Estilista: {{ r.estilista }}</p>
+            </div>
+            <div class="stars-display">
+              <span *ngFor="let s of [1,2,3,4,5]" [class.filled]="s <= r.estrellas">★</span>
             </div>
           </div>
-          <div class="form-group">
-            <label>Comentario</label>
-            <textarea [(ngModel)]="nuevoComentario" 
-                      placeholder="Cuéntanos sobre tu experiencia..." 
-                      rows="4"></textarea>
+          <p class="comment-text">"{{ r.comentario }}"</p>
+          <p class="resena-date">{{ r.fecha }}</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Modal para dejar reseña -->
+  <div class="modal-overlay" *ngIf="mostrarModal" (click)="cerrarModal()">
+    <div class="modal-box glass-card" (click)="$event.stopPropagation()">
+      <h2 class="modal-title">Dejar una Reseña</h2>
+      <p class="modal-servicio" *ngIf="citaSeleccionada">{{ citaSeleccionada.servicio }}</p>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label>Calificación</label>
+          <div class="star-picker">
+            <span *ngFor="let n of [1,2,3,4,5]"
+                  (click)="seleccionarEstrellas(n)"
+                  [class.active]="n <= nuevaCalificacion">★</span>
           </div>
         </div>
-        <div class="modal-footer">
-          <button class="btn-modal-cancel" (click)="cerrarModal()">Cancelar</button>
-          <button class="btn-modal-send" 
-                  [disabled]="nuevaCalificacion === 0" 
-                  (click)="enviarResena()">Enviar</button>
+        <div class="form-group">
+          <label>Comentario</label>
+          <textarea [(ngModel)]="nuevoComentario"
+                    placeholder="Cuéntanos sobre tu experiencia..."
+                    rows="4"></textarea>
         </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn-modal-cancel" (click)="cerrarModal()">Cancelar</button>
+        <button class="btn-modal-send"
+                [disabled]="nuevaCalificacion === 0"
+                (click)="enviarResena()">Enviar Reseña</button>
       </div>
     </div>
   </div>
+</div>

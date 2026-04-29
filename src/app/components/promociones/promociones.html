@@ -1,55 +1,58 @@
 <div class="promociones-page">
-    <nav class="nav-header">
-      <div class="nav-content">
-        <h2 class="logo-text" (click)="regresar()">PonteGuapa</h2>
-        <div class="nav-actions">
-          <button class="nav-btn" (click)="regresar()">Volver al Panel</button>
-          <button class="nav-btn logout" (click)="cerrarSesion()">Cerrar Sesión</button>
-        </div>
-      </div>
-    </nav>
-  
-    <div class="content-container">
-      <div class="top-header">
-        <h1 class="title">Promociones Especiales</h1>
-      </div>
-  
-      <!-- Estado de carga -->
-      <div *ngIf="cargando" class="loading-state">
-        <p>Cargando promociones...</p>
-      </div>
-  
-      <!-- Sin promociones -->
-      <div *ngIf="!cargando && promociones.length === 0" class="empty-state">
-        <p>No hay promociones disponibles en este momento.</p>
-      </div>
-  
-      <!-- Grid de promociones -->
-      <div class="promo-grid" *ngIf="!cargando && promociones.length > 0">
-        <div class="promo-card" *ngFor="let p of promociones">
-          <div class="promo-header-gradient">
-            <span class="pct">{{ p.valor_descuento | number:'1.0-0' }}%</span>
-            <span class="sub">de descuento</span>
-          </div>
-  
-          <div class="promo-body">
-            <div class="promo-info">
-              <h3>{{ p.titulo }}</h3>
-              <p class="desc">{{ p.descripcion }}</p>
-              <span class="codigo-badge">Código: {{ p.codigo }}</span>
-            </div>
-  
-            <div class="promo-actions">
-              <div class="vigencia">
-                <span>Válido: {{ p.fecha_inicio | date:'d/M/yyyy' }} - {{ p.fecha_fin | date:'d/M/yyyy' }}</span>
-              </div>
-              <button class="btn-reservar-promo" (click)="irAReservar(p.titulo)">
-                Reservar Ahora
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-  
+  <div class="bg-circle circle-1"></div>
+  <div class="bg-circle circle-2"></div>
+  <div class="bg-circle circle-3"></div>
+
+  <app-client-navbar
+    [active]="'promociones'"
+    (navigate)="onNavigate($event)"
+    (logout)="cerrarSesion()">
+  </app-client-navbar>
+
+  <div class="content-container">
+    <div class="top-header">
+      <h1 class="page-title">Promociones Especiales</h1>
+      <p class="page-subtitle">Aprovecha nuestras ofertas exclusivas</p>
     </div>
+
+    <div class="loading-state" *ngIf="cargando">
+      <p>Cargando promociones...</p>
+    </div>
+
+    <div class="empty-state glass-card" *ngIf="!cargando && promociones.length === 0">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+      <p>No hay promociones disponibles en este momento.</p>
+    </div>
+
+    <div class="promo-grid" *ngIf="!cargando && promociones.length > 0">
+      <div class="promo-card glass-card" *ngFor="let p of promociones">
+
+        <div class="promo-discount-badge">
+          <span class="pct">{{ p.valor_descuento | number:'1.0-0' }}%</span>
+          <span class="pct-label">de descuento</span>
+        </div>
+
+        <div class="promo-body">
+          <h3 class="promo-titulo">{{ p.titulo }}</h3>
+          <p class="promo-desc">{{ p.descripcion }}</p>
+
+          <div class="promo-codigo">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
+            <span>Código: <strong>{{ p.codigo }}</strong></span>
+          </div>
+
+          <div class="promo-vigencia">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+            <span>{{ p.fecha_inicio | date:'d/M/yyyy' }} — {{ p.fecha_fin | date:'d/M/yyyy' }}</span>
+          </div>
+
+          <button class="btn-reservar-promo" (click)="irAReservar(p.titulo)">
+            Reservar Ahora
+          </button>
+        </div>
+
+      </div>
+    </div>
+
   </div>
+</div>

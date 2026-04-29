@@ -2,17 +2,18 @@ import { Component, EventEmitter, Output, OnInit, ChangeDetectorRef } from '@ang
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ClientNavbarComponent } from '../client-navbar/client-navbar';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ClientNavbarComponent],
   templateUrl: './perfil.html',
   styleUrl: './perfil.css'
 })
 export class PerfilComponent implements OnInit {
-  @Output() backToHome = new EventEmitter<void>();
-  @Output() logout     = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
+  @Output() logout   = new EventEmitter<void>();
 
   private apiUrl = 'http://localhost:3000/api/usuarios';
 
@@ -185,6 +186,12 @@ export class PerfilComponent implements OnInit {
     }, 3000);
   }
 
-  regresar()     { this.backToHome.emit(); }
-  cerrarSesion() { this.logout.emit(); }
+  private readonly MAPA: Record<string,string> = {
+    inicio:'home', reservar:'reservar', ver:'ver-cita',
+    servicios:'servicios', promociones:'promociones',
+    recompensas:'recompensas', resenas:'resenas', perfil:'perfil'
+  };
+
+  onNavigate(section: string) { this.navigate.emit(this.MAPA[section] ?? section); }
+  cerrarSesion()               { this.logout.emit(); }
 }

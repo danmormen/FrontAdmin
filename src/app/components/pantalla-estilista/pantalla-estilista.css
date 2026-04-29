@@ -327,10 +327,14 @@
 }
 
 .dia-horas {
-  font-size: 2rem;
-  font-weight: 800;
+  /* Antes era un numero grande (2rem). Ahora muestra "domingo 26", asi que
+     bajamos el tamaño para que entre sin partirse en columnas chicas. */
+  font-size: 0.95rem;
+  font-weight: 700;
   color: #6B7560;
-  line-height: 1;
+  line-height: 1.2;
+  text-transform: capitalize;
+  text-align: center;
 }
 .dia-horas.descanso { color: #C0C8B8; }
 
@@ -372,7 +376,7 @@
 @media (max-width: 960px) {
   .dashboard-grid { grid-template-columns: 1fr; }
   .horario-grid   { gap: 4px; }
-  .dia-horas      { font-size: 1.5rem; }
+  .dia-horas      { font-size: 0.82rem; }
   .dia-rango      { font-size: 0.65rem; }
 }
 

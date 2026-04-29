@@ -1,17 +1,18 @@
 import { Component, EventEmitter, Output, Input, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ClientNavbarComponent } from '../client-navbar/client-navbar';
 
 @Component({
   selector: 'app-reservar',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ClientNavbarComponent],
   templateUrl: './reservar.html',
   styleUrl: './reservar.css'
 })
 export class ReservarComponent implements OnInit {
-  @Output() backToHome = new EventEmitter<void>();
-  @Output() logout     = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
+  @Output() logout   = new EventEmitter<void>();
   
   @Input() servicioFijo: string = ''; 
   @Input() esPromo: boolean = false; 
@@ -85,12 +86,19 @@ export class ReservarComponent implements OnInit {
   }
 
   regresar() {
-    this.backToHome.emit();
+    this.navigate.emit('home');
   }
 
-  cerrarSesion() {
-    this.logout.emit();
+  onNavigate(section: string) {
+    const mapa: Record<string, string> = {
+      inicio: 'home', reservar: 'reservar', ver: 'ver-cita',
+      servicios: 'servicios', promociones: 'promociones',
+      recompensas: 'recompensas', resenas: 'resenas', perfil: 'perfil'
+    };
+    this.navigate.emit(mapa[section] ?? section);
   }
+
+  cerrarSesion() { this.logout.emit(); }
 
   confirmarReserva() {
     if (!this.nuevaCita.servicio || !this.nuevaCita.hora) {

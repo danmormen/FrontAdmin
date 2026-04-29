@@ -1,16 +1,17 @@
 import { Component, EventEmitter, OnInit, Output, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { ClientNavbarComponent } from '../client-navbar/client-navbar';
 
 @Component({
   selector: 'app-promociones',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ClientNavbarComponent],
   templateUrl: './promociones.html',
   styleUrl: './promociones.css'
 })
 export class PromocionesComponent implements OnInit {
-  @Output() backToHome       = new EventEmitter<void>();
+  @Output() navigate         = new EventEmitter<string>();
   @Output() seleccionarPromo = new EventEmitter<string>();
   @Output() logout           = new EventEmitter<void>();
 
@@ -44,15 +45,13 @@ export class PromocionesComponent implements OnInit {
     });
   }
 
-  regresar() {
-    this.backToHome.emit();
-  }
+  private readonly MAPA: Record<string,string> = {
+    inicio:'home', reservar:'reservar', ver:'ver-cita',
+    servicios:'servicios', promociones:'promociones',
+    recompensas:'recompensas', resenas:'resenas', perfil:'perfil'
+  };
 
-  cerrarSesion() {
-    this.logout.emit();
-  }
-
-  irAReservar(nombreServicio: string) {
-    this.seleccionarPromo.emit(nombreServicio);
-  }
+  onNavigate(section: string) { this.navigate.emit(this.MAPA[section] ?? section); }
+  cerrarSesion()              { this.logout.emit(); }
+  irAReservar(nombre: string) { this.seleccionarPromo.emit(nombre); }
 }

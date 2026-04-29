@@ -36,13 +36,13 @@
 
   <app-perfil
     *ngIf="vistaActual === 'perfil'"
-    (backToHome)="onNavigate('home')"
+    (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-perfil>
 
   <app-servicios
     *ngIf="vistaActual === 'servicios'"
-    (backToHome)="onNavigate('home')"
+    (navigate)="onNavigate($event)"
     (reservar)="onServiceSelected($event, false)"
     (logout)="onLogout()">
   </app-servicios>
@@ -50,13 +50,13 @@
   <app-promociones
     *ngIf="vistaActual === 'promociones'"
     (seleccionarPromo)="onServiceSelected($event, true)"
-    (backToHome)="onNavigate('home')"
+    (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-promociones>
 
   <app-ver-cita
     *ngIf="vistaActual === 'ver-cita'"
-    (backToHome)="onNavigate('home')"
+    (navigate)="onNavigate($event)"
     (modificar)="onModificarCita($event)"
     (logout)="onLogout()">
   </app-ver-cita>
@@ -66,19 +66,19 @@
     [servicioFijo]="servicioPreseleccionado"
     [esPromo]="esPromocion"
     [datosEdicion]="citaAEditar"
-    (backToHome)="onNavigate('home')"
+    (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-reservar>
 
   <app-recompensas
     *ngIf="vistaActual === 'recompensas'"
-    (backToHome)="onNavigate('home')"
+    (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-recompensas>
 
   <app-resenas
     *ngIf="vistaActual === 'resenas'"
-    (backToHome)="onNavigate('home')"
+    (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-resenas>
 

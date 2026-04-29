@@ -1,17 +1,18 @@
 import { Component, EventEmitter, Output, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { ClientNavbarComponent } from '../client-navbar/client-navbar';
 
 @Component({
   selector: 'app-recompensas',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ClientNavbarComponent],
   templateUrl: './recompensas.html',
   styleUrl: './recompensas.css'
 })
 export class RecompensasComponent implements OnInit {
-  @Output() backToHome = new EventEmitter<void>();
-  @Output() logout     = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
+  @Output() logout   = new EventEmitter<void>();
 
   recompensas:       any[] = [];
   historial:         any[] = [];
@@ -122,11 +123,12 @@ export class RecompensasComponent implements OnInit {
     }
   }
 
-  regresar(): void {
-    this.backToHome.emit();
-  }
+  private readonly MAPA: Record<string,string> = {
+    inicio:'home', reservar:'reservar', ver:'ver-cita',
+    servicios:'servicios', promociones:'promociones',
+    recompensas:'recompensas', resenas:'resenas', perfil:'perfil'
+  };
 
-  cerrarSesion(): void {
-    this.logout.emit();
-  }
+  onNavigate(section: string) { this.navigate.emit(this.MAPA[section] ?? section); }
+  cerrarSesion(): void        { this.logout.emit(); }
 }

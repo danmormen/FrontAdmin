@@ -137,9 +137,8 @@
         <div class="horario-grid"
              *ngIf="!cargandoHorario && !errorHorario && !sinHorario && horarioSemanal.length > 0">
           <div class="dia-col" *ngFor="let d of horarioSemanal">
-            <span class="dia-nombre">{{ d.dia }}</span>
-            <span class="dia-horas" [class.descanso]="d.descanso">{{ d.descanso ? 0 : d.horas }}</span>
-            <span class="dia-label">horas</span>
+            <span class="dia-horas" [class.descanso]="d.descanso">{{ d.nombreCompleto }} {{ d.numeroFecha }}</span>
+            <span class="dia-label">{{ d.descanso ? 0 : d.horas }} horas</span>
             <div class="dia-bar" [class.descanso]="d.descanso"></div>
             <span class="dia-rango" *ngIf="!d.descanso">{{ d.inicio }} - {{ d.fin }}</span>
             <span class="dia-rango descanso-txt" *ngIf="d.descanso">—</span>

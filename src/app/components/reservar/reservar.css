@@ -1,175 +1,50 @@
+/* === Reservar: Rose/Blush Liquid Glass === */
 .reservar-page {
-    background-color: #fdf2f8;
-    min-height: 100vh;
-  }
-  
-  .nav-header {
-    background: white;
-    border-bottom: 1px solid #f3e8ff;
-    padding: 15px 0;
-  }
-  
-  .nav-content {
-    max-width: 1200px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 0 30px;
-  }
-  
-  .logo-text {
-    color: #db2777;
-    font-family: serif;
-    font-size: 1.8rem;
-    font-weight: bold;
-    cursor: pointer;
-    margin: 0;
-  }
-  
-  .nav-actions {
-    display: flex;
-    gap: 15px;
-    align-items: center;
-  }
-  
-  .nav-btn {
-    background: none;
-    border: none;
-    color: #4b5563;
-    font-size: 0.95rem;
-    font-weight: 500;
-    cursor: pointer;
-    padding: 8px 12px;
-    border-radius: 8px;
-    transition: background-color 0.2s;
-  }
-  
-  .nav-btn:hover {
-    background-color: #fdf2f8;
-    color: #db2777;
-  }
-  
-  .nav-btn.logout {
-    color: #dc2626;
-  }
-  
-  .nav-btn.logout:hover {
-    background-color: #fee2e2;
-  }
-  
-  /* Contenedor */
-  .content-container { 
-    max-width: 700px; 
-    margin: 0 auto; 
-    padding: 40px 20px; 
-  }
-  
-  .title { 
-    font-size: 1.5rem; 
-    color: #1f2937; 
-    margin: 0 0 25px 0; 
-    font-weight: 600; 
-  }
-  
-  /* Tarjeta Booking */
-  .booking-card {
-    background: white;
-    border-radius: 24px;
-    padding: 40px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.05);
-  }
-  
-  
-  .promo-banner {
-    background: linear-gradient(135deg, #db2777, #a855f7); 
-    border-radius: 12px;
-    padding: 15px 20px;
-    margin-bottom: 25px;
-    color: white;
-    animation: fadeIn 0.5s ease-in-out;
-  }
-  
-  .promo-tag {
-    font-weight: 800;
-    font-size: 0.9rem;
-    display: block;
-    margin-bottom: 4px;
-  }
-  
-  .promo-detail {
-    font-size: 0.85rem;
-    margin: 0;
-    opacity: 0.95;
-    line-height: 1.4;
-  }
-  
-  /* Formulario */
-  .form-group { margin-bottom: 24px; }
-  
-  .form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-  }
-  
-  label {
-    display: block;
-    font-size: 0.9rem;
-    color: #374151;
-    margin-bottom: 8px;
-    font-weight: 500;
-  }
-  
-  /* Inputs y Selects */
-  input, select, textarea {
-    width: 100%;
-    padding: 12px 16px;
-    border: 1px solid #e5e7eb;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-family: inherit;
-    color: #1f2937;
-    background-color: white;
-    box-sizing: border-box;
-    transition: all 0.2s;
-  }
-  
-  input:focus, select:focus, textarea:focus {
-    outline: none;
-    border-color: #f472b6;
-    box-shadow: 0 0 0 4px rgba(244, 114, 182, 0.1);
-  }
-  
- 
-  select:disabled {
-    background-color: #f3f4f6; 
-    color: #6b7280;
-    cursor: not-allowed;
-    border-color: #e5e7eb;
-    opacity: 1; 
-  }
-  
-  /* Botón Confirmar */
-  .btn-confirm {
-    width: 100%;
-    padding: 16px;
-    background-color: #db2777;
-    color: white;
-    border: none;
-    border-radius: 12px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    margin-top: 10px;
-    transition: background 0.3s, transform 0.1s;
-  }
-  
-  .btn-confirm:hover { background-color: #be185d; }
-  .btn-confirm:active { transform: scale(0.98); }
-  
-  
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-10px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  font-family: 'Inter', system-ui, sans-serif;
+  background: linear-gradient(135deg, #F5E6E8 0%, #E8D5D0 25%, #D8A7B1 50%, #E8D5D0 75%, #F5E6E8 100%);
+  overflow-x: hidden;
+}
+.bg-circle { position: fixed; border-radius: 50%; filter: blur(80px); pointer-events: none; z-index: 0; }
+.circle-1 { width: 420px; height: 420px; background: rgba(216,167,177,0.35); top: -100px; left: -120px; }
+.circle-2 { width: 360px; height: 360px; background: rgba(200,169,106,0.28); bottom: -120px; right: -80px; }
+.circle-3 { width: 320px; height: 320px; background: rgba(183,110,121,0.20); top: 40%; left: 65%; }
+.glass-card {
+  background: rgba(255,255,255,0.60);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255,255,255,0.75);
+  border-radius: 18px;
+  box-shadow: 0 8px 32px rgba(183,110,121,0.10);
+}
+.content-container { position: relative; z-index: 1; max-width: 720px; margin: 0 auto; padding: 32px 24px 60px; }
+.top-header { margin-bottom: 28px; }
+.page-title { font-family: 'Playfair Display', serif; font-size: 2rem; font-weight: 700; color: #2F2A2A; margin: 0 0 6px; }
+.page-subtitle { font-size: 0.95rem; color: #9B6F75; margin: 0; }
+
+.booking-card { padding: 32px; }
+
+.promo-banner { background: linear-gradient(135deg, rgba(183,110,121,0.12), rgba(216,167,177,0.22)); border: 1px solid rgba(183,110,121,0.28); border-radius: 12px; padding: 14px 18px; margin-bottom: 24px; }
+.promo-tag { font-size: 0.78rem; font-weight: 700; color: #B76E79; text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 4px; }
+.promo-detail { font-size: 0.92rem; color: #5C3D42; margin: 0; }
+
+.form-group { margin-bottom: 20px; }
+.form-group label { display: block; font-size: 0.82rem; font-weight: 600; color: #5C3D42; margin-bottom: 7px; text-transform: uppercase; letter-spacing: 0.4px; }
+.form-group input, .form-group select, .form-group textarea {
+  width: 100%; padding: 12px 14px; border: 1.5px solid rgba(183,110,121,0.25); border-radius: 10px;
+  background: rgba(255,255,255,0.70); font-family: 'Inter', system-ui, sans-serif; font-size: 0.95rem;
+  color: #2F2A2A; transition: border-color 0.2s, box-shadow 0.2s; box-sizing: border-box;
+}
+.form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+  outline: none; border-color: #B76E79; box-shadow: 0 0 0 3px rgba(183,110,121,0.15);
+}
+.form-group input:disabled, .form-group select:disabled { opacity: 0.6; cursor: not-allowed; }
+.form-group textarea { resize: vertical; min-height: 100px; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.btn-confirm { width: 100%; padding: 14px; background: linear-gradient(135deg, #B76E79, #C48490); color: #fff; font-family: 'Inter', system-ui, sans-serif; font-size: 1rem; font-weight: 600; border: none; border-radius: 12px; cursor: pointer; margin-top: 8px; transition: opacity 0.2s, transform 0.15s; }
+.btn-confirm:hover { opacity: 0.92; transform: translateY(-1px); }
+
+@media (max-width: 600px) { .form-row { grid-template-columns: 1fr; } .booking-card { padding: 20px; } }

@@ -19,11 +19,13 @@ interface NotifItem {
 }
 
 interface DiaHorario {
-  dia: string;
-  horas: number;
-  inicio: string;
-  fin: string;
-  descanso: boolean;
+  dia:            string;  // abreviatura (Dom, Lun...) — la dejamos por compatibilidad
+  nombreCompleto: string;  // 'domingo', 'lunes'... lo que pintamos en la card
+  numeroFecha:    number;  // dia del mes (26, 27...) calculado para la semana actual
+  horas:          number;
+  inicio:         string;
+  fin:            string;
+  descanso:       boolean;
 }
 
 @Component({
@@ -68,6 +70,25 @@ export class PantallaEstilistaComponent implements OnInit {
     'miércoles': 'Mié', 'miercoles': 'Mié',
     'jueves': 'Jue', 'viernes': 'Vie', 'sábado': 'Sáb', 'sabado': 'Sáb'
   };
+
+  // Indice del dia de la semana (Dom=0, Lun=1, etc.) — usado para calcular la fecha
+  private readonly INDICE_DIA: Record<string, number> = {
+    'domingo': 0, 'lunes': 1, 'martes': 2,
+    'miércoles': 3, 'miercoles': 3,
+    'jueves': 4, 'viernes': 5,
+    'sábado': 6, 'sabado': 6
+  };
+
+  // Devuelve el numero del dia del mes (1-31) que cae el dia indicado en la semana actual.
+  // ej. si hoy es martes 28, getFechaDelDia('domingo') devuelve 26
+  private getFechaDelDia(nombreDia: string): number {
+    const indice = this.INDICE_DIA[nombreDia.toLowerCase().trim()] ?? 0;
+    const hoy = new Date();
+    const domingo = new Date(hoy);
+    domingo.setDate(hoy.getDate() - hoy.getDay()); // retrocedemos al domingo de esta semana
+    domingo.setDate(domingo.getDate() + indice);   // avanzamos al dia que toca
+    return domingo.getDate();
+  }
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
@@ -141,9 +162,13 @@ export class PantallaEstilistaComponent implements OnInit {
               horas = Math.round((diff > 0 ? diff : 0) * 10) / 10;
             }
 
+            const nombreDia = (d.dia_semana || '').toLowerCase().trim();
+
             return {
               // si el dia viene con acento o capitalizado distinto, igual lo abreviamos
-              dia:      this.ABREV[d.dia_semana?.toLowerCase().trim()] ?? d.dia_semana.substring(0, 3),
+              dia:            this.ABREV[nombreDia] ?? d.dia_semana.substring(0, 3),
+              nombreCompleto: nombreDia,                       // 'domingo', 'lunes'...
+              numeroFecha:    this.getFechaDelDia(nombreDia),  // 26, 27, 28...
               horas,
               inicio,
               fin,

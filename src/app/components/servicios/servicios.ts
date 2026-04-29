@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Output, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
+import { ClientNavbarComponent } from '../client-navbar/client-navbar';
 
 interface Servicio {
   id?: number;
@@ -16,14 +17,14 @@ interface Servicio {
 @Component({
   selector: 'app-servicios',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ClientNavbarComponent],
   templateUrl: './servicios.html',
   styleUrl: './servicios.css'
 })
 export class ServiciosComponent implements OnInit {
-  @Output() backToHome = new EventEmitter<void>();
-  @Output() reservar   = new EventEmitter<string>();
-  @Output() logout     = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
+  @Output() reservar = new EventEmitter<string>();
+  @Output() logout   = new EventEmitter<void>();
 
   // URL de tu API
   private apiUrl = 'http://localhost:3000/api/servicios';
@@ -61,15 +62,13 @@ export class ServiciosComponent implements OnInit {
     });
   }
 
-  regresar() {
-    this.backToHome.emit();
-  }
+  private readonly MAPA: Record<string,string> = {
+    inicio:'home', reservar:'reservar', ver:'ver-cita',
+    servicios:'servicios', promociones:'promociones',
+    recompensas:'recompensas', resenas:'resenas', perfil:'perfil'
+  };
 
-  cerrarSesion() {
-    this.logout.emit();
-  }
-
-  onReservar(servicio: string) {
-    this.reservar.emit(servicio);
-  }
+  onNavigate(section: string) { this.navigate.emit(this.MAPA[section] ?? section); }
+  cerrarSesion()              { this.logout.emit(); }
+  onReservar(servicio: string){ this.reservar.emit(servicio); }
 }
