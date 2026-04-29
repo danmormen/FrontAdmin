@@ -182,9 +182,9 @@
     (logout)="onLogout()">
   </app-perfil-estilista>
 
-  <app-estilista-horario 
-    *ngIf="vistaActual === 'horario-estilista'" 
-    (back)="onNavigate('estilista')" 
+  <app-estilista-horario
+    *ngIf="vistaActual === 'horario-estilista'"
+    (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-estilista-horario>
 

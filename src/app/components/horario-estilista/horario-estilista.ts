@@ -1,28 +1,71 @@
 import { Component, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { EstilistaNavbarComponent } from '../estilista-navbar/estilista-navbar';
 
 @Component({
   selector: 'app-estilista-horario',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, EstilistaNavbarComponent],
   templateUrl: './horario-estilista.html',
   styleUrls: ['./horario-estilista.css']
 })
 export class EstilistaHorarioComponent implements OnInit {
-  @Output() back = new EventEmitter<void>();
-  @Output() logout = new EventEmitter<void>();
+  @Output() navigate = new EventEmitter<string>();
+  @Output() logout   = new EventEmitter<void>();
 
   private apiUrl = 'http://localhost:3000/api/horarios/mi-horario';
 
   // Inicializamos como array vacío
   horarioSemanal: any[] = [];
   mensajeError: string = '';
-  
+
   // Totales para la interfaz
   diasLaborables = 0;
   horasSemanalesTotal = 0;
   diasDescansoCount = 0;
+
+  // ── NAVEGACIÓN DE SEMANA ─────────────────────────────────────────
+  semanaOffset = 0; // 0 = semana actual, -1 = anterior, +1 = siguiente
+
+  private readonly DIAS_IDX: Record<string, number> = {
+    'domingo': 0, 'lunes': 1, 'martes': 2,
+    'miércoles': 3, 'miercoles': 3,
+    'jueves': 4, 'viernes': 5, 'sábado': 6, 'sabado': 6
+  };
+
+  /** Domingo de la semana mostrada (con offset) */
+  get inicioSemana(): Date {
+    const hoy = new Date();
+    const dia = new Date(hoy);
+    dia.setDate(hoy.getDate() - hoy.getDay() + this.semanaOffset * 7);
+    dia.setHours(0, 0, 0, 0);
+    return dia;
+  }
+
+  /** "26 - 2 Mayo de 2026" — mismo formato que admin */
+  get tituloSemana(): string {
+    const inicio = this.inicioSemana;
+    const fin    = new Date(inicio);
+    fin.setDate(inicio.getDate() + 6);
+    const mes = fin.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
+    return `${inicio.getDate()} - ${fin.getDate()} ${mes.charAt(0).toUpperCase() + mes.slice(1)}`;
+  }
+
+  get esSemanaActual(): boolean { return this.semanaOffset === 0; }
+
+  semanaAnterior(): void   { this.semanaOffset--; this.cdr.detectChanges(); }
+  semanaSiguiente(): void  { this.semanaOffset++; this.cdr.detectChanges(); }
+  volverSemanaActual(): void { this.semanaOffset = 0; this.cdr.detectChanges(); }
+
+  /** Devuelve "28 abr." para el nombre de día recibido de la API */
+  getFechaDia(diaSemana: string): string {
+    const idx = this.DIAS_IDX[diaSemana?.toLowerCase().trim()] ?? -1;
+    if (idx < 0) return '';
+    const fecha = new Date(this.inicioSemana);
+    fecha.setDate(this.inicioSemana.getDate() + idx);
+    return fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+  }
 
   constructor(
     private http: HttpClient,
@@ -93,11 +136,6 @@ export class EstilistaHorarioComponent implements OnInit {
     this.diasDescansoCount = descansos;
   }
 
-  regresar(): void {
-    this.back.emit();
-  }
-
-  cerrarSesion(): void {
-    this.logout.emit();
-  }
+  onNavigate(dest: string): void { this.navigate.emit(dest); }
+  cerrarSesion(): void { this.logout.emit(); }
 }

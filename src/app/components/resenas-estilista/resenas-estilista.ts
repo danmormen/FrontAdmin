@@ -1,5 +1,6 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { EstilistaNavbarComponent } from '../estilista-navbar/estilista-navbar';
 
 interface Resena {
   id: number;
@@ -13,7 +14,7 @@ interface Resena {
 @Component({
   selector: 'app-resenas-estilista',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, EstilistaNavbarComponent],
   templateUrl: './resenas-estilista.html',
   styleUrls: ['./resenas-estilista.css']
 })
@@ -66,6 +67,6 @@ export class ResenasEstilistaComponent {
     return Array(5).fill(0).map((_, i) => i < rating);
   }
 
-  onBack() { this.navigate.emit('estilista'); }
+  onNavigate(dest: string) { this.navigate.emit(dest); }
   onLogout() { this.logout.emit(); }
 }

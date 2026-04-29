@@ -1,55 +1,78 @@
 <div class="estilista-container">
-    <nav class="nav-header">
-      <div class="nav-content">
-        <h2 class="logo-text" (click)="onBack()">PonteGuapa - <span class="sub-text">Estilista</span></h2>
-        <div class="nav-actions">
-          <button class="nav-btn" (click)="onBack()">Volver al Panel</button>
-          <button class="nav-btn logout" (click)="onLogout()">Cerrar Sesión</button>
-        </div>
+  <app-estilista-navbar
+    [active]="'agenda'"
+    (navigate)="onNavigate($event)"
+    (logout)="onLogout()">
+  </app-estilista-navbar>
+
+  <main class="main-layout">
+    <header class="page-info">
+      <h1>Agenda de Citas</h1>
+    </header>
+
+    <!-- Navegador de día -->
+    <div class="day-navigator">
+      <button class="day-nav-btn" (click)="diaAnterior()">‹</button>
+      <div class="day-info">
+        <p class="day-label">{{ esHoy ? 'Hoy' : 'Fecha' }}</p>
+        <h3 class="day-title">{{ tituloDia }}</h3>
+        <button class="day-today-btn" *ngIf="!esHoy" (click)="volverHoy()">Volver a hoy</button>
       </div>
-    </nav>
-  
-    <main class="main-layout">
-      <header class="page-info">
-        <h1>Agenda de Citas</h1>
-      </header>
-  
-      <section class="date-card">
-        <div class="field">
-          <label>Seleccionar fecha</label>
-          <input type="date" [(ngModel)]="fechaSeleccionada" class="date-control">
+      <button class="day-nav-btn" (click)="diaSiguiente()">›</button>
+    </div>
+
+    <!-- Lista de citas -->
+    <div class="cards-stack">
+      <article class="appointment-item" *ngFor="let cita of citas">
+
+        <!-- Franja de hora -->
+        <div class="time-stripe">
+          <span class="time-value">{{ cita.hora }}</span>
+          <span class="time-label">hora</span>
         </div>
-      </section>
-  
-      <div class="cards-stack">
-        <article class="appointment-item" *ngFor="let cita of citas">
-          <div class="user-profile">
-            <div class="icon-avatar">👤</div>
-            <div class="user-info">
-              <h3>{{cita.cliente}}</h3>
-              <p class="phone-sub">{{cita.telefono}}</p>
+
+        <!-- Cuerpo principal -->
+        <div class="appt-body">
+
+          <!-- Servicio + estado -->
+          <div class="appt-top-row">
+            <span class="appt-service-name">{{ cita.servicio }}</span>
+            <span class="status-pill" [ngClass]="cita.estado.toLowerCase()">{{ cita.estado }}</span>
+          </div>
+
+          <!-- Duración -->
+          <div class="appt-meta-row">
+            <span class="meta-label">Duración</span>
+            <span class="duration-chip">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
+                <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+              </svg>
+              {{ cita.duracion }}
+            </span>
+          </div>
+
+          <div class="appt-divider"></div>
+
+          <!-- Cliente -->
+          <div class="appt-bottom-row">
+            <div class="client-block">
+              <div class="client-avatar">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="18" height="18">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                </svg>
+              </div>
+              <div>
+                <p class="client-name">{{ cita.cliente }}</p>
+                <p class="client-phone">{{ cita.telefono }}</p>
+              </div>
             </div>
           </div>
-  
-          <div class="service-meta">
-            <p><span class="label">🗓️ Servicio:</span> {{cita.servicio}}</p>
-            <p><span class="label">🕒 Hora:</span> {{cita.hora}}</p>
-            <p><span class="label">⌛ Duración:</span> {{cita.duracion}}</p>
-          </div>
-  
-          <div class="action-status">
-            <span class="status-pill" [ngClass]="cita.estado.toLowerCase()">
-              {{cita.estado}}
-            </span>
-            <button 
-              *ngIf="cita.estado !== 'Completada'"
-              class="complete-btn" 
-              (click)="marcarCompletada(cita.id)">
-              Marcar Completada
-            </button>
-            <span *ngIf="cita.estado === 'Completada'" class="finished-tag">✅ Servicio Finalizado</span>
-          </div>
-        </article>
-      </div>
-    </main>
-  </div>
+
+        </div>
+      </article>
+
+      <p class="empty-msg" *ngIf="citas.length === 0">No hay citas para este día.</p>
+    </div>
+  </main>
+</div>

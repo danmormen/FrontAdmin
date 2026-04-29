@@ -1,79 +1,152 @@
 <div class="estilista-page">
-    <nav class="estilista-navbar">
-      <div class="navbar-content">
-        <h2 class="brand-logo" (click)="navegarA('estilista')">PonteGuapa - <span class="role-tag">Estilista</span></h2>
-        <button class="nav-btn logout" (click)="cerrarSesion()">Cerrar Sesión</button>
-      </div>
-    </nav>
-  
-    <div class="main-container">
-      <header class="welcome-header">
-        <h1 class="title">Panel de Estilista</h1>
-        <p class="subtitle">
-          Bienvenida al panel de estilista de PonteGuapa. Desde aquí puedes gestionar tu agenda, consultar el detalle de tus citas, ver las reseñas de tus clientes y administrar tu perfil profesional.
-        </p>
-      </header>
-  
-      <div class="actions-grid">
-        <div class="action-card" (click)="navegarA('citas-estilista')">
-          <div class="icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
-            </svg>
-          </div>
-          <h3>Agenda de Citas</h3>
-          <p>Visualiza tus citas del día</p>
-        </div>
-  
-        <div class="action-card" (click)="navegarA('detalle-citas')">
-          <div class="icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/>
-            </svg>
-          </div>
-          <h3>Detalle de Citas</h3>
-          <p>Historial completo de citas</p>
-        </div>
-  
-        <div class="action-card" (click)="navegarA('resenas-estilista')">
-          <div class="icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
-            </svg>
-          </div>
-          <h3>Reseñas</h3>
-          <p>Consulta las reseñas de tus clientes</p>
-        </div>
-  
-        <div class="action-card" (click)="navegarA('notificaciones-estilista')">
-          <div class="icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/>
-            </svg>
-          </div>
-          <h3>Notificaciones</h3>
-          <p>Revisa tus notificaciones</p>
-        </div>
 
-        <div class="action-card" (click)="navegarA('horario-estilista')">
-            <div class="icon-box">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
-              </svg>
-            </div>
-            <h3>Mi Horario</h3>
-            <p>Consulta tus días y horas asignadas</p>
-          </div>
-  
-        <div class="action-card" (click)="navegarA('perfil-estilista')">
-          <div class="icon-box">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
-            </svg>
-          </div>
-          <h3>Perfil</h3>
-          <p>Administra tu información personal</p>
-        </div>
+  <app-estilista-navbar
+    [active]="'inicio'"
+    (navigate)="onNavigate($event)"
+    (logout)="cerrarSesion()">
+  </app-estilista-navbar>
+
+  <div class="main-container">
+
+    <!-- ── WELCOME CARD ── -->
+    <div class="welcome-card">
+      <div class="welcome-text">
+        <h1 class="welcome-title">Bienvenida, {{ nombreEstilista }}</h1>
+        <p class="welcome-sub">Tienes {{ citasHoy.length }} citas programadas para hoy</p>
+      </div>
+      <div class="welcome-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+        </svg>
       </div>
     </div>
+
+    <!-- ── TWO-COLUMN GRID ── -->
+    <div class="dashboard-grid">
+
+      <!-- LEFT: CITAS DEL DÍA -->
+      <section class="citas-section">
+        <div class="section-header">
+          <h2 class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="section-icon">
+              <rect x="4" y="5" width="16" height="15" rx="2"/>
+              <path d="M8 3v4M16 3v4M4 9h16"/>
+            </svg>
+            Mis Citas de Hoy
+          </h2>
+          <div class="count-badges">
+            <span class="badge confirmada">{{ confirmadas }} confirmadas</span>
+            <span class="badge pendiente">{{ pendientes }} pendientes</span>
+          </div>
+        </div>
+
+        <div class="citas-list">
+          <div class="cita-card" *ngFor="let cita of citasHoy">
+            <div class="cita-time">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+              </svg>
+              {{ cita.hora }}
+            </div>
+            <div class="cita-info">
+              <div class="cita-top">
+                <span class="cita-cliente">{{ cita.cliente }}</span>
+                <span class="cita-badge" [class.confirmada]="cita.estado === 'confirmada'"
+                                         [class.pendiente]="cita.estado === 'pendiente'">
+                  <svg *ngIf="cita.estado === 'confirmada'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  <svg *ngIf="cita.estado === 'pendiente'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="11" height="11">
+                    <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+                  </svg>
+                  {{ cita.estado }}
+                </span>
+              </div>
+              <p class="cita-detalle">{{ cita.servicio }} • {{ cita.duracion }}</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT: NOTIFICACIONES -->
+      <section class="notif-section">
+        <h2 class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="section-icon">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/>
+            <path d="M13.7 21a2 2 0 0 1-3.4 0"/>
+          </svg>
+          Notificaciones
+        </h2>
+
+        <div class="notif-list">
+          <div class="notif-card" *ngFor="let n of notificaciones">
+            <div class="notif-icon" [ngClass]="n.icon">
+              <!-- Calendar icon — nueva cita -->
+              <svg *ngIf="n.icon === 'cita'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 9h16"/>
+              </svg>
+              <!-- Alert icon — cancelada -->
+              <svg *ngIf="n.icon === 'cancelada'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+              </svg>
+              <!-- Trend icon — reseña -->
+              <svg *ngIf="n.icon === 'resena'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/><polyline points="16 7 22 7 22 13"/>
+              </svg>
+            </div>
+            <div class="notif-body">
+              <p class="notif-msg">{{ n.mensaje }}</p>
+              <span class="notif-hace">{{ n.hace }}</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- ── HORARIO SEMANAL ── -->
+    <section class="horario-section">
+      <div class="horario-header">
+        <h2 class="section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="section-icon">
+            <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+          </svg>
+          Mi Horario Semanal
+        </h2>
+        <span class="total-horas">Total: <strong>{{ totalHoras }}h</strong></span>
+      </div>
+
+      <div class="horario-card">
+
+        <!-- Cargando -->
+        <p class="horario-vacio" *ngIf="cargandoHorario">Cargando horario...</p>
+
+        <!-- Error real (no 404) -->
+        <p class="horario-vacio" *ngIf="errorHorario && !cargandoHorario" style="color:#b91c1c;">
+          {{ errorHorario }}
+        </p>
+
+        <!-- 404 — el backend dice que no hay horario para este usuario -->
+        <p class="horario-vacio" *ngIf="sinHorario && !cargandoHorario && !errorHorario">
+          Aún no tienes un horario asignado esta semana.
+        </p>
+
+        <!-- Horario cargado -->
+        <div class="horario-grid"
+             *ngIf="!cargandoHorario && !errorHorario && !sinHorario && horarioSemanal.length > 0">
+          <div class="dia-col" *ngFor="let d of horarioSemanal">
+            <span class="dia-nombre">{{ d.dia }}</span>
+            <span class="dia-horas" [class.descanso]="d.descanso">{{ d.descanso ? 0 : d.horas }}</span>
+            <span class="dia-label">horas</span>
+            <div class="dia-bar" [class.descanso]="d.descanso"></div>
+            <span class="dia-rango" *ngIf="!d.descanso">{{ d.inicio }} - {{ d.fin }}</span>
+            <span class="dia-rango descanso-txt" *ngIf="d.descanso">—</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </div>
+</div>

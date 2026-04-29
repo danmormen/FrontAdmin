@@ -1,60 +1,69 @@
 <div class="resenas-container">
-    <nav class="nav-header">
-      <div class="nav-content">
-        <h2 class="logo-text" (click)="onBack()">PonteGuapa - <span class="sub-text">Estilista</span></h2>
-        <div class="nav-actions">
-          <button class="nav-btn" (click)="onBack()">Volver al Panel</button>
-          <button class="nav-btn logout" (click)="onLogout()">Cerrar Sesión</button>
+  <app-estilista-navbar
+    [active]="'resenas'"
+    (navigate)="onNavigate($event)"
+    (logout)="onLogout()">
+  </app-estilista-navbar>
+
+  <main class="main-layout">
+    <header class="page-info">
+      <h1>Reseñas de Clientes</h1>
+    </header>
+
+    <section class="summary-card">
+      <div class="rating-overall">
+        <span class="big-number">{{ promedio }}</span>
+        <div class="stars-row">
+          <span class="star filled" *ngFor="let s of [1,2,3,4,5]">★</span>
+        </div>
+        <p class="total-count">{{ totalResenas }} reseñas</p>
+      </div>
+
+      <div class="rating-bars">
+        <div class="bar-row" *ngFor="let item of estrellasProgreso">
+          <span class="star-label">{{ item.nivel }}★</span>
+          <div class="progress-bg">
+            <div class="progress-fill" [style.width.%]="item.porcentaje"></div>
+          </div>
+          <span class="count-label">{{ item.cantidad }}</span>
         </div>
       </div>
-    </nav>
-  
-    <main class="main-layout">
-      <header class="page-info">
-        <h1>Reseñas de Clientes</h1>
-      </header>
-  
-      <section class="summary-card">
-        <div class="rating-overall">
-          <span class="big-number">{{promedio}}</span>
-          <div class="stars-row">
-            <span class="star filled" *ngFor="let s of [1,2,3,4,5]">★</span>
-          </div>
-          <p class="total-count">{{totalResenas}} reseñas</p>
-        </div>
-  
-        <div class="rating-bars">
-          <div class="bar-row" *ngFor="let item of estrellasProgreso">
-            <span class="star-label">{{item.nivel}}★</span>
-            <div class="progress-bg">
-              <div class="progress-fill" [style.width.%]="item.porcentaje"></div>
+    </section>
+
+    <div class="reviews-list">
+      <article class="review-item" *ngFor="let r of resenas">
+        <div class="review-header">
+          <div class="user-info">
+            <div class="avatar-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" width="20" height="20">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+              </svg>
             </div>
-            <span class="count-label">{{item.cantidad}}</span>
+            <div>
+              <h3>{{ r.cliente }}</h3>
+              <p class="service-tag">{{ r.servicio }}</p>
+            </div>
+          </div>
+          <div class="stars-rating">
+            <span class="star" [class.filled]="isFilled" *ngFor="let isFilled of getStars(r.calificacion)">★</span>
           </div>
         </div>
-      </section>
-  
-      <div class="reviews-list">
-        <article class="review-item" *ngFor="let r of resenas">
-          <div class="review-header">
-            <div class="user-info">
-              <div class="avatar-icon">👤</div>
-              <div>
-                <h3>{{r.cliente}}</h3>
-                <p class="service-tag">{{r.servicio}}</p>
-              </div>
-            </div>
-            <div class="stars-rating">
-              <span class="star" [class.filled]="isFilled" *ngFor="let isFilled of getStars(r.calificacion)">★</span>
-            </div>
-          </div>
-          
-          <p class="comment-text">{{r.comentario}}</p>
-          
-          <div class="review-footer">
-            <span class="date-icon">🗓️</span> {{r.fecha}}
-          </div>
-        </article>
-      </div>
-    </main>
-  </div>
+
+        <p class="comment-text">{{ r.comentario }}</p>
+
+        <div class="review-footer">
+          <span class="review-date-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="13" height="13">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8" y1="2" x2="8" y2="6"/>
+              <line x1="3" y1="10" x2="21" y2="10"/>
+            </svg>
+          </span>
+          {{ r.fecha }}
+        </div>
+      </article>
+    </div>
+  </main>
+</div>

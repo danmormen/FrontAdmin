@@ -1,11 +1,12 @@
 import { Component, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { EstilistaNavbarComponent } from '../estilista-navbar/estilista-navbar';
 
 @Component({
   selector: 'app-perfil-estilista',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, EstilistaNavbarComponent],
   templateUrl: './perfil-estilista.html',
   styleUrls: ['./perfil-estilista.css']
 })
@@ -39,6 +40,6 @@ export class PerfilEstilistaComponent {
     this.editandoTelefono = false;
   }
 
-  onBack() { this.navigate.emit('estilista'); }
+  onNavigate(dest: string) { this.navigate.emit(dest); }
   onLogout() { this.logout.emit(); }
 }

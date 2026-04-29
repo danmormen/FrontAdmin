@@ -1,15 +1,9 @@
 <div class="perfil-container">
-    <nav class="nav-header">
-      <div class="nav-content">
-        <h2 class="logo-text" (click)="onBack()" style="cursor: pointer;">
-          PonteGuapa - <span class="sub-text">Estilista</span>
-        </h2>
-        <div class="nav-actions">
-          <button class="nav-btn" (click)="onBack()">Volver al Panel</button>
-          <button class="nav-btn logout" (click)="onLogout()">Cerrar Sesión</button>
-        </div>
-      </div>
-    </nav>
+  <app-estilista-navbar
+    [active]="'perfil'"
+    (navigate)="onNavigate($event)"
+    (logout)="onLogout()">
+  </app-estilista-navbar>
   
     <main class="main-layout">
       <header class="page-info">
