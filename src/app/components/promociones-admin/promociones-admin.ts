@@ -16,38 +16,54 @@ export class PromocionesAdminComponent implements OnInit {
   @Output() logout   = new EventEmitter<void>();
 
   promociones: any[] = [];
+  servicios:   any[] = [];   // lista de servicios para el select del formulario
   mostrarModal = false;
-  editando = false;
+  editando  = false;
   guardando = false;
-  cargando = true; // ← Estado de carga para feedback visual
+  cargando  = true;
   promoForm: any = this.getNuevaPromo();
 
-  private apiUrl = 'http://localhost:3000/api/promociones';
+  private apiUrl      = 'http://localhost:3000/api/promociones';
+  private serviciosUrl = 'http://localhost:3000/api/servicios';
 
   constructor(
     private http: HttpClient,
-    private cdr: ChangeDetectorRef // ← Inyectamos el detector
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit() {
+    // Cargamos servicios y promociones en paralelo para no bloquear la UI.
+    this.cargarServicios();
     this.cargarPromociones();
   }
 
   private getAuthHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
-    return new HttpHeaders({
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${token}`
+    return new HttpHeaders({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` });
+  }
+
+  // ── Servicios ─────────────────────────────────────────────────────
+  // Se necesitan solo para mostrar el select "Servicio incluido" en el modal.
+  // Solo mostramos los activos porque no tiene sentido crear una promo
+  // para un servicio que ya no se ofrece.
+  cargarServicios() {
+    this.http.get<any[]>(this.serviciosUrl).subscribe({
+      next: (data) => {
+        this.servicios = data.filter(s => s.activo === 1 || s.activo === true);
+        this.cdr.detectChanges();
+      },
+      error: () => { /* si falla los servicios igual podemos gestionar promos */ }
     });
   }
 
+  // ── Promociones ───────────────────────────────────────────────────
   cargarPromociones() {
     this.cargando = true;
     this.http.get<any[]>(this.apiUrl).subscribe({
       next: (data) => {
         this.promociones = data;
-        this.cargando = false;
-        this.cdr.detectChanges(); // ← Fuerza actualización de la vista
+        this.cargando    = false;
+        this.cdr.detectChanges();
       },
       error: (err) => {
         console.error('Error al cargar promociones:', err);
@@ -57,35 +73,40 @@ export class PromocionesAdminComponent implements OnInit {
     });
   }
 
+  // ── Modelo vacío de formulario ────────────────────────────────────
+  // Refleja el nuevo esquema: servicio_id + precio_especial.
+  // El campo activo empieza en 1 (activa) al crear.
   getNuevaPromo() {
     return {
-      id: 0,
-      titulo: '',
-      descripcion: '',
-      codigo: '',
-      tipo_descuento: 'porcentaje',
-      valor_descuento: 0,
-      fecha_inicio: '',
-      fecha_fin: '',
-      limite_usos: null,
-      activo: 1
+      id:             0,
+      titulo:         '',
+      descripcion:    '',
+      servicio_id:    null as number | null,
+      precio_especial: 0,
+      fecha_inicio:   '',
+      fecha_fin:      '',
+      limite_usos:    null as number | null,
+      activo:         1
     };
   }
 
   abrirModalNuevo() {
-    this.editando = false;
-    this.guardando = false;
-    this.promoForm = this.getNuevaPromo();
+    this.editando    = false;
+    this.guardando   = false;
+    this.promoForm   = this.getNuevaPromo();
     this.mostrarModal = true;
   }
 
   abrirModalEditar(promo: any) {
-    this.editando = true;
-    this.guardando = false;
-    this.promoForm = {
+    this.editando    = true;
+    this.guardando   = false;
+    this.promoForm   = {
       ...promo,
+      // Las fechas llegan como datetime ISO; el input[type=date] necesita YYYY-MM-DD.
       fecha_inicio: promo.fecha_inicio ? promo.fecha_inicio.split('T')[0] : '',
-      fecha_fin: promo.fecha_fin ? promo.fecha_fin.split('T')[0] : ''
+      fecha_fin:    promo.fecha_fin    ? promo.fecha_fin.split('T')[0]    : '',
+      // servicio_id puede llegar como número; lo casteamos igual por seguridad.
+      servicio_id:  promo.servicio_id ?? null
     };
     this.mostrarModal = true;
   }
@@ -93,25 +114,21 @@ export class PromocionesAdminComponent implements OnInit {
   guardarPromo() {
     if (this.guardando) return;
 
+    // Validaciones básicas en el frontend para no hacer viaje al servidor innecesario.
     if (!this.promoForm.titulo?.trim()) {
       return alert('El título es obligatorio.');
     }
-    if (!this.promoForm.codigo?.trim()) {
-      return alert('El código de cupón es obligatorio.');
+    if (!this.promoForm.servicio_id) {
+      return alert('Debes seleccionar un servicio para la promoción.');
     }
-    if (!this.promoForm.valor_descuento || this.promoForm.valor_descuento <= 0) {
-      return alert('El descuento debe ser mayor a 0.');
-    }
-    if (this.promoForm.valor_descuento > 100) {
-      return alert('El descuento no puede ser mayor a 100%.');
+    if (this.promoForm.precio_especial == null || Number(this.promoForm.precio_especial) < 0) {
+      return alert('El precio especial debe ser un número mayor o igual a 0.');
     }
     if (!this.promoForm.fecha_inicio || !this.promoForm.fecha_fin) {
       return alert('Las fechas de inicio y fin son obligatorias.');
     }
-
     const inicio = new Date(this.promoForm.fecha_inicio);
     const fin    = new Date(this.promoForm.fecha_fin);
-
     if (isNaN(inicio.getTime()) || isNaN(fin.getTime())) {
       return alert('Una o ambas fechas no son válidas.');
     }
@@ -120,9 +137,12 @@ export class PromocionesAdminComponent implements OnInit {
     }
 
     const payload = {
-      ...this.promoForm,
-      codigo:          this.promoForm.codigo.trim().toUpperCase(),
-      valor_descuento: Math.round(Number(this.promoForm.valor_descuento)),
+      titulo:          this.promoForm.titulo.trim(),
+      descripcion:     this.promoForm.descripcion?.trim() || null,
+      servicio_id:     Number(this.promoForm.servicio_id),
+      precio_especial: parseFloat(this.promoForm.precio_especial),
+      fecha_inicio:    this.promoForm.fecha_inicio,
+      fecha_fin:       this.promoForm.fecha_fin,
       limite_usos:     this.promoForm.limite_usos ? Number(this.promoForm.limite_usos) : null,
       activo:          Number(this.promoForm.activo)
     };
@@ -131,7 +151,7 @@ export class PromocionesAdminComponent implements OnInit {
     this.guardando = true;
 
     if (this.editando) {
-      this.http.put(`${this.apiUrl}/${payload.id}`, payload, { headers }).subscribe({
+      this.http.put(`${this.apiUrl}/${this.promoForm.id}`, payload, { headers }).subscribe({
         next: () => {
           this.mostrarModal = false;
           this.promoForm    = this.getNuevaPromo();
@@ -167,6 +187,12 @@ export class PromocionesAdminComponent implements OnInit {
         error: (err) => alert('Error al eliminar: ' + (err.error?.error || err.message))
       });
     }
+  }
+
+  // Devuelve el texto de estado de usos: "Ilimitada" o "X/Y usos".
+  textoUsos(p: any): string {
+    if (p.limite_usos === null || p.limite_usos === undefined) return 'Ilimitada';
+    return `${p.usos_actuales ?? 0} / ${p.limite_usos} usos`;
   }
 
   onNavigate(dest: string) { this.navigate.emit(dest); }

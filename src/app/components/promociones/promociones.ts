@@ -12,7 +12,9 @@ import { ClientNavbarComponent } from '../client-navbar/client-navbar';
 })
 export class PromocionesComponent implements OnInit {
   @Output() navigate         = new EventEmitter<string>();
-  @Output() seleccionarPromo = new EventEmitter<string>();
+  // Emite el objeto completo de la promo para que app.ts pueda pasar
+  // servicio_id, precio_especial y promo.id al componente reservar.
+  @Output() seleccionarPromo = new EventEmitter<any>();
   @Output() logout           = new EventEmitter<void>();
 
   promociones: any[] = [];
@@ -53,5 +55,7 @@ export class PromocionesComponent implements OnInit {
 
   onNavigate(section: string) { this.navigate.emit(this.MAPA[section] ?? section); }
   cerrarSesion()              { this.logout.emit(); }
-  irAReservar(nombre: string) { this.seleccionarPromo.emit(nombre); }
+  // Emitimos todo el objeto promo (no solo el nombre) para que el formulario
+  // de reserva pueda preseleccionar el servicio y mostrar el precio especial.
+  irAReservar(promo: any)     { this.seleccionarPromo.emit(promo); }
 }

@@ -42,8 +42,19 @@ export class VerCitaComponent implements OnInit {
     this.cargando = true;
     this.http.get<any[]>(this.apiUrl + '/mis-citas', { headers: this.getHeaders() }).subscribe({
       next: (data) => {
-        this.listaCitas = data;
-        this.cargando   = false;
+        const hoy = new Date();
+        hoy.setHours(0, 0, 0, 0);
+
+        // Solo se muestran citas cuya fecha sea hoy o posterior.
+        // Las citas pasadas (vencidas sin atender) ya no son relevantes
+        // para el cliente en esta vista; el resumen histórico queda en el inicio.
+        this.listaCitas = data.filter(c => {
+          const soloFecha = (c.fecha as string).includes('T') ? c.fecha.split('T')[0] : c.fecha;
+          const [y, m, d] = soloFecha.split('-').map(Number);
+          return new Date(y, m - 1, d) >= hoy;
+        });
+
+        this.cargando = false;
         this.cdr.detectChanges();
       },
       error: (err) => {
@@ -56,6 +67,32 @@ export class VerCitaComponent implements OnInit {
   }
 
   onModificar(cita: any) { this.modificar.emit(cita); }
+
+  // El cliente siempre puede cancelar una cita activa.
+  puedeCancelar(cita: any): boolean {
+    return cita.estado !== 'cancelada' && cita.estado !== 'completada';
+  }
+
+  // Solo se puede modificar si faltan más de 24 horas para la cita.
+  puedeModificar(cita: any): boolean {
+    if (cita.estado === 'cancelada' || cita.estado === 'completada') return false;
+    const [fy, fm, fd] = (cita.fecha as string).substring(0, 10).split('-').map(Number);
+    const [fh, fmin]   = (cita.hora  as string).substring(0, 5).split(':').map(Number);
+    const citaMs       = new Date(fy, fm - 1, fd, fh, fmin).getTime();
+    return citaMs - Date.now() > 24 * 60 * 60 * 1000;
+  }
+
+  // Devuelve true si el cliente puede confirmar su cita (solo pendiente).
+  puedeConfirmar(cita: any): boolean {
+    return cita.estado === 'pendiente';
+  }
+
+  onConfirmar(cita: any) {
+    this.http.patch(this.apiUrl + '/' + cita.id + '/confirmar', {}, { headers: this.getHeaders() }).subscribe({
+      next: () => { cita.estado = 'confirmada'; this.cdr.detectChanges(); },
+      error: (err) => alert(err.error?.error || 'No se pudo confirmar la cita.')
+    });
+  }
 
   onCancelar(cita: any) {
     if (!confirm('¿Estás seguro de cancelar tu cita de ' + cita.servicios + '?')) return;

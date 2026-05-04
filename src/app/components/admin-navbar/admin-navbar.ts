@@ -11,7 +11,8 @@ export type AdminNavSection =
   | 'promociones'
   | 'recompensas'
   | 'reportes'
-  | 'notificaciones';
+  | 'notificaciones'
+  | 'dias-especiales';
 
 @Component({
   selector: 'app-admin-navbar',
@@ -36,7 +37,8 @@ export class AdminNavbarComponent {
     promociones:    'promociones-admin',
     recompensas:    'recompensas-admin',
     reportes:       'blog-admin',
-    notificaciones: 'notificaciones-admin'
+    notificaciones:   'notificaciones-admin',
+    'dias-especiales': 'dias-especiales-admin'
   };
 
   goTo(section: AdminNavSection): void {

@@ -4,56 +4,96 @@
     (navigate)="onNavigate($event)"
     (logout)="cerrarSesion()">
   </app-admin-navbar>
-  
-    <div class="main-content">
-      <h1 class="page-title">Gestión de Citas</h1>
-  
-      <div class="toolbar">
-        <div class="search-box">
-          <span class="search-icon">🔍</span>
-          <input type="text" [(ngModel)]="filtroBusqueda" placeholder="Buscar por cliente o servicio...">
-        </div>
-        
-        <div class="filter-group">
-          <span class="filter-icon">⏳</span>
-          <select [(ngModel)]="filtroEstado">
-            <option value="Todas">Todas</option>
-            <option value="Confirmada">Confirmadas</option>
-            <option value="Pendiente">Pendientes</option>
-            <option value="Cancelada">Canceladas</option>
-          </select>
-        </div>
+
+  <div class="main-content">
+    <h1 class="page-title">Gestión de Citas</h1>
+
+    <!-- Toolbar -->
+    <div class="toolbar">
+      <div class="search-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16" style="color:#94a3b8;flex-shrink:0">
+          <circle cx="11" cy="11" r="7"/><path d="M21 21l-4.35-4.35"/>
+        </svg>
+        <input type="text" [(ngModel)]="filtroBusqueda" placeholder="Buscar por cliente, servicio o estilista...">
       </div>
-  
-      <div class="table-container">
-        <table class="citas-table">
-          <thead>
-            <tr>
-              <th>Cliente</th>
-              <th>Servicio</th>
-              <th>Estilista</th>
-              <th>Fecha</th>
-              <th>Hora</th>
-              <th>Precio</th>
-              <th>Estado</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let cita of citasFiltradas">
-              <td class="font-bold">{{ cita.cliente }}</td>
-              <td>{{ cita.servicio }}</td>
-              <td>{{ cita.estilista }}</td>
-              <td>{{ cita.fecha }}</td>
-              <td>{{ cita.hora }}</td>
-              <td class="font-bold">{{ cita.precio }}</td>
-              <td>
-                <span class="status-badge" [ngClass]="cita.estado.toLowerCase()">
-                  {{ cita.estado }}
-                </span>
-              </td>
-            </tr>
-          </tbody>
-        </table>
+
+      <div class="filter-group">
+        <select [(ngModel)]="filtroEstado" (change)="onFiltroChange()">
+          <option value="">Todos los estados</option>
+          <option value="pendiente">Pendiente</option>
+          <option value="confirmada">Confirmada</option>
+          <option value="completada">Completada</option>
+          <option value="cancelada">Cancelada</option>
+        </select>
       </div>
+
+      <div class="filter-group">
+        <input type="date" [(ngModel)]="filtroFecha" (change)="onFiltroChange()" placeholder="Filtrar fecha">
+      </div>
+
+      <button class="btn-limpiar" (click)="limpiarFiltros()" *ngIf="filtroEstado || filtroFecha || filtroBusqueda">
+        Limpiar filtros
+      </button>
     </div>
+
+    <!-- Cargando -->
+    <div class="loading-state" *ngIf="cargando">
+      <svg style="width:22px;height:22px;animation:spin 1s linear infinite" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 12a9 9 0 1 1-6.219-8.56"/>
+      </svg>
+      Cargando citas...
+    </div>
+
+    <!-- Error -->
+    <div class="error-state" *ngIf="error">{{ error }}</div>
+
+    <!-- Tabla -->
+    <div class="table-container" *ngIf="!cargando && !error">
+      <table class="citas-table">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Cliente</th>
+            <th>Servicio</th>
+            <th>Estilista</th>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Precio</th>
+            <th>Estado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cita of citasFiltradas">
+            <td class="col-id">#{{ cita.id }}</td>
+            <td class="font-bold">{{ cita.cliente_nombre }}</td>
+            <td>{{ cita.servicios }}</td>
+            <td>{{ cita.estilista_nombre }}</td>
+            <td>{{ formatearFecha(cita.fecha) }}</td>
+            <td>{{ formatearHora(cita.hora) }}</td>
+            <td class="font-bold">Q{{ cita.precio_total | number:'1.2-2' }}</td>
+            <td>
+              <span class="status-badge" [ngClass]="cita.estado">{{ cita.estado }}</span>
+            </td>
+            <td>
+              <select class="estado-select"
+                      [value]="cita.estado"
+                      (change)="cambiarEstado(cita, $any($event.target).value)"
+                      [disabled]="cita.estado === 'cancelada' || cita.estado === 'completada'">
+                <option value="pendiente">Pendiente</option>
+                <option value="confirmada">Confirmada</option>
+                <option value="completada">Completada</option>
+                <option value="cancelada">Cancelada</option>
+              </select>
+            </td>
+          </tr>
+          <tr *ngIf="citasFiltradas.length === 0">
+            <td colspan="9" class="empty-row">No hay citas que coincidan con los filtros.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <p class="total-label" *ngIf="!cargando">{{ citasFiltradas.length }} cita(s) encontradas</p>
   </div>
+</div>

@@ -4,6 +4,24 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AdminNavbarComponent } from '../admin-navbar/admin-navbar';
 
+// ── Celda del calendario bimensual ────────────────────────────────
+interface DiaCalendario {
+  dia:          number;
+  esDelMes:     boolean;
+  esHoy:        boolean;
+  esTrabajo:    boolean;
+  inicio:       string;
+  fin:          string;
+  semanaISO:    string;   // Lunes de la semana a la que pertenece
+  tieneHorario: boolean;  // ¿existe alguna entrada para esa semana?
+}
+
+// 0=Dom … 6=Sáb → nombre en español
+const JS_A_NOMBRE: Record<number, string> = {
+  0: 'Domingo', 1: 'Lunes', 2: 'Martes', 3: 'Miércoles',
+  4: 'Jueves',  5: 'Viernes', 6: 'Sábado'
+};
+
 @Component({
   selector: 'app-horarios-administrador',
   standalone: true,
@@ -19,199 +37,426 @@ export class HorariosAdministradorComponent implements OnInit {
   private usuariosUrl = 'http://localhost:3000/api/usuarios';
 
   listaEstilistas:          any[] = [];
-  listaEmpleadosSinHorario: any[] = [];
+  listaEmpleadosSinSemana:  any[] = [];
   private todosLosUsuarios: any[] = [];
 
-  mostrarModal = false;
-  editando     = false;
-  seleccionado: any = { id: null, horarios: [] };
+  // ── Estilista activo ─────────────────────────────────────────────
+  estilistaActivo: any = null;
+  // Lookup rápido: semanaISO → { diaNombre → {inicio,fin,descanso} }
+  private weekMap = new Map<string, Map<string, any>>();
 
-  // ── Navegación de semana ──────────────────────────────────────────
-  semanaOffset = 0; // 0 = semana actual, -1 = semana anterior, etc.
-  diasDeSemana: { nombre: string; fecha: Date; etiqueta: string }[] = [];
+  // ── Calendario bimensual ──────────────────────────────────────────
+  mesBase:      Date                = new Date();
+  meses:        DiaCalendario[][][] = [];
+  titulosMeses: string[]            = [];
+  readonly CABECERA = ['Lun','Mar','Mié','Jue','Vie','Sáb','Dom'];
+  readonly HOY_STR:  string;
 
-  // Orden domingo a sábado
-  private ORDEN_DIAS = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+  // ── Modal ─────────────────────────────────────────────────────────
+  mostrarModal  = false;
+  guardando     = false;
+  modoNuevo     = false;   // true = nuevo (pide empleado), false = editar semana
 
-  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+  seleccionado: any = { id: null, nombre: '', horarios: [] };
+  semanaSelISO  = '';   // Lunes de la semana que se edita (YYYY-MM-DD)
+  semanaSelLabel = ''; // "27 abr. — 3 may."
+
+  private readonly ORDEN_DIAS = [
+    'Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sábado'
+  ];
+
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {
+    const hoy    = new Date();
+    this.HOY_STR = this.isoFecha(hoy);
+    this.mesBase = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+  }
 
   ngOnInit() {
-    this.calcularSemana();
     this.cargarHorarios();
     this.preCargarUsuarios();
   }
 
-  private getHeaders() {
+  // ── Helpers ──────────────────────────────────────────────────────
+  private isoFecha(d: Date): string {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  /** Devuelve el ISO del lunes de la semana que contiene `d` */
+  getLunes(d: Date): string {
+    const fecha = new Date(d);
+    const diaSem = fecha.getDay();
+    const offset = diaSem === 0 ? -6 : 1 - diaSem;
+    fecha.setDate(fecha.getDate() + offset);
+    return this.isoFecha(fecha);
+  }
+
+  /** "Lun 27 abr – Dom 3 may" a partir del ISO del lunes */
+  labelSemana(lunesISO: string): string {
+    if (!lunesISO) return '';
+    const lunes = new Date(lunesISO + 'T00:00:00');
+    const dom   = new Date(lunes);
+    dom.setDate(dom.getDate() + 6);
+    const fmt = (d: Date) =>
+      d.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+    return `${fmt(lunes)} – ${fmt(dom)}`;
+  }
+
+  private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
-    return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
-  // ── Calcula las fechas de la semana actual + offset ───────────────
-  calcularSemana() {
-    const hoy    = new Date();
-    // Ajusta al domingo de la semana actual
-    const dia    = hoy.getDay(); // 0=Dom, 1=Lun, etc.
-    const domingo = new Date(hoy);
-    domingo.setDate(hoy.getDate() - dia + (this.semanaOffset * 7));
-
-    this.diasDeSemana = this.ORDEN_DIAS.map((nombre, i) => {
-      const fecha = new Date(domingo);
-      fecha.setDate(domingo.getDate() + i);
-      return {
-        nombre,
-        fecha,
-        etiqueta: fecha.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' })
-      };
-    });
-
-    this.cdr.detectChanges();
-  }
-
-  // ── Título de la semana — ej. "3 - 9 Mayo 2026" ──────────────────
-  get tituloSemana(): string {
-    if (this.diasDeSemana.length === 0) return '';
-    const inicio = this.diasDeSemana[0].fecha;
-    const fin    = this.diasDeSemana[6].fecha;
-    const mes    = fin.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' });
-    return `${inicio.getDate()} - ${fin.getDate()} ${mes.charAt(0).toUpperCase() + mes.slice(1)}`;
-  }
-
-  // ── Verifica si la semana mostrada es la actual ───────────────────
-  get esSemanaActual(): boolean {
-    return this.semanaOffset === 0;
-  }
-
-  semanaAnterior() {
-    this.semanaOffset--;
-    this.calcularSemana();
-  }
-
-  semanaSiguiente() {
-    this.semanaOffset++;
-    this.calcularSemana();
-  }
-
-  volverSemanaActual() {
-    this.semanaOffset = 0;
-    this.calcularSemana();
-  }
-
-  // ── Obtiene la fecha de un día específico para mostrarlo en la card ─
-  getFechaDia(nombreDia: string): string {
-    const dia = this.diasDeSemana.find(d => d.nombre === nombreDia);
-    return dia ? dia.etiqueta : '';
-  }
-
-  // ── Carga horarios del backend ────────────────────────────────────
+  // ── Carga ─────────────────────────────────────────────────────────
   cargarHorarios() {
     this.http.get<any[]>(this.apiUrl, { headers: this.getHeaders() }).subscribe({
       next: (res) => {
-        // Reordena los horarios de cada estilista de Dom a Sáb
-        this.listaEstilistas = res.map(estilista => ({
-          ...estilista,
-          horarios: this.reordenarHorarios(estilista.horarios)
+        this.listaEstilistas = res.map(e => ({
+          ...e,
+          resumen: e.totalSemanas
+            ? `${e.totalSemanas} semana(s) asignada(s)`
+            : 'Sin semanas asignadas'
         }));
+
+        if (this.estilistaActivo) {
+          const act = this.listaEstilistas.find(e => e.id === this.estilistaActivo.id);
+          if (act) {
+            this.estilistaActivo = act;
+            this.construirWeekMap();
+            this.generarCalendario();
+          }
+        }
         this.cdr.detectChanges();
       },
-      error: (err) => console.error('Error al cargar horarios:', err)
+      error: err => console.error('Error cargando horarios:', err)
     });
-  }
-
-  // ── Reordena los días de un estilista de Dom a Sáb ───────────────
-  private reordenarHorarios(horarios: any[]): any[] {
-    return this.ORDEN_DIAS.map(dia =>
-      horarios.find(h => h.dia === dia) || { dia, inicio: null, fin: null, descanso: true }
-    );
   }
 
   preCargarUsuarios() {
     this.http.get<any[]>(this.usuariosUrl, { headers: this.getHeaders() }).subscribe({
-      next: (usuarios) => { this.todosLosUsuarios = usuarios; },
-      error: (err) => console.error('Error pre-cargando usuarios:', err)
+      next: us => { this.todosLosUsuarios = us; },
+      error: err => console.error('Error cargando usuarios:', err)
     });
   }
 
-  // ── Modal nuevo horario ───────────────────────────────────────────
-  abrirModalNuevo() {
-    this.editando = false;
-    const idsConHorario = this.listaEstilistas.map(e => e.id);
-    this.listaEmpleadosSinHorario = this.todosLosUsuarios.filter(u =>
-      (u.rol === 'estilista' || u.rol === 'admin') && !idsConHorario.includes(u.id)
-    );
+  // ── Selección de estilista ────────────────────────────────────────
+  seleccionarEstilista(est: any) {
+    this.estilistaActivo = est;
+    this.construirWeekMap();
+    this.generarCalendario();
+  }
+
+  /** Construye weekMap a partir de estilistaActivo.semanas */
+  private construirWeekMap() {
+    this.weekMap.clear();
+    for (const semana of (this.estilistaActivo?.semanas || [])) {
+      const diaMap = new Map<string, any>();
+      for (const h of semana.horarios) diaMap.set(h.dia, h);
+      this.weekMap.set(semana.semana_inicio, diaMap);
+    }
+  }
+
+  // ── Generar calendario 2 meses ────────────────────────────────────
+  generarCalendario() {
+    this.meses        = [];
+    this.titulosMeses = [];
+    const hoyStr      = this.HOY_STR;
+
+    for (let m = 0; m < 2; m++) {
+      const primerDia = new Date(this.mesBase.getFullYear(), this.mesBase.getMonth() + m, 1);
+      this.titulosMeses.push(
+        primerDia.toLocaleDateString('es-ES', { month: 'long', year: 'numeric' })
+          .replace(/^\w/, c => c.toUpperCase())
+      );
+
+      const diaSem = primerDia.getDay();
+      const offset = diaSem === 0 ? 6 : diaSem - 1;
+      const inicio = new Date(primerDia);
+      inicio.setDate(inicio.getDate() - offset);
+
+      const semanas: DiaCalendario[][] = [];
+      for (let s = 0; s < 6; s++) {
+        const semana: DiaCalendario[] = [];
+        for (let d = 0; d < 7; d++) {
+          const fecha     = new Date(inicio);
+          fecha.setDate(inicio.getDate() + s * 7 + d);
+          const esDelMes  = fecha.getMonth() === primerDia.getMonth();
+          const nombre    = JS_A_NOMBRE[fecha.getDay()];
+          const semISO    = this.getLunes(fecha);
+          const diaMap    = this.weekMap.get(semISO);
+          const horario   = diaMap?.get(nombre);
+          const esTrabajo = esDelMes && !!horario && !horario.descanso;
+
+          semana.push({
+            dia:          fecha.getDate(),
+            esDelMes,
+            esHoy:        this.isoFecha(fecha) === hoyStr,
+            esTrabajo,
+            inicio:       horario?.inicio?.substring(0,5) || '',
+            fin:          horario?.fin?.substring(0,5)    || '',
+            semanaISO:    semISO,
+            tieneHorario: esDelMes && !!diaMap
+          });
+        }
+        semanas.push(semana);
+      }
+      this.meses.push(semanas);
+    }
+    this.cdr.detectChanges();
+  }
+
+  get tituloPeriodo(): string { return this.titulosMeses.join(' — '); }
+
+  mesAnterior()  {
+    this.mesBase = new Date(this.mesBase.getFullYear(), this.mesBase.getMonth() - 2, 1);
+    this.generarCalendario();
+  }
+  mesSiguiente() {
+    this.mesBase = new Date(this.mesBase.getFullYear(), this.mesBase.getMonth() + 2, 1);
+    this.generarCalendario();
+  }
+  volverMesActual() {
+    const hoy = new Date();
+    this.mesBase = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+    this.generarCalendario();
+  }
+  get esMesActual(): boolean {
+    const hoy = new Date();
+    return this.mesBase.getFullYear() === hoy.getFullYear() &&
+           this.mesBase.getMonth()    === hoy.getMonth();
+  }
+
+  // ── Modal: click en semana del calendario ─────────────────────────
+  editarSemana(semanaISO: string, event?: MouseEvent) {
+    event?.stopPropagation();
+    if (!this.estilistaActivo) return;
+
+    this.modoNuevo      = false;
+    this.semanaSelISO   = semanaISO;
+    this.semanaSelLabel = this.labelSemana(semanaISO);
+
+    const diaMap = this.weekMap.get(semanaISO);
     this.seleccionado = {
-      id: null,
-      nombre: '',
+      id:      this.estilistaActivo.id,
+      nombre:  this.estilistaActivo.nombre,
+      horarios: this.ORDEN_DIAS.map(dia => {
+        const h = diaMap?.get(dia);
+        return {
+          dia,
+          inicio:   h ? (h.inicio || null) : (dia === 'Domingo' ? null : '09:00'),
+          fin:      h ? (h.fin    || null) : (dia === 'Domingo' ? null : '18:00'),
+          descanso: h ? h.descanso         : (dia === 'Domingo')
+        };
+      })
+    };
+    this.mostrarModal = true;
+  }
+
+  // ── Modal: nueva semana desde el botón Asignar ────────────────────
+  abrirModalNuevo() {
+    this.modoNuevo    = true;
+    this.listaEmpleadosSinSemana = this.todosLosUsuarios.filter(
+      u => u.rol === 'estilista' || u.rol === 'admin'
+    );
+    this.semanaSelISO   = this.getLunes(new Date());
+    this.semanaSelLabel = this.labelSemana(this.semanaSelISO);
+    this.seleccionado = { id: null, nombre: '', horarios: this.crearHorarioVacio() };
+    this.mostrarModal = true;
+  }
+
+  /** Nueva semana para el estilista activo (+ button en la card) */
+  nuevaSemanaParaActivo() {
+    if (!this.estilistaActivo) return;
+    this.modoNuevo      = false;
+    this.semanaSelISO   = this.getLunes(new Date());
+    this.semanaSelLabel = this.labelSemana(this.semanaSelISO);
+    this.seleccionado   = {
+      id:      this.estilistaActivo.id,
+      nombre:  this.estilistaActivo.nombre,
       horarios: this.crearHorarioVacio()
     };
     this.mostrarModal = true;
   }
 
-  editarHorario(estilista: any) {
-    this.editando    = true;
-    this.seleccionado = JSON.parse(JSON.stringify(estilista));
-    this.mostrarModal = true;
+  /** Seleccionar empleado en el modal modo-nuevo (reemplaza el dropdown) */
+  seleccionarEmpleadoModal(emp: any) {
+    // Construir weekMap para este empleado para precargar su semana actual si existe
+    const empCompleto = this.listaEstilistas.find(e => e.id === emp.id) || emp;
+    const tempWeekMap = new Map<string, Map<string, any>>();
+    for (const semana of (empCompleto?.semanas || [])) {
+      const dm = new Map<string, any>();
+      for (const h of semana.horarios) dm.set(h.dia, h);
+      tempWeekMap.set(semana.semana_inicio, dm);
+    }
+    const diaMap = tempWeekMap.get(this.semanaSelISO);
+    this.seleccionado = {
+      id:      emp.id,
+      nombre:  emp.nombre,
+      horarios: this.ORDEN_DIAS.map(dia => {
+        const h = diaMap?.get(dia);
+        return {
+          dia,
+          inicio:   h ? (h.inicio || null) : (dia === 'Domingo' ? null : '09:00'),
+          fin:      h ? (h.fin    || null) : (dia === 'Domingo' ? null : '18:00'),
+          descanso: h ? h.descanso         : (dia === 'Domingo')
+        };
+      })
+    };
+    this.cdr.detectChanges();
   }
 
   cerrarModal() {
     this.mostrarModal = false;
+    this.guardando    = false;
     this.seleccionado = { id: null, horarios: [] };
-    this.editando     = false;
   }
 
-  // ── Guarda el horario en el backend ──────────────────────────────
   guardarCambios() {
     if (!this.seleccionado.id || this.seleccionado.id === 'null') {
-      alert('Debes seleccionar un empleado de la lista.');
-      return;
+      alert('Selecciona un empleado.'); return;
     }
+    if (!this.semanaSelISO) { alert('Selecciona una semana.'); return; }
 
+    this.guardando = true;
     const payload = {
-      empleado_id: Number(this.seleccionado.id),
-      horarios:    this.seleccionado.horarios
+      empleado_id:   Number(this.seleccionado.id),
+      semana_inicio: this.semanaSelISO,
+      horarios:      this.seleccionado.horarios
     };
-
     this.http.post(`${this.apiUrl}/save`, payload, { headers: this.getHeaders() }).subscribe({
-      next: () => {
-        alert(this.editando ? 'Horario actualizado' : 'Horario creado con éxito');
-        this.cerrarModal();
-        this.cargarHorarios();
-        this.preCargarUsuarios();
-      },
-      error: (err) => alert('Error al guardar: ' + (err.error?.details || 'Error de servidor'))
+      next: () => { this.guardando = false; this.cerrarModal(); this.cargarHorarios(); },
+      error: err => {
+        this.guardando = false;
+        let msg = '';
+        if (err.status === 0) {
+          msg = 'No se pudo conectar al servidor. ¿Está corriendo el backend?';
+        } else if (err.status === 403) {
+          msg = 'Sin permisos de administrador.';
+        } else if (err.status === 401) {
+          msg = 'Sesión expirada. Vuelve a iniciar sesión.';
+        } else {
+          msg = err.error?.details || err.error?.message || err.error?.error || `Error ${err.status}`;
+          if (msg.includes("doesn't exist") || msg.includes('no existe')) {
+            msg += '\n\nEjecuta la migración SQL:\nmysql -u root -p ponte_guapagt < backend/src/migrations/esquema-semanal.sql';
+          }
+        }
+        alert('Error al guardar horario:\n\n' + msg);
+      }
     });
   }
 
-  eliminarHorario(empleadoId: number) {
-    if (confirm('¿Deseas eliminar el horario? El empleado volverá a estar disponible.')) {
-      this.http.delete(`${this.apiUrl}/${empleadoId}`, { headers: this.getHeaders() }).subscribe({
+  eliminarSemana(semanaISO: string, event?: MouseEvent) {
+    event?.stopPropagation();
+    if (!confirm(`¿Eliminar horario de la semana ${this.labelSemana(semanaISO)}?`)) return;
+    this.http.delete(
+      `${this.apiUrl}/${this.estilistaActivo.id}/${semanaISO}`,
+      { headers: this.getHeaders() }
+    ).subscribe({
+      next: () => this.cargarHorarios(),
+      error: () => alert('No se pudo eliminar la semana.')
+    });
+  }
+
+  /** Abre el modal de edición para un estilista específico desde su tarjeta */
+  abrirModalParaEstilista(est: any, event?: MouseEvent) {
+    event?.stopPropagation();
+    // Asegurarse de que el weekMap esté construido para este estilista
+    if (this.estilistaActivo?.id !== est.id) {
+      this.estilistaActivo = est;
+      this.construirWeekMap();
+      this.generarCalendario();
+    }
+    this.modoNuevo      = false;
+    this.semanaSelISO   = this.getLunes(new Date());
+    this.semanaSelLabel = this.labelSemana(this.semanaSelISO);
+    const diaMap = this.weekMap.get(this.semanaSelISO);
+    this.seleccionado = {
+      id:      est.id,
+      nombre:  est.nombre,
+      horarios: this.ORDEN_DIAS.map(dia => {
+        const h = diaMap?.get(dia);
+        return {
+          dia,
+          inicio:   h ? (h.inicio || null) : (dia === 'Domingo' ? null : '09:00'),
+          fin:      h ? (h.fin    || null) : (dia === 'Domingo' ? null : '18:00'),
+          descanso: h ? h.descanso         : (dia === 'Domingo')
+        };
+      })
+    };
+    this.mostrarModal = true;
+  }
+
+  eliminarTodoEstilista(est: any, event?: MouseEvent) {
+    event?.stopPropagation();
+    if (!confirm(`¿Eliminar TODOS los horarios de ${est.nombre}?`)) return;
+    this.http.delete(`${this.apiUrl}/${est.id}`, { headers: this.getHeaders() })
+      .subscribe({
         next: () => {
-          alert('Horario eliminado');
+          if (this.estilistaActivo?.id === est.id) {
+            this.estilistaActivo = null;
+            this.meses = []; this.titulosMeses = []; this.weekMap.clear();
+          }
           this.cargarHorarios();
-          this.preCargarUsuarios();
         },
         error: () => alert('No se pudo eliminar.')
       });
+  }
+
+  // ── Navegación de semana en el modal ─────────────────────────────
+  semanaAnteriorModal() {
+    const d = new Date(this.semanaSelISO + 'T00:00:00');
+    d.setDate(d.getDate() - 7);
+    this.semanaSelISO   = this.isoFecha(d);
+    this.semanaSelLabel = this.labelSemana(this.semanaSelISO);
+    // Recargar datos si esa semana ya tiene horario
+    const diaMap = this.weekMap.get(this.semanaSelISO);
+    if (diaMap && this.seleccionado?.id) {
+      this.seleccionado.horarios = this.ORDEN_DIAS.map(dia => {
+        const h = diaMap.get(dia);
+        return {
+          dia,
+          inicio:   h ? (h.inicio || null) : (dia === 'Domingo' ? null : '09:00'),
+          fin:      h ? (h.fin    || null) : (dia === 'Domingo' ? null : '18:00'),
+          descanso: h ? h.descanso         : (dia === 'Domingo')
+        };
+      });
+    } else {
+      this.seleccionado.horarios = this.crearHorarioVacio();
     }
   }
 
-  // ── Crea horario vacío de Dom a Sáb ──────────────────────────────
+  semanaSiguienteModal() {
+    const d = new Date(this.semanaSelISO + 'T00:00:00');
+    d.setDate(d.getDate() + 7);
+    this.semanaSelISO   = this.isoFecha(d);
+    this.semanaSelLabel = this.labelSemana(this.semanaSelISO);
+    const diaMap = this.weekMap.get(this.semanaSelISO);
+    if (diaMap && this.seleccionado?.id) {
+      this.seleccionado.horarios = this.ORDEN_DIAS.map(dia => {
+        const h = diaMap.get(dia);
+        return {
+          dia,
+          inicio:   h ? (h.inicio || null) : (dia === 'Domingo' ? null : '09:00'),
+          fin:      h ? (h.fin    || null) : (dia === 'Domingo' ? null : '18:00'),
+          descanso: h ? h.descanso         : (dia === 'Domingo')
+        };
+      });
+    } else {
+      this.seleccionado.horarios = this.crearHorarioVacio();
+    }
+  }
+
   private crearHorarioVacio() {
     return this.ORDEN_DIAS.map(d => ({
       dia:      d,
       inicio:   d === 'Domingo' ? null : '09:00',
       fin:      d === 'Domingo' ? null : '18:00',
-      descanso: d === 'Domingo' // Domingo en descanso por defecto
+      descanso: d === 'Domingo'
     }));
   }
 
   toggleDescanso(dia: any) {
-    if (dia.descanso) {
-      dia.inicio = null;
-      dia.fin    = null;
-    } else {
-      dia.inicio = '09:00';
-      dia.fin    = '18:00';
-    }
+    if (dia.descanso) { dia.inicio = null; dia.fin = null; }
+    else              { dia.inicio = '09:00'; dia.fin = '18:00'; }
   }
 
   onNavigate(dest: string) { this.navigate.emit(dest); }

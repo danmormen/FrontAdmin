@@ -11,17 +11,29 @@ import { HttpClient } from '@angular/common/http';
   styleUrls: ['./login.css']
 })
 export class LoginComponent {
-  @Output() onLogin                   = new EventEmitter<void>();
-  @Output() onAdminLogin              = new EventEmitter<void>();
-  @Output() onEstilistaLogin          = new EventEmitter<void>();
-  @Output() onRequirePasswordChange   = new EventEmitter<void>(); // ← Usado por estilistas Y clientes
-  @Output() onNavigate                = new EventEmitter<string>();
-  @Output() onOlvidePassword          = new EventEmitter<void>();
+
+  // ══════════════════════════════════════════════════════════════════
+  // Eventos de salida — cada rol tiene su propio @Output porque app.html
+  // necesita reaccionar diferente según quién entró. Si hubiera un solo
+  // evento genérico 'loginExitoso', app.ts tendría que leer localStorage
+  // para saber a dónde navegar, lo cual es más frágil.
+  //
+  // onAdminLogin          → va directo al panel de administrador
+  // onEstilistaLogin      → va al panel del estilista
+  // onLogin               → va al home del cliente
+  // onRequirePasswordChange → va a cambio obligatorio (cualquier rol)
+  // ══════════════════════════════════════════════════════════════════
+  @Output() onLogin                 = new EventEmitter<void>();
+  @Output() onAdminLogin            = new EventEmitter<void>();
+  @Output() onEstilistaLogin        = new EventEmitter<void>();
+  @Output() onRequirePasswordChange = new EventEmitter<void>();
+  @Output() onNavigate              = new EventEmitter<string>();
+  @Output() onOlvidePassword        = new EventEmitter<void>();
 
   email       = '';
   pass        = '';
   cargando    = false;
-  mostrarPass = false; // toggle del ojito en el input de password
+  mostrarPass = false;
 
   constructor(private http: HttpClient) {}
 
@@ -33,36 +45,45 @@ export class LoginComponent {
 
     this.cargando = true;
 
-    const credenciales = { email: this.email, password: this.pass };
-
-    this.http.post('http://localhost:3000/api/auth/login', credenciales).subscribe({
+    this.http.post('http://localhost:3000/api/auth/login', {
+      email:    this.email,
+      password: this.pass
+    }).subscribe({
       next: (respuesta: any) => {
         this.cargando = false;
-        console.log('Login exitoso:', respuesta);
 
-        // Guardamos token para futuras peticiones
+        // El token se guarda en localStorage para adjuntarlo a todas
+        // las peticiones protegidas que haga el usuario durante su sesión.
         localStorage.setItem('token', respuesta.token);
 
-        // Guardamos datos del usuario incluyendo requiere_cambio
+        // Se guarda el objeto usuario con los datos mínimos necesarios:
+        // id (para rutas como /api/usuarios/:id), nombre (para el navbar),
+        // rol (para redireccionar después del cambio de contraseña)
+        // y requiere_cambio (para forzar el cambio si es necesario).
         localStorage.setItem('usuario', JSON.stringify({
           id:              respuesta.id,
           nombre:          respuesta.nombre,
           rol:             respuesta.rol,
-          requiere_cambio: respuesta.requiere_cambio // ← Guardamos para usarlo en cambio-contrasena
+          requiere_cambio: respuesta.requiere_cambio
         }));
 
-        const rol             = respuesta.rol;
-        const requiereCambio  = respuesta.requiere_cambio === 1 || respuesta.requiere_cambio === true;
+        const rol            = respuesta.rol;
+        const requiereCambio = respuesta.requiere_cambio === 1 || respuesta.requiere_cambio === true;
 
-        // ── Redirección según rol y estado de contraseña ──────────
+        // ── Lógica de roles y redirección ─────────────────────────
+        // El orden importa: primero se revisa requiere_cambio porque
+        // aplica a cualquier rol. Si el estilista nuevo o el cliente
+        // con contraseña temporal entra, lo primero que tiene que
+        // hacer es cambiar su clave, sin importar su rol.
         if (rol === 'admin') {
-          // El admin nunca necesita cambiar contraseña desde aquí
+          // El admin no pasa por flujo de cambio de contraseña desde aquí.
+          // Si un admin necesita cambiarla, el otro admin se la resetea manualmente.
           this.onAdminLogin.emit();
 
         } else if (rol === 'estilista') {
           if (requiereCambio) {
-            // Estilista nuevo con contraseña asignada por el admin
-            console.log('Estilista nuevo: redirigiendo a cambio de contraseña');
+            // Estilista que entra por primera vez con la contraseña
+            // provisional que le asignó el admin al crear su cuenta.
             this.onRequirePasswordChange.emit();
           } else {
             this.onEstilistaLogin.emit();
@@ -71,8 +92,7 @@ export class LoginComponent {
         } else {
           // Cliente
           if (requiereCambio) {
-            // Cliente que usó contraseña temporal de recuperación
-            console.log('Cliente con contraseña temporal: redirigiendo a cambio de contraseña');
+            // Cliente que recuperó su contraseña y está usando la temporal.
             this.onRequirePasswordChange.emit();
           } else {
             this.onLogin.emit();
@@ -81,10 +101,13 @@ export class LoginComponent {
       },
       error: (errorRes) => {
         this.cargando = false;
-        console.error('Error en el login:', errorRes);
         if (errorRes.status === 401) {
+          // 401 significa que el backend encontró el email pero la contraseña no coincide,
+          // o que la cuenta está desactivada. El mensaje viene del backend.
           alert(errorRes.error?.message || 'Correo o contraseña incorrectos.');
         } else {
+          // Cualquier otro error (500, sin conexión, etc.) probablemente
+          // significa que el servidor no está corriendo.
           alert('Error de conexión. Asegúrate de que el servidor esté encendido.');
         }
       }

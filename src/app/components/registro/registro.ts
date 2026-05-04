@@ -18,10 +18,12 @@ export class RegistroComponent {
   email:           string  = '';
   pass:            string  = '';
   fechaNacimiento: string  = '';
-  mostrarPass:     boolean = false; // toggle del ojito
+  mostrarPass:     boolean = false;
 
   constructor(private http: HttpClient) {}
 
+  // Bloquea cualquier tecla que no sea un dígito (0-9) en el campo de fecha.
+  // charCode < 31 son teclas de control (Enter, Backspace, etc.) que sí dejamos pasar.
   validarSoloNumeros(event: KeyboardEvent) {
     const charCode = event.which ? event.which : event.keyCode;
     if (charCode > 31 && (charCode < 48 || charCode > 57)) {
@@ -31,17 +33,20 @@ export class RegistroComponent {
     return true;
   }
 
- 
+  // Formatea la fecha automáticamente mientras el usuario escribe.
+  // El usuario teclea solo números; el componente inserta las barras.
+  // Ejemplo: "01022000" → "01/02/2000"
+  // Se usa replace(/\D/g,'') primero para limpiar si el usuario pegó texto con barras.
   formatearFecha(event: any) {
-    let input = event.target.value.replace(/\D/g, ''); 
+    let input = event.target.value.replace(/\D/g, '');
     let formatted = '';
 
     if (input.length > 0) {
-      formatted = input.substring(0, 2); // Día
+      formatted = input.substring(0, 2);
       if (input.length > 2) {
-        formatted += '/' + input.substring(2, 4); // Mes
+        formatted += '/' + input.substring(2, 4);
         if (input.length > 4) {
-          formatted += '/' + input.substring(4, 8); // Año
+          formatted += '/' + input.substring(4, 8);
         }
       }
     }
@@ -49,7 +54,7 @@ export class RegistroComponent {
   }
 
   registrar() {
-    // Validar que la fecha esté completa
+    // La fecha debe tener exactamente 10 caracteres (DD/MM/AAAA)
     if (this.fechaNacimiento.length < 10) {
       alert('Por favor, ingresa la fecha completa (DD/MM/AAAA)');
       return;
@@ -57,11 +62,12 @@ export class RegistroComponent {
 
     const [dia, mes, anio] = this.fechaNacimiento.split('/').map(Number);
 
-    // Validaciones de lógica de calendario
     if (dia < 1 || dia > 31) { alert('Día inválido (01-31)'); return; }
     if (mes < 1 || mes > 12) { alert('Mes inválido (01-12)'); return; }
 
-    // Validación de mayoría de edad 
+    // Validación de mayoría de edad: año > 2008 implica menos de 18 años (aprox.).
+    // Es una validación rápida por año, no exacta por día/mes — el backend puede
+    // hacer la validación precisa si se necesita.
     if (anio > 2008) {
       alert('Debes ser mayor de 18 años para registrarte.');
       return;
@@ -71,36 +77,33 @@ export class RegistroComponent {
       return;
     }
 
-    // Validar campos vacíos
     if (this.nombre && this.apellido && this.email && this.pass) {
-      
-      // 3. Preparamos el payload mapeando tus variables locales a lo que espera el backend
+
+      // La variable local se llama 'pass' para abreviar, pero el backend espera 'password'.
       const datosRegistro = {
-        nombre: this.nombre,
-        apellido: this.apellido,
-        email: this.email,
-        password: this.pass, // ¡Atención aquí! Mapeamos 'pass' a 'password'
+        nombre:          this.nombre,
+        apellido:        this.apellido,
+        email:           this.email,
+        password:        this.pass,
         fechaNacimiento: this.fechaNacimiento
       };
 
-      // 4. Enviamos la petición POST al backend
       this.http.post('http://localhost:3000/api/auth/registro', datosRegistro)
         .subscribe({
           next: (respuesta: any) => {
-            console.log('Registro exitoso desde Angular:', respuesta);
-            
-            // Opcional: Guardar el token si decides loguear al usuario inmediatamente
-            if(respuesta.token) {
+            // El backend devuelve un token, pero por ahora no iniciamos sesión
+            // automáticamente: mandamos al login para que el usuario entre con sus datos.
+            // Si en el futuro se quisiera auto-login, solo habría que guardar el token
+            // y emitir el evento de login en lugar de redirigir al login.
+            if (respuesta.token) {
               localStorage.setItem('token', respuesta.token);
             }
-
             alert('¡Cuenta creada con éxito!');
             this.onNavigate.emit('login');
           },
           error: (errorRes) => {
-            console.error('Error de registro:', errorRes);
-            
-            // Manejamos los mensajes de error que vengan de express-validator o la BD
+            // express-validator devuelve los errores en errorRes.error.errores (array).
+            // Los errores de negocio del backend (email duplicado, etc.) vienen en .message.
             if (errorRes.error && errorRes.error.errores) {
               const mensajes = errorRes.error.errores.map((e: any) => e.msg).join('\n');
               alert('Revisa tus datos:\n' + mensajes);

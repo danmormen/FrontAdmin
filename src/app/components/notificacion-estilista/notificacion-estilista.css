@@ -197,3 +197,45 @@
   transition: color 0.2s;
 }
 .btn-close:hover { color: #6B7560; }
+
+/* Header con acciones masivas */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.header-left { display: flex; align-items: center; gap: 12px; }
+.header-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+.btn-accion {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 14px; border-radius: 8px; border: 1px solid;
+  font-size: 0.82rem; font-weight: 600; cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-leer {
+  background: rgba(52,211,153,0.12); color: #065F46;
+  border-color: rgba(52,211,153,0.3);
+}
+.btn-leer:hover { background: rgba(52,211,153,0.22); }
+.btn-borrar {
+  background: rgba(239,68,68,0.08); color: #B91C1C;
+  border-color: rgba(239,68,68,0.2);
+}
+.btn-borrar:hover { background: rgba(239,68,68,0.16); }
+
+.loading-msg {
+  display: flex; align-items: center; gap: 10px;
+  padding: 24px; color: #94a3b8; font-size: 0.9rem;
+}
+.error-msg {
+  padding: 16px; color: #dc2626;
+  background: rgba(239,68,68,0.08); border-radius: 10px; margin: 16px 0;
+}
+.empty-state {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 60px 24px; color: #94a3b8; text-align: center;
+}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

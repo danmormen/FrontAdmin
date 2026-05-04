@@ -5,16 +5,23 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AdminNavbarComponent } from '../admin-navbar/admin-navbar';
 
 interface Empleado {
-  id: number;
+  id:                   number;
+  nombre:               string;
+  apellido?:            string;
+  email:                string;
+  password?:            string;
+  telefono:             string;
+  rol:                  'admin' | 'estilista' | 'cliente';
+  especialidades_ids?:  number[];
+  especialidades_nombres?: string[];
+  fecha_nacimiento:     string;
+  activo:               boolean | number;
+}
+
+interface Especialidad {
+  id:     number;
   nombre: string;
-  apellido?: string; 
-  email: string;
-  password?: string;
-  telefono: string;
-  rol: 'admin' | 'estilista' | 'cliente';
-  especialidad: string;
-  fecha_nacimiento: string;
-  activo: boolean | number;
+  activa: number;
 }
 
 @Component({
@@ -28,140 +35,140 @@ export class EmpleadosAdminComponent implements OnInit {
   @Output() navigate = new EventEmitter<string>();
   @Output() logout   = new EventEmitter<void>();
 
-  private apiUrl = 'http://localhost:3000/api/usuarios'; 
-  empleados: Empleado[] = [];
-  
+  private apiUrl          = 'http://localhost:3000/api/usuarios';
+  private apiEspecialidades = 'http://localhost:3000/api/especialidades';
+
+  empleados:   Empleado[]    = [];
+  especialidades: Especialidad[] = [];
+
   mostrarModal = false;
-  editando = false;
+  editando     = false;
   empleadoForm: Empleado = this.getNuevoEmpleado();
 
+  // IDs de especialidades seleccionadas en el formulario actual
+  especialidadesSeleccionadas: number[] = [];
+
   mostrarModalPassword = false;
-  idUsuarioPassword: number = 0;
-  empleadoPasswordActual: string = '';
+  idUsuarioPassword:        number = 0;
+  empleadoPasswordActual:   string = '';
   nuevaPassword = '';
 
-  constructor(
-    private http: HttpClient,
-    private cdr: ChangeDetectorRef 
-  ) {}
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.cargarEmpleados();
+    this.cargarEspecialidades();
   }
 
-  getHeaders() {
+  getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
   getNuevoEmpleado(): Empleado {
-    return { 
-      id: 0, 
-      nombre: '', 
-      apellido: '', 
-      email: '', 
-      password: '', 
-      telefono: '+502 ', 
-      rol: 'estilista', 
-      especialidad: '', 
-      fecha_nacimiento: '', 
-      activo: 1 
+    return {
+      id: 0, nombre: '', apellido: '', email: '', password: '',
+      telefono: '+502 ', rol: 'estilista',
+      fecha_nacimiento: '', activo: 1
     };
   }
 
-  // --- LÓGICA DE MÁSCARA PARA TELÉFONO ---
+  // ── Teléfono con máscara ────────────────────────────────────────
   onTelefonoInput(event: any) {
-    let numeros = event.target.value.replace(/\D/g, ''); 
+    let numeros = event.target.value.replace(/\D/g, '');
     if (numeros.length > 8) numeros = numeros.substring(0, 8);
-
-    let formateado = '';
-    if (numeros.length > 4) {
-      formateado = `${numeros.substring(0, 4)}-${numeros.substring(4)}`;
-    } else {
-      formateado = numeros;
-    }
-
+    let formateado = numeros.length > 4
+      ? `${numeros.substring(0, 4)}-${numeros.substring(4)}`
+      : numeros;
     this.empleadoForm.telefono = `+502 ${formateado}`;
     event.target.value = formateado;
   }
 
-  // --- CARGA DE DATOS ---
+  // ── Especialidades ──────────────────────────────────────────────
+  cargarEspecialidades() {
+    this.http.get<Especialidad[]>(this.apiEspecialidades, { headers: this.getHeaders() })
+      .subscribe({
+        next: (res) => { this.especialidades = res.filter(e => e.activa); this.cdr.detectChanges(); },
+        error: (err) => console.error('Error al cargar especialidades', err)
+      });
+  }
+
+  toggleEspecialidad(id: number) {
+    const idx = this.especialidadesSeleccionadas.indexOf(id);
+    if (idx >= 0) {
+      this.especialidadesSeleccionadas.splice(idx, 1);
+    } else {
+      this.especialidadesSeleccionadas.push(id);
+    }
+  }
+
+  estaSeleccionada(id: number): boolean {
+    return this.especialidadesSeleccionadas.includes(id);
+  }
+
+  // ── Carga de empleados ──────────────────────────────────────────
   cargarEmpleados() {
     this.http.get<Empleado[]>(this.apiUrl, { headers: this.getHeaders() })
       .subscribe({
-        next: (res) => {
-          this.empleados = res;
-          this.cdr.detectChanges(); 
-        },
-        error: (err) => {
-          console.error('Error al cargar:', err);
-          alert('Error al obtener la lista de empleados.');
-        }
+        next: (res) => { this.empleados = res; this.cdr.detectChanges(); },
+        error: () => alert('Error al obtener la lista de empleados.')
       });
   }
 
   abrirModalNuevo() {
-    this.editando = false;
-    this.empleadoForm = this.getNuevoEmpleado();
-    this.mostrarModal = true;
+    this.editando                 = false;
+    this.empleadoForm             = this.getNuevoEmpleado();
+    this.especialidadesSeleccionadas = [];
+    this.mostrarModal             = true;
   }
 
-  // --- EDICIÓN (CON CORRECCIÓN DE FECHA Y NOMBRE) ---
   abrirModalEditar(emp: Empleado) {
     this.editando = true;
-    
-    // Clonamos el objeto para no ensuciar la lista de la tabla mientras editamos
     const tempEmp = { ...emp };
 
-    // 1. Limpiar la Fecha (CRÍTICO para el input type="date")
-    // Cortamos "YYYY-MM-DDThh:mm..." a solo "YYYY-MM-DD"
     if (tempEmp.fecha_nacimiento) {
       tempEmp.fecha_nacimiento = tempEmp.fecha_nacimiento.substring(0, 10);
     }
 
-    // 2. Separar Nombre y Apellido
+    // Separar nombre y apellido
     const nombreCompleto = (tempEmp.nombre || '').trim();
-    const indexEspacio = nombreCompleto.indexOf(' ');
-
-    if (indexEspacio !== -1) {
-      tempEmp.nombre = nombreCompleto.substring(0, indexEspacio);
-      tempEmp.apellido = nombreCompleto.substring(indexEspacio + 1);
+    const idx = nombreCompleto.indexOf(' ');
+    if (idx !== -1) {
+      tempEmp.nombre   = nombreCompleto.substring(0, idx);
+      tempEmp.apellido = nombreCompleto.substring(idx + 1);
     } else {
-      tempEmp.apellido = ''; 
+      tempEmp.apellido = '';
     }
 
-    this.empleadoForm = tempEmp;
-    this.mostrarModal = true;
+    this.empleadoForm             = tempEmp;
+    this.especialidadesSeleccionadas = [...(emp.especialidades_ids || [])];
+    this.mostrarModal             = true;
   }
 
   guardarEmpleado() {
     if (!this.empleadoForm.nombre || !this.empleadoForm.email) {
-      alert('Nombre y Correo son obligatorios.');
-      return;
+      alert('Nombre y Correo son obligatorios.'); return;
     }
-
+    if (this.empleadoForm.rol === 'estilista' && this.especialidadesSeleccionadas.length === 0) {
+      alert('Un estilista debe tener al menos una especialidad.'); return;
+    }
     if (this.empleadoForm.telefono.length < 14) {
-      alert('El teléfono debe tener 8 números (formato xxxx-xxxx).');
-      return;
+      alert('El teléfono debe tener 8 números (formato xxxx-xxxx).'); return;
     }
 
     const payload = {
       ...this.empleadoForm,
-      nombre: this.empleadoForm.apellido 
-              ? `${this.empleadoForm.nombre.trim()} ${this.empleadoForm.apellido.trim()}`
-              : this.empleadoForm.nombre.trim(),
-      activo: this.empleadoForm.activo ? 1 : 0
+      nombre: this.empleadoForm.apellido
+        ? `${this.empleadoForm.nombre.trim()} ${this.empleadoForm.apellido.trim()}`
+        : this.empleadoForm.nombre.trim(),
+      activo:         this.empleadoForm.activo ? 1 : 0,
+      especialidades: this.especialidadesSeleccionadas
     };
 
     if (this.editando) {
       this.http.put(`${this.apiUrl}/${this.empleadoForm.id}`, payload, { headers: this.getHeaders() })
         .subscribe({
-          next: () => {
-            alert('Empleado actualizado correctamente');
-            this.cerrarYRefrescar();
-          },
+          next: () => { alert('Empleado actualizado correctamente'); this.cerrarYRefrescar(); },
           error: (err) => {
             const mensaje = err.error?.error || 'Error desconocido';
             const detalle = err.error?.detalle ? `\n\nDetalle: ${err.error.detalle}` : '';
@@ -170,70 +177,57 @@ export class EmpleadosAdminComponent implements OnInit {
         });
     } else {
       if (!this.empleadoForm.password || this.empleadoForm.password.length < 6) {
-        alert('La contraseña debe tener al menos 6 caracteres.');
-        return;
+        alert('La contraseña debe tener al menos 6 caracteres.'); return;
       }
-
       this.http.post(this.apiUrl, payload, { headers: this.getHeaders() })
         .subscribe({
-          next: () => {
-            alert('Empleado creado con éxito');
-            this.cerrarYRefrescar();
-          },
+          next: () => { alert('Empleado creado con éxito'); this.cerrarYRefrescar(); },
           error: (err) => alert('Error al crear: ' + (err.error?.error || 'Error desconocido'))
         });
     }
   }
 
   eliminarEmpleado(id: number) {
-    if(confirm('¿Estás seguro de eliminar a este empleado?')) {
-      this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() })
-        .subscribe({
-          next: () => {
-            alert('Usuario eliminado');
-            this.cargarEmpleados();
-          },
-          error: (err) => alert('Error al eliminar')
-        });
-    }
+    if (!confirm('¿Estás seguro de eliminar a este empleado?')) return;
+    this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() })
+      .subscribe({
+        next: () => { alert('Usuario eliminado'); this.cargarEmpleados(); },
+        error: () => alert('Error al eliminar')
+      });
   }
 
-  // --- PASSWORD Y UTILIDADES ---
+  // ── Password ────────────────────────────────────────────────────
   abrirModalPassword(emp: Empleado) {
-    this.idUsuarioPassword = emp.id;
+    this.idUsuarioPassword      = emp.id;
     this.empleadoPasswordActual = emp.nombre;
-    this.nuevaPassword = ''; 
-    this.mostrarModalPassword = true;
+    this.nuevaPassword          = '';
+    this.mostrarModalPassword   = true;
   }
 
   guardarPassword() {
     if (this.nuevaPassword.trim().length < 6) {
-      alert('La contraseña debe tener al menos 6 caracteres.');
-      return;
+      alert('La contraseña debe tener al menos 6 caracteres.'); return;
     }
-
-    this.http.patch(`${this.apiUrl}/${this.idUsuarioPassword}/cambiar-password`, 
-      { password: this.nuevaPassword }, 
+    this.http.patch(`${this.apiUrl}/${this.idUsuarioPassword}/cambiar-password`,
+      { password: this.nuevaPassword },
       { headers: this.getHeaders() }
     ).subscribe({
-      next: () => {
-        alert('Contraseña actualizada correctamente');
-        this.cerrarModalPassword();
-      },
-      error: (err) => alert('Error al cambiar contraseña')
+      next: () => { alert('Contraseña actualizada correctamente'); this.cerrarModalPassword(); },
+      error: () => alert('Error al cambiar contraseña')
     });
   }
 
   cerrarYRefrescar() {
-    this.mostrarModal = false; 
-    this.editando = false;
-    this.empleadoForm = this.getNuevoEmpleado();
+    this.mostrarModal            = false;
+    this.editando                = false;
+    this.empleadoForm            = this.getNuevoEmpleado();
+    this.especialidadesSeleccionadas = [];
     this.cargarEmpleados();
   }
 
   cerrarModalPassword() {
     this.mostrarModalPassword = false;
-    this.nuevaPassword = '';
+    this.nuevaPassword        = '';
   }
 
   onNavigate(dest: string) { this.navigate.emit(dest); }

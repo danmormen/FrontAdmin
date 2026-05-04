@@ -1,14 +1,21 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EstilistaNavbarComponent } from '../estilista-navbar/estilista-navbar';
 
-interface Resena {
+interface DistribucionItem {
+  nivel: number;
+  cantidad: number;
+  porcentaje: number;
+}
+
+interface ResenaItem {
   id: number;
-  cliente: string;
-  servicio: string;
+  calificacion: number;
   comentario: string;
-  calificacion: number; 
   fecha: string;
+  cliente: string;
+  servicios: string;
 }
 
 @Component({
@@ -18,55 +25,70 @@ interface Resena {
   templateUrl: './resenas-estilista.html',
   styleUrls: ['./resenas-estilista.css']
 })
-export class ResenasEstilistaComponent {
+export class ResenasEstilistaComponent implements OnInit {
   @Output() navigate = new EventEmitter<string>();
-  @Output() logout = new EventEmitter<void>();
+  @Output() logout   = new EventEmitter<void>();
 
-  
-  promedio: number = 4.8;
-  totalResenas: number = 5;
+  private apiUrl = 'http://localhost:3000/api';
 
-  // Distribución de estrellas 
-  estrellasProgreso = [
-    { nivel: 5, porcentaje: 80, cantidad: 4 },
-    { nivel: 4, porcentaje: 20, cantidad: 1 },
-    { nivel: 3, porcentaje: 0, cantidad: 0 },
-    { nivel: 2, porcentaje: 0, cantidad: 0 },
-    { nivel: 1, porcentaje: 0, cantidad: 0 }
-  ];
+  cargando = true;
+  error    = '';
 
-  resenas: Resena[] = [
-    {
-      id: 1,
-      cliente: 'María González',
-      servicio: 'Corte de cabello',
-      comentario: 'Excelente trabajo! Muy profesional y atenta a los detalles. El corte quedó perfecto.',
-      calificacion: 5,
-      fecha: '19 de marzo de 2026'
-    },
-    {
-      id: 2,
-      cliente: 'Ana Martínez',
-      servicio: 'Coloración',
-      comentario: 'Me encantó el color! Exactamente lo que quería. Definitivamente volveré.',
-      calificacion: 5,
-      fecha: '17 de marzo de 2026'
-    },
-    {
-      id: 3,
-      cliente: 'Laura Rodríguez',
-      servicio: 'Manicure',
-      comentario: 'Muy buen servicio, rápido y limpio. Solo me hubiera gustado más opciones de colores.',
-      calificacion: 4,
-      fecha: '14 de marzo de 2026'
-    }
-  ];
+  promedio      = 0;
+  totalResenas  = 0;
+  distribucion: DistribucionItem[] = [];
+  resenas: ResenaItem[] = [];
 
-  
-  getStars(rating: number) {
-    return Array(5).fill(0).map((_, i) => i < rating);
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+
+  ngOnInit() { this.cargarPerfil(); }
+
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({ Authorization: 'Bearer ' + token });
+  }
+
+  cargarPerfil() {
+    this.cargando = true;
+    this.error    = '';
+    this.http.get<any>(`${this.apiUrl}/resenas/mi-perfil-estilista`, { headers: this.getHeaders() })
+      .subscribe({
+        next: (data) => {
+          this.promedio     = data.promedio     || 0;
+          this.totalResenas = data.total        || 0;
+          this.distribucion = data.distribucion || [];
+          this.resenas      = data.resenas      || [];
+          this.cargando     = false;
+          this.cdr.detectChanges();
+        },
+        error: () => {
+          // En caso de error mostramos estado vacío en lugar de mensaje de error
+          this.promedio     = 0;
+          this.totalResenas = 0;
+          this.distribucion = [];
+          this.resenas      = [];
+          this.cargando     = false;
+          this.cdr.detectChanges();
+        }
+      });
+  }
+
+  // Returns array of booleans for star rendering
+  getStars(rating: number): boolean[] {
+    return Array(5).fill(false).map((_, i) => i < Math.round(rating));
+  }
+
+  // Returns booleans for the summary average stars (uses half-star rounding)
+  getPromedioStars(): boolean[] {
+    return Array(5).fill(false).map((_, i) => i < Math.round(this.promedio));
+  }
+
+  formatearFecha(fecha: string): string {
+    if (!fecha) return '';
+    const d = new Date(fecha + 'T00:00:00');
+    return d.toLocaleDateString('es-ES', { day: 'numeric', month: 'long', year: 'numeric' });
   }
 
   onNavigate(dest: string) { this.navigate.emit(dest); }
-  onLogout() { this.logout.emit(); }
+  onLogout()               { this.logout.emit(); }
 }

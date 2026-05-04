@@ -49,7 +49,7 @@
 
   <app-promociones
     *ngIf="vistaActual === 'promociones'"
-    (seleccionarPromo)="onServiceSelected($event, true)"
+    (seleccionarPromo)="onPromoSelected($event)"
     (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-promociones>
@@ -66,6 +66,7 @@
     [servicioFijo]="servicioPreseleccionado"
     [esPromo]="esPromocion"
     [datosEdicion]="citaAEditar"
+    [promoActiva]="promoActiva"
     (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-reservar>
@@ -144,6 +145,12 @@
     (navigate)="onNavigate($event)"
     (logout)="onLogout()">
   </app-recompensa-admin>
+
+  <app-dias-especiales-admin
+    *ngIf="vistaActual === 'dias-especiales-admin'"
+    (navigate)="onNavigate($event)"
+    (logout)="onLogout()">
+  </app-dias-especiales-admin>
 
 
   <app-pantalla-estilista 

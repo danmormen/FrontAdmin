@@ -175,18 +175,13 @@
   background: linear-gradient(135deg, #C4B8AE 0%, #8A8078 100%);
 }
 
+/* Nombre de la promo en el banner (mismo estilo que vista cliente) */
 .discount-val {
   font-family: 'Playfair Display', serif;
-  font-size: 2.5rem;
+  font-size: 1.35rem;
   font-weight: 700;
-  line-height: 1;
-}
-
-.discount-label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  opacity: 0.90;
-  margin-top: 4px;
+  line-height: 1.25;
+  letter-spacing: 0.01em;
 }
 
 /* Cuerpo de la card */
@@ -194,17 +189,36 @@
 
 .body-header {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
   margin-bottom: 10px;
 }
 
-.body-header h3 {
-  font-family: 'Playfair Display', serif;
-  font-size: 1.15rem;
-  color: #2F2A2A;
-  margin: 0;
+/* Precio especial destacado (igual que vista cliente) */
+.precio-especial-box {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  background: rgba(206, 181, 158, 0.18);
+  border: 1px solid rgba(206, 181, 158, 0.35);
+  border-radius: 12px;
+  padding: 10px 16px;
+  margin-bottom: 14px;
+}
+
+.precio-especial-box .precio-label {
+  font-size: 0.75rem;
   font-weight: 700;
+  color: #A09585;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.precio-especial-box .precio-valor {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #8B6F4D;
 }
 
 /* Toggle switch */

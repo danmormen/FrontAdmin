@@ -9,10 +9,18 @@ interface Servicio {
   nombre: string;
   descripcion: string;
   precio: number;
-  duracion: number; 
-  categoria: 'cabello' | 'uñas' | 'maquillaje' | 'tratamientos' | 'otros';
+  duracion: number;
+  categoria: string;
   imagen?: string;
   activo: boolean | number;
+  especialidad_id?: number | null;
+  especialidad_nombre?: string;
+}
+
+interface Especialidad {
+  id: number;
+  nombre: string;
+  activa: number;
 }
 
 @Component({
@@ -26,64 +34,59 @@ export class ServiciosAdminComponent implements OnInit {
   @Output() navigate = new EventEmitter<string>();
   @Output() logout   = new EventEmitter<void>();
 
-  private apiUrl = 'http://localhost:3000/api/servicios';
-  servicios: Servicio[] = [];
-  
-  mostrarModal = false;
-  editando = false;
+  private apiServicios     = 'http://localhost:3000/api/servicios';
+  private apiEspecialidades = 'http://localhost:3000/api/especialidades';
+
+  // ── Servicios ────────────────────────────────────────────────────
+  servicios:    Servicio[]    = [];
+  mostrarModal  = false;
+  editando      = false;
   servicioForm: Servicio = this.getNuevoServicio();
 
-  constructor(
-    private http: HttpClient,
-    private cdr: ChangeDetectorRef // Agregado para forzar la vista
-  ) {}
+  // ── Especialidades ───────────────────────────────────────────────
+  especialidades:   Especialidad[] = [];
+  mostrarModalEsp   = false;
+  editandoEsp       = false;
+  guardandoEsp      = false;
+  errorEsp          = '';
+  espForm: { id?: number; nombre: string; activa: number } = this.getNuevaEsp();
+
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
   ngOnInit() {
     this.cargarServicios();
+    this.cargarEspecialidades();
   }
 
-  getHeaders() {
+  getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
+    return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  // SERVICIOS
+  // ════════════════════════════════════════════════════════════════
+
+  getNuevoServicio(): Servicio {
+    return { nombre: '', descripcion: '', precio: 0, duracion: 0,
+             categoria: 'otros', activo: 1, especialidad_id: null };
+  }
+
+  cargarServicios() {
+    this.http.get<Servicio[]>(this.apiServicios).subscribe({
+      next: (res) => { this.servicios = res; this.cdr.detectChanges(); },
+      error: () => alert('Error al obtener la lista de servicios.')
     });
   }
 
-  getNuevoServicio(): Servicio {
-    return { 
-      nombre: '', 
-      descripcion: '', 
-      precio: 0, 
-      duracion: 0, 
-      categoria: 'otros',
-      activo: 1 
-    };
-  }
-
-  // --- CARGA DE DATOS (Misma lógica que empleados) ---
-  cargarServicios() {
-    this.http.get<Servicio[]>(this.apiUrl) // Quitamos headers aquí porque la ruta es pública según tu servicios.js
-      .subscribe({
-        next: (res) => {
-          this.servicios = res;
-          this.cdr.detectChanges(); // Forzamos a Angular a pintar los cambios
-        },
-        error: (err) => {
-          console.error('Error al cargar servicios:', err);
-          alert('Error al obtener la lista de servicios.');
-        }
-      });
-  }
-
   abrirModalNuevo() {
-    this.editando = false;
+    this.editando     = false;
     this.servicioForm = this.getNuevoServicio();
     this.mostrarModal = true;
   }
 
   abrirModalEditar(s: Servicio) {
-    this.editando = true;
-    // Clonamos para no editar la fila de la tabla directamente
+    this.editando     = true;
     this.servicioForm = { ...s };
     this.mostrarModal = true;
   }
@@ -93,60 +96,110 @@ export class ServiciosAdminComponent implements OnInit {
       alert('Nombre, Precio y Duración son obligatorios.');
       return;
     }
-    if (this.servicioForm.precio < 0) {
-      alert('El precio no puede ser negativo.');
-      return;
-    }
-    if (this.servicioForm.duracion < 1) {
-      alert('La duración debe ser de al menos 1 minuto.');
-      return;
-    }
+    if (this.servicioForm.precio < 0)  { alert('El precio no puede ser negativo.'); return; }
+    if (this.servicioForm.duracion < 1) { alert('La duración debe ser de al menos 1 minuto.'); return; }
 
-    const payload = {
-      ...this.servicioForm,
-      activo: this.servicioForm.activo ? 1 : 0
-    };
+    const payload = { ...this.servicioForm, activo: this.servicioForm.activo ? 1 : 0 };
 
     if (this.editando) {
-      this.http.put(`${this.apiUrl}/${this.servicioForm.id}`, payload, { headers: this.getHeaders() })
+      this.http.put(`${this.apiServicios}/${this.servicioForm.id}`, payload, { headers: this.getHeaders() })
         .subscribe({
-          next: () => {
-            alert('Servicio actualizado correctamente');
-            this.cerrarYRefrescar();
-          },
+          next: () => { alert('Servicio actualizado correctamente'); this.cerrarYRefrescar(); },
           error: (err) => alert('Error al actualizar: ' + (err.error?.error || 'Error desconocido'))
         });
     } else {
-      this.http.post(this.apiUrl, payload, { headers: this.getHeaders() })
+      this.http.post(this.apiServicios, payload, { headers: this.getHeaders() })
         .subscribe({
-          next: () => {
-            alert('Servicio creado con éxito');
-            this.cerrarYRefrescar();
-          },
+          next: () => { alert('Servicio creado con éxito'); this.cerrarYRefrescar(); },
           error: (err) => alert('Error al crear: ' + (err.error?.error || 'Error desconocido'))
         });
     }
   }
 
   eliminarServicio(id: number | undefined) {
-    if(!id) return;
-    if(confirm('¿Estás seguro de eliminar este servicio?')) {
-      this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() })
-        .subscribe({
-          next: () => {
-            alert('Servicio eliminado');
-            this.cargarServicios();
-          },
-          error: (err) => alert('Error al eliminar')
-        });
-    }
+    if (!id) return;
+    if (!confirm('¿Estás seguro de eliminar este servicio?')) return;
+    this.http.delete(`${this.apiServicios}/${id}`, { headers: this.getHeaders() })
+      .subscribe({
+        next: () => { alert('Servicio eliminado'); this.cargarServicios(); },
+        error: () => alert('Error al eliminar')
+      });
   }
 
   cerrarYRefrescar() {
-    this.mostrarModal = false; 
-    this.editando = false;
+    this.mostrarModal = false;
+    this.editando     = false;
     this.servicioForm = this.getNuevoServicio();
     this.cargarServicios();
+  }
+
+  // ════════════════════════════════════════════════════════════════
+  // ESPECIALIDADES
+  // ════════════════════════════════════════════════════════════════
+
+  getNuevaEsp() {
+    return { nombre: '', activa: 1 };
+  }
+
+  cargarEspecialidades() {
+    this.http.get<Especialidad[]>(this.apiEspecialidades, { headers: this.getHeaders() })
+      .subscribe({
+        next: (res) => { this.especialidades = res; this.cdr.detectChanges(); },
+        error: () => console.error('Error al cargar especialidades')
+      });
+  }
+
+  abrirModalNuevaEsp() {
+    this.editandoEsp   = false;
+    this.espForm       = this.getNuevaEsp();
+    this.errorEsp      = '';
+    this.mostrarModalEsp = true;
+  }
+
+  abrirModalEditarEsp(esp: Especialidad) {
+    this.editandoEsp   = true;
+    this.espForm       = { id: esp.id, nombre: esp.nombre, activa: esp.activa };
+    this.errorEsp      = '';
+    this.mostrarModalEsp = true;
+  }
+
+  guardarEspecialidad() {
+    if (!this.espForm.nombre.trim()) {
+      this.errorEsp = 'El nombre es obligatorio.'; return;
+    }
+    this.guardandoEsp = true;
+    this.errorEsp     = '';
+
+    const req$ = this.editandoEsp
+      ? this.http.put(`${this.apiEspecialidades}/${this.espForm.id}`, this.espForm, { headers: this.getHeaders() })
+      : this.http.post(this.apiEspecialidades, this.espForm, { headers: this.getHeaders() });
+
+    req$.subscribe({
+      next: () => {
+        this.guardandoEsp    = false;
+        this.mostrarModalEsp = false;
+        this.cargarEspecialidades();
+        this.cargarServicios(); // refrescar nombre de especialidad en cards
+      },
+      error: (err) => {
+        this.guardandoEsp = false;
+        this.errorEsp = err.error?.error || 'Error al guardar.';
+      }
+    });
+  }
+
+  eliminarEspecialidad(esp: Especialidad) {
+    if (!confirm(`¿Desactivar la especialidad "${esp.nombre}"? Los estilistas que la tienen asignada no se verán afectados.`)) return;
+    this.http.delete(`${this.apiEspecialidades}/${esp.id}`, { headers: this.getHeaders() })
+      .subscribe({
+        next: () => this.cargarEspecialidades(),
+        error: () => alert('Error al desactivar.')
+      });
+  }
+
+  cerrarModalEsp() {
+    this.mostrarModalEsp = false;
+    this.errorEsp        = '';
   }
 
   onNavigate(dest: string) { this.navigate.emit(dest); }

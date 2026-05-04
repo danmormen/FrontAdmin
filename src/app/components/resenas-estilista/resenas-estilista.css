@@ -190,6 +190,28 @@
 .comment-text { color: #5A6355; line-height: 1.6; margin-bottom: 14px; font-size: 0.93rem; }
 .review-footer { font-size: 0.83rem; color: #A5AE98; display: flex; align-items: center; gap: 6px; }
 
+/* ── Loading / Error / Empty ── */
+.loading-msg {
+  display: flex; align-items: center; gap: 10px;
+  padding: 28px; color: #E8E1D5; font-size: 0.92rem;
+}
+.error-msg {
+  padding: 16px; color: #dc2626;
+  background: rgba(239,68,68,0.08); border-radius: 12px; margin: 0 0 20px;
+}
+.empty-state {
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
+  padding: 48px 24px; text-align: center;
+  background: rgba(255,255,255,0.50);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(255,255,255,0.65);
+  border-radius: 18px;
+}
+.empty-state svg { stroke: #A5AE98; }
+.empty-state p { margin: 0; font-size: 0.92rem; color: #88937B; line-height: 1.6; }
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
 /* ── RESPONSIVE ── */
 @media (max-width: 600px) {
   .summary-card { grid-template-columns: 1fr; }

@@ -11,8 +11,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
   styleUrls: ['./cambio-contrasena.css']
 })
 export class CambioContrasenaComponent implements OnInit {
+
+  // onPasswordChanged avisa a app.ts que el cambio fue exitoso.
+  // app.ts lee el rol del localStorage para saber a dónde navegar.
+  // onCancel lleva de vuelta al login si el usuario no quiere continuar.
   @Output() onPasswordChanged = new EventEmitter<void>();
-  @Output() onCancel = new EventEmitter<void>();
+  @Output() onCancel          = new EventEmitter<void>();
 
   private apiUrl = 'http://localhost:3000/api/usuarios';
 
@@ -22,7 +26,6 @@ export class CambioContrasenaComponent implements OnInit {
   usuarioId: number | null = null;
   rol: string = '';
 
-  // UI state
   mostrarNueva     = false;
   mostrarConfirmar = false;
   guardando        = false;
@@ -30,19 +33,23 @@ export class CambioContrasenaComponent implements OnInit {
 
   constructor(private http: HttpClient) {}
 
+  // ══════════════════════════════════════════════════════════════════
+  // ngOnInit — lee el id y el rol del usuario desde localStorage.
+  // Necesitamos el id para construir la URL del PATCH, y el rol
+  // para mostrar el mensaje de instrucción correcto según quién es.
+  //
+  // Si por alguna razón no hay datos en localStorage (sesión corrupta,
+  // alguien llegó aquí sin pasar por el login), se muestra un error
+  // en lugar de llamar al backend con un id null.
+  // ══════════════════════════════════════════════════════════════════
   ngOnInit() {
-    // Recuperamos los datos del usuario desde localStorage
     const userStr = localStorage.getItem('usuario');
-    console.log('Datos en LocalStorage al cargar:', userStr);
-
     if (userStr) {
       try {
-        const user = JSON.parse(userStr);
+        const user     = JSON.parse(userStr);
         this.usuarioId = user.id;
-        this.rol       = user.rol || ''; // ← Guardamos el rol (cliente, estilista, admin)
-        console.log('ID de usuario detectado:', this.usuarioId, '| Rol:', this.rol);
+        this.rol       = user.rol || '';
       } catch (error) {
-        console.error('Error al parsear el usuario del localStorage:', error);
         this.errorMsg = 'Error al recuperar los datos del usuario. Intenta iniciar sesión nuevamente.';
       }
     }
@@ -52,7 +59,9 @@ export class CambioContrasenaComponent implements OnInit {
     }
   }
 
-  // ── Mensaje personalizado según rol ──────────────────────────────
+  // El mensaje de instrucción cambia según el rol porque el contexto es distinto:
+  // un estilista nuevo recibió una contraseña temporal del admin,
+  // un cliente llegó aquí desde el flujo de recuperación de contraseña.
   getMensajeInstruccion(): string {
     if (this.rol === 'estilista') {
       return 'Es tu primer ingreso. Por seguridad debes cambiar la contraseña provisional que te asignó el administrador.';
@@ -60,7 +69,9 @@ export class CambioContrasenaComponent implements OnInit {
     return 'Ingresaste con una contraseña temporal. Establece una nueva contraseña para proteger tu cuenta.';
   }
 
-  // ── Indicador de fortaleza ────────────────────────────────────────
+  // ── Indicador visual de fortaleza ────────────────────────────────
+  // Solo evalúa longitud porque el objetivo es orientar al usuario,
+  // no aplicar una política estricta (eso lo valida el backend con mínimo 6).
   get fortalezaClass(): string {
     const len = this.nuevaPassword.length;
     if (len < 6)  return 'debil';
@@ -69,32 +80,39 @@ export class CambioContrasenaComponent implements OnInit {
   }
   get fortalezaAncho(): string {
     const len = this.nuevaPassword.length;
-    if (len === 0)  return '0%';
+    if (len === 0) return '0%';
     if (len < 6)   return '33%';
     if (len < 10)  return '66%';
     return '100%';
   }
   get fortalezaTexto(): string {
     const c = this.fortalezaClass;
-    if (c === 'debil')  return 'Débil';
-    if (c === 'media')  return 'Media';
+    if (c === 'debil') return 'Débil';
+    if (c === 'media') return 'Media';
     return 'Fuerte';
   }
 
-  // ── Construye los headers con el token JWT ────────────────────────
-  getHeaders(): HttpHeaders | null {
+  // Construye los headers con el JWT. Si no hay token devuelve null
+  // y el método que lo llama corta la ejecución antes de hacer el PATCH.
+  private getHeaders(): HttpHeaders | null {
     const token = localStorage.getItem('token');
     if (!token) {
-      console.error('Token no encontrado en localStorage.');
       this.errorMsg = 'Error de autenticación. Intenta iniciar sesión nuevamente.';
       return null;
     }
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
+    return new HttpHeaders({ 'Authorization': `Bearer ${token}` });
   }
 
-  // ── Guarda la nueva contraseña ────────────────────────────────────
+  // ══════════════════════════════════════════════════════════════════
+  // guardarPassword — valida localmente y hace el PATCH al backend.
+  //
+  // Al recibir respuesta exitosa se actualiza requiere_cambio en
+  // localStorage para que si el usuario navega hacia atrás o recarga
+  // no vuelva a caer en este flujo en la misma sesión.
+  //
+  // El setTimeout de 1200ms da tiempo a que el usuario vea el mensaje
+  // de éxito antes de que la pantalla cambie, evitando el flash abrupto.
+  // ══════════════════════════════════════════════════════════════════
   guardarPassword() {
     this.errorMsg = '';
 
@@ -125,15 +143,15 @@ export class CambioContrasenaComponent implements OnInit {
         this.guardando = false;
         this.exito     = true;
 
-        // Actualizar localStorage
+        // Sincronizar localStorage para que requiere_cambio refleje el nuevo estado.
+        // Esto importa porque completarCambioPassword() en app.ts lee el rol de aquí.
         const userStr = localStorage.getItem('usuario');
         if (userStr) {
-          const user = JSON.parse(userStr);
+          const user       = JSON.parse(userStr);
           user.requiere_cambio = 0;
           localStorage.setItem('usuario', JSON.stringify(user));
         }
 
-        // Navegar después de un breve delay para que el usuario vea el mensaje
         setTimeout(() => this.onPasswordChanged.emit(), 1200);
       },
       error: (err) => {

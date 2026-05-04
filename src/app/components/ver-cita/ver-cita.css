@@ -48,6 +48,8 @@
 }
 .tag-green  { background: rgba(72,167,120,0.15); color: #2E7D57; border: 1px solid rgba(72,167,120,0.35); }
 .tag-yellow { background: rgba(200,160,60,0.15); color: #8A6A00; border: 1px solid rgba(200,160,60,0.35); }
+.tag-blue   { background: rgba(72,120,167,0.15); color: #2E5C7D; border: 1px solid rgba(72,120,167,0.35); }
+.tag-red    { background: rgba(183,110,121,0.15); color: #8C3A43; border: 1px solid rgba(183,110,121,0.35); }
 
 .cita-servicio { font-size: 1.1rem; font-weight: 700; color: #2F2A2A; margin: 0 0 12px; }
 
@@ -57,35 +59,68 @@
 
 .actions-section { display: flex; flex-direction: column; gap: 8px; align-items: stretch; min-width: 130px; }
 
+/* ── Botones de acción — liquid glass ─────────────────────────── */
 .btn-action {
   padding: 9px 16px;
-  border-radius: 10px;
-  font-size: 0.88rem;
+  border-radius: 12px;
+  font-size: 0.87rem;
   font-weight: 600;
   font-family: 'Inter', system-ui, sans-serif;
   cursor: pointer;
-  border: none;
-  transition: opacity 0.2s, transform 0.15s;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
   text-align: center;
+  white-space: nowrap;
 }
-.btn-action:hover { opacity: 0.88; transform: translateY(-1px); }
-.btn-green       { background: linear-gradient(135deg, #48A778, #5DB88A); color: #fff; }
-.btn-blush       { background: linear-gradient(135deg, #B76E79, #C48490); color: #fff; }
-.btn-outline-red { background: transparent; border: 1.5px solid rgba(183,110,121,0.40); color: #B76E79; }
-.btn-outline-red:hover { background: rgba(183,110,121,0.08); }
+.btn-action:hover { transform: translateY(-1px); box-shadow: 0 6px 18px rgba(0,0,0,0.10); }
+.btn-action:active { transform: translateY(0); }
+
+/* Confirmar — azul cristal */
+.btn-confirmar {
+  background: rgba(91,163,217,0.20);
+  border: 1px solid rgba(91,163,217,0.45);
+  color: #1E6FA8;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.55), 0 2px 8px rgba(91,163,217,0.12);
+}
+.btn-confirmar:hover { background: rgba(91,163,217,0.32); }
+
+/* Modificar — blanco cristal neutro */
+.btn-outline {
+  background: rgba(255,255,255,0.35);
+  border: 1px solid rgba(255,255,255,0.65);
+  color: #5A4550;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.70), 0 2px 8px rgba(183,110,121,0.06);
+}
+.btn-outline:hover { background: rgba(255,255,255,0.52); }
+
+/* Cancelar — rosa cristal */
+.btn-outline-red {
+  background: rgba(183,110,121,0.12);
+  border: 1px solid rgba(183,110,121,0.35);
+  color: #8C3A43;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.50), 0 2px 8px rgba(183,110,121,0.10);
+}
+.btn-outline-red:hover { background: rgba(183,110,121,0.22); }
+
+.btn-green { background: rgba(72,167,120,0.18); border: 1px solid rgba(72,167,120,0.38); color: #1D6B43; }
+.btn-blush { background: rgba(183,110,121,0.18); border: 1px solid rgba(183,110,121,0.38); color: #8C3A43; }
+
+/* ─────────────────────────────────────────────────────────────── */
 
 .empty-state {
-  display: flex; flex-direction: column; align-items: center; gap: 12px;
+  display: flex; flex-direction: column; align-items: center; gap: 14px;
   padding: 60px 24px; text-align: center; color: #9B6F75;
 }
-.empty-state svg { width: 48px; height: 48px; stroke: #D8A7B1; }
+.empty-state svg { width: 52px; height: 52px; stroke: #D8A7B1; }
+.empty-state p { font-size: 1rem; margin: 0; }
 
 @media (max-width: 600px) {
   .cita-card { flex-direction: column; }
   .actions-section { flex-direction: row; flex-wrap: wrap; }
 }
 
-/* Additions for real backend data */
+/* Loading */
 .loading-state { text-align: center; padding: 60px 24px; color: #9B6F75; }
 
 .alert-error {
@@ -95,10 +130,6 @@
   font-size: 0.90rem; margin-bottom: 16px;
 }
 .alert-error svg { width: 18px; height: 18px; flex-shrink: 0; stroke: #B76E79; margin-top: 1px; }
-
-/* Estado tags adicionales */
-.tag-blue { background: rgba(72,120,167,0.15); color: #2E5C7D; border: 1px solid rgba(72,120,167,0.35); }
-.tag-red  { background: rgba(183,110,121,0.15); color: #8C3A43; border: 1px solid rgba(183,110,121,0.35); }
 
 /* Tarjetas desvanecidas para estados finales */
 .cita-card.cancelada  { opacity: 0.65; }
@@ -114,21 +145,17 @@
 .completada-badge { color: #2E7D57; }
 .completada-badge svg { stroke: #48A778; }
 
-/* Empty state con botón */
-.empty-state {
-  display: flex; flex-direction: column; align-items: center; gap: 14px;
-  padding: 60px 24px; text-align: center; color: #9B6F75;
-}
-.empty-state svg { width: 52px; height: 52px; stroke: #D8A7B1; }
-.empty-state p { font-size: 1rem; margin: 0; }
-
 .btn-reservar-empty {
   padding: 11px 24px;
-  background: linear-gradient(135deg, #B76E79, #C48490);
-  color: #fff;
+  background: rgba(183,110,121,0.18);
+  border: 1px solid rgba(183,110,121,0.38);
+  color: #8C3A43;
   font-family: 'Inter', system-ui, sans-serif;
   font-size: 0.90rem; font-weight: 600;
-  border: none; border-radius: 10px; cursor: pointer;
-  transition: opacity 0.2s;
+  border-radius: 12px; cursor: pointer;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.50);
+  transition: background 0.15s, transform 0.15s;
 }
-.btn-reservar-empty:hover { opacity: 0.88; }
+.btn-reservar-empty:hover { background: rgba(183,110,121,0.28); transform: translateY(-1px); }

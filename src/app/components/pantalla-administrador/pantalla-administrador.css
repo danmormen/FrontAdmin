@@ -363,3 +363,44 @@
   .cita-time { min-width: 60px; padding: 8px; }
   .total-value { font-size: 2rem; }
 }
+
+/* Estados reales */
+.status-confirmada { background: rgba(52,211,153,0.15);  color: #065F46; }
+.status-pendiente  { background: rgba(251,191,36,0.15);  color: #92400E; }
+.status-completada { background: rgba(99,102,241,0.15);  color: #3730A3; }
+.status-cancelada  { background: rgba(239,68,68,0.12);   color: #B91C1C; }
+
+.cita-card.status-completada { opacity: 0.65; }
+.cita-card.status-cancelada  { opacity: 0.4; }
+
+.cita-precio {
+  font-size: 0.78rem; font-weight: 700;
+  color: #6b7c5a; margin: 2px 0 0;
+}
+
+/* Día actual resaltado en la gráfica */
+.dia-row.dia-hoy .dia-name { font-weight: 700; color: #5a6e45; }
+.dia-row.dia-hoy .dia-count { font-weight: 700; color: #5a6e45; }
+.dia-bar-fill.dia-hoy-fill  { background: linear-gradient(90deg, #7a9c6a, #5a6e45); }
+
+/* Loading y vacío */
+.loading-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 20px 4px; color: #94a3b8; font-size: 0.88rem;
+}
+.citas-empty {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 32px 16px; color: #94a3b8; font-size: 0.88rem; text-align: center;
+}
+
+/* Botón ver todas */
+.ver-todas-btn {
+  width: 100%; margin-top: 12px; padding: 10px;
+  background: transparent; border: 1px solid rgba(148,163,184,0.3);
+  border-radius: 8px; color: #64748b; font-size: 0.82rem;
+  font-weight: 600; cursor: pointer; transition: background 0.2s;
+  font-family: inherit;
+}
+.ver-todas-btn:hover { background: rgba(255,255,255,0.5); color: #334155; }
+
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }

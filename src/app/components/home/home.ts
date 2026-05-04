@@ -28,7 +28,9 @@ export class HomeComponent implements OnInit {
   nombreUsuario = 'Cliente';
 
   // Citas reales del backend
-  proximasCitas: any[] = [];
+  proximasCitas:  any[]    = [];
+  totalCitas:     number   = 0;
+  ultimaCita:     any|null = null;
   cargandoCitas = true;
 
   // Puntos (mock por ahora)
@@ -70,21 +72,37 @@ export class HomeComponent implements OnInit {
         const hoy = new Date();
         hoy.setHours(0, 0, 0, 0);
 
-        // Solo citas futuras que no estén canceladas
+        // Total histórico: todas las citas (sin importar estado)
+        this.totalCitas = data.length;
+
+        // Última cita realizada: la más reciente por fecha+hora en el pasado
+        const pasadas = data
+          .filter(c => {
+            const soloFecha = c.fecha.includes('T') ? c.fecha.split('T')[0] : c.fecha;
+            const [y, m, d] = soloFecha.split('-').map(Number);
+            return new Date(y, m - 1, d) < hoy;
+          })
+          .sort((a, b) => {
+            const fa = a.fecha.split('T')[0] + 'T' + a.hora;
+            const fb = b.fecha.split('T')[0] + 'T' + b.hora;
+            return fb.localeCompare(fa); // más reciente primero
+          });
+        this.ultimaCita = pasadas[0] || null;
+
+        // Próximas citas: futuras, no canceladas ni completadas
         this.proximasCitas = data
           .filter(c => {
             if (c.estado === 'cancelada' || c.estado === 'completada') return false;
             const soloFecha = c.fecha.includes('T') ? c.fecha.split('T')[0] : c.fecha;
             const [y, m, d] = soloFecha.split('-').map(Number);
-            const fechaCita = new Date(y, m - 1, d);
-            return fechaCita >= hoy;
+            return new Date(y, m - 1, d) >= hoy;
           })
           .sort((a, b) => {
             const fa = a.fecha.split('T')[0] + 'T' + a.hora;
             const fb = b.fecha.split('T')[0] + 'T' + b.hora;
             return fa.localeCompare(fb);
           })
-          .slice(0, 4); // máximo 4 en el home
+          .slice(0, 4);
 
         this.cargandoCitas = false;
         this.cdr.detectChanges();

@@ -74,7 +74,21 @@
         </div>
 
         <div class="actions-section" *ngIf="cita.estado !== 'cancelada' && cita.estado !== 'completada'">
-          <button class="btn-action btn-outline-red" (click)="onCancelar(cita)">
+          <!-- Confirmar: visible solo cuando la cita está pendiente -->
+          <button class="btn-action btn-confirmar" *ngIf="puedeConfirmar(cita)"
+                  (click)="onConfirmar(cita)">
+            Confirmar
+          </button>
+
+          <!-- Modificar: solo si faltan más de 24 h -->
+          <button class="btn-action btn-outline" *ngIf="puedeModificar(cita)"
+                  (click)="onModificar(cita)">
+            Modificar
+          </button>
+
+          <!-- Cancelar: siempre disponible para citas activas -->
+          <button class="btn-action btn-outline-red" *ngIf="puedeCancelar(cita)"
+                  (click)="onCancelar(cita)">
             Cancelar
           </button>
         </div>

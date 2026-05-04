@@ -1,15 +1,7 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EstilistaNavbarComponent } from '../estilista-navbar/estilista-navbar';
-
-interface Notificacion {
-  id: number;
-  tipo: 'nueva-cita' | 'cancelada' | 'confirmada' | 'recordatorio' | 'resena';
-  titulo: string;
-  mensaje: string;
-  fecha: string;
-  leida: boolean;
-}
 
 @Component({
   selector: 'app-notificacion-estilista',
@@ -18,66 +10,86 @@ interface Notificacion {
   templateUrl: './notificacion-estilista.html',
   styleUrls: ['./notificacion-estilista.css']
 })
-export class NotificacionEstilistaComponent {
+export class NotificacionEstilistaComponent implements OnInit {
   @Output() navigate = new EventEmitter<string>();
-  @Output() logout = new EventEmitter<void>();
+  @Output() logout   = new EventEmitter<void>();
 
-  notificaciones: Notificacion[] = [
-    {
-      id: 1,
-      tipo: 'nueva-cita',
-      titulo: 'Nueva cita agendada',
-      mensaje: 'María González ha reservado un corte de cabello para mañana a las 09:00',
-      fecha: '24 mar 2026, 08:30',
-      leida: false
-    },
-    {
-      id: 2,
-      tipo: 'cancelada',
-      titulo: 'Cita cancelada',
-      mensaje: 'La cita de Pedro Ramírez para el tratamiento facial ha sido cancelada',
-      fecha: '23 mar 2026, 15:45',
-      leida: false
-    },
-    {
-      id: 3,
-      tipo: 'confirmada',
-      titulo: 'Cita confirmada',
-      mensaje: 'Ana Martínez confirmó su cita de coloración para hoy a las 10:00',
-      fecha: '24 mar 2026, 07:00',
-      leida: true
-    },
-    {
-      id: 4,
-      tipo: 'recordatorio',
-      titulo: 'Recordatorio de cita',
-      mensaje: 'Tienes una cita con Laura Rodríguez en 30 minutos - Manicure',
-      fecha: '23 mar 2026, 12:30',
-      leida: true
-    },
-    {
-      id: 5,
-      tipo: 'resena',
-      titulo: 'Nueva reseña recibida',
-      mensaje: 'Sofía López dejó una reseña de 5 estrellas para tu servicio de tratamiento facial',
-      fecha: '22 mar 2026, 18:20',
-      leida: true
-    }
-  ];
+  private apiUrl = 'http://localhost:3000/api/notif-estilista';
 
-  get sinLeerCount(): number {
-    return this.notificaciones.filter(n => !n.leida).length;
+  notificaciones: any[] = [];
+  cargando  = true;
+  error     = '';
+
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+
+  ngOnInit() { this.cargarNotificaciones(); }
+
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({ Authorization: 'Bearer ' + token });
   }
 
-  marcarComoLeida(id: number) {
-    const notif = this.notificaciones.find(n => n.id === id);
-    if (notif) notif.leida = true;
+  cargarNotificaciones() {
+    this.cargando = true;
+    this.http.get<any[]>(`${this.apiUrl}/mis-notificaciones`, { headers: this.getHeaders() })
+      .subscribe({
+        next: (data) => { this.notificaciones = data; this.cargando = false; this.cdr.detectChanges(); },
+        error: () => { this.error = 'No se pudieron cargar las notificaciones.'; this.cargando = false; this.cdr.detectChanges(); }
+      });
   }
 
+  // Getter calculado: cuenta cuántas notificaciones no han sido leídas.
+  // Se usa en el template para mostrar el texto "X sin leer" en el encabezado.
+  // El campo 'leida' viene del backend como 0/1, por eso !n.leida captura ambos false y 0.
+  get sinLeerCount(): number { return this.notificaciones.filter(n => !n.leida).length; }
+
+  // Marca una sola notificación como leída. Si ya estaba leída, no hace nada
+  // para evitar un PATCH innecesario. Actualiza el objeto local directamente
+  // (leida = 1) sin recargar toda la lista.
+  marcarComoLeida(notif: any) {
+    if (notif.leida) return;
+    this.http.patch(`${this.apiUrl}/${notif.id}/leer`, {}, { headers: this.getHeaders() })
+      .subscribe({ next: () => { notif.leida = 1; this.cdr.detectChanges(); }, error: () => {} });
+  }
+
+  // Elimina una notificación del servidor y la quita del array local con filter.
+  // No recarga la lista completa — actualización optimista del estado local.
   eliminarNotificacion(id: number) {
-    this.notificaciones = this.notificaciones.filter(n => n.id !== id);
+    this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() })
+      .subscribe({
+        next: () => { this.notificaciones = this.notificaciones.filter(n => n.id !== id); this.cdr.detectChanges(); },
+        error: () => {}
+      });
+  }
+
+  // Marca todas como leídas en el backend con un solo PATCH, luego actualiza
+  // cada objeto local para no recargar la lista desde el servidor.
+  marcarTodas() {
+    this.http.patch(`${this.apiUrl}/marcar-todas`, {}, { headers: this.getHeaders() })
+      .subscribe({
+        next: () => { this.notificaciones.forEach(n => n.leida = 1); this.cdr.detectChanges(); },
+        error: () => {}
+      });
+  }
+
+  borrarTodas() {
+    if (!confirm('¿Borrar todas las notificaciones?')) return;
+    this.http.delete(`${this.apiUrl}/borrar-todas`, { headers: this.getHeaders() })
+      .subscribe({
+        next: () => { this.notificaciones = []; this.cdr.detectChanges(); },
+        error: () => {}
+      });
+  }
+
+  // La fecha del backend viene como string ISO con zona UTC. toLocaleDateString
+  // la convierte a la zona del navegador del estilista automáticamente.
+  formatearFecha(fechaStr: string): string {
+    if (!fechaStr) return '';
+    const d = new Date(fechaStr);
+    return d.toLocaleDateString('es-ES', { day:'numeric', month:'short', year:'numeric' }) +
+           ', ' + d.toLocaleTimeString('es-ES', { hour:'2-digit', minute:'2-digit' });
   }
 
   onNavigate(dest: string) { this.navigate.emit(dest); }
-  onLogout() { this.logout.emit(); }
+  onLogout()               { this.logout.emit(); }
 }

@@ -99,6 +99,17 @@
         Notificaciones
       </button>
 
+      <button class="nav-item" type="button"
+              [class.active]="active === 'dias-especiales'"
+              (click)="goTo('dias-especiales')">
+        <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
+          <rect x="4" y="5" width="16" height="15" rx="2"/>
+          <path d="M8 3v4M16 3v4M4 9h16"/>
+          <line x1="9" y1="14" x2="15" y2="14"/>
+        </svg>
+        Días Especiales
+      </button>
+
       <button class="nav-item nav-item-logout" type="button" (click)="cerrarSesion()">
         <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7">
           <path d="M15 4h4a1 1 0 0 1 1 1v14a1 1 0 0 1-1 1h-4M10 17l-5-5l5-5M5 12h11"/>

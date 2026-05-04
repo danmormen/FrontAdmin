@@ -385,3 +385,43 @@
   .welcome-title { font-size: 1.4rem; }
   .horario-grid  { grid-template-columns: repeat(4, 1fr); }
 }
+
+/* Estados reales en home estilista */
+.cita-badge.confirmada { background: rgba(52,211,153,0.15); color: #065F46; }
+.cita-badge.pendiente  { background: rgba(251,191,36,0.15);  color: #92400E; }
+.cita-badge.completada { background: rgba(99,102,241,0.15);  color: #3730A3; }
+.cita-badge.cancelada  { background: rgba(239,68,68,0.12);   color: #B91C1C; }
+
+.cita-card.completada { opacity: 0.6; }
+.cita-card.cancelada  { opacity: 0.4; }
+
+.cita-precio {
+  font-size: 0.8rem; font-weight: 700;
+  color: #4a7c5c; margin: 2px 0 0;
+}
+
+.citas-loading {
+  display: flex; align-items: center; gap: 8px;
+  padding: 16px; color: #94a3b8; font-size: 0.85rem;
+}
+.citas-empty {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 32px 16px; color: #94a3b8; font-size: 0.88rem; text-align: center;
+}
+@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+/* Notificaciones home con datos reales */
+.notif-card.unread { border-left: 3px solid #6b8f71; }
+
+.notif-empty {
+  padding: 20px; text-align: center;
+  color: #94a3b8; font-size: 0.85rem;
+}
+
+.ver-todas-btn {
+  width: 100%; margin-top: 10px; padding: 9px;
+  background: transparent; border: 1px solid rgba(107,143,113,0.3);
+  border-radius: 8px; color: #4a7c5c; font-size: 0.82rem;
+  font-weight: 600; cursor: pointer; transition: background 0.2s;
+}
+.ver-todas-btn:hover { background: rgba(107,143,113,0.08); }

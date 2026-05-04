@@ -25,28 +25,42 @@
         </div>
   
         <div class="promo-card" *ngFor="let p of promociones">
+          <!-- Banner: título de la promo (como en la vista de clientes) -->
           <div class="promo-banner" [class.inactive-banner]="!p.activo">
-            <span class="discount-val">{{ p.valor_descuento | number:'1.0-0' }}%</span>
-            <span class="discount-label">de descuento</span>
+            <span class="discount-val">{{ p.titulo }}</span>
           </div>
-  
+
           <div class="card-body">
             <div class="body-header">
-              <h3>{{ p.titulo }}</h3>
               <div class="status-toggle" [class.on]="p.activo">
                 <div class="toggle-circle"></div>
               </div>
             </div>
-  
+
             <p class="description">{{ p.descripcion }}</p>
-            <div class="price-offer main-color">Código: {{ p.codigo }}</div>
-  
+
+            <!-- Precio especial destacado (como en vista cliente) -->
+            <div class="precio-especial-box">
+              <span class="precio-label">Precio especial</span>
+              <span class="precio-valor">Q{{ p.precio_especial | number:'1.2-2' }}</span>
+            </div>
+
+            <!-- Servicio al que aplica la promo -->
+            <div class="price-offer main-color" *ngIf="p.servicio_nombre">
+              Servicio: {{ p.servicio_nombre }}
+            </div>
+
+            <!-- Contador de usos -->
+            <div class="price-offer" style="margin-top:4px; font-size:0.82rem; color:#888;">
+              Usos: {{ textoUsos(p) }}
+            </div>
+
             <div class="validity-box">
               <span class="label">Vigencia:</span>
               <span class="value">{{ p.fecha_inicio | date:'d/M/yyyy' }} - {{ p.fecha_fin | date:'d/M/yyyy' }}</span>
             </div>
           </div>
-  
+
           <div class="card-footer">
             <button class="action-btn edit" (click)="abrirModalEditar(p)">Editar</button>
             <button class="action-btn delete" (click)="eliminarPromo(p.id)">Eliminar</button>
@@ -64,31 +78,39 @@
         <div class="form-container">
           <div class="input-field full-width">
             <label>Título de la Promoción</label>
-            <input type="text" [(ngModel)]="promoForm.titulo" placeholder="Ej. Combo Verano">
+            <input type="text" [(ngModel)]="promoForm.titulo" placeholder="Ej. 2 uñas por el precio de 1">
           </div>
-  
+
+          <!-- Servicio al que aplica la promo -->
           <div class="input-field full-width">
-            <label>Código de Cupón</label>
-            <input type="text" [(ngModel)]="promoForm.codigo" placeholder="Ej. VERANO2026"
-              style="text-transform: uppercase">
+            <label>Servicio incluido</label>
+            <select [(ngModel)]="promoForm.servicio_id">
+              <option [ngValue]="null" disabled selected>Selecciona un servicio...</option>
+              <option *ngFor="let s of servicios" [ngValue]="s.id">
+                {{ s.nombre }} (precio regular: Q{{ s.precio }})
+              </option>
+            </select>
           </div>
-  
+
           <div class="input-field full-width">
             <label>Descripción</label>
-            <textarea [(ngModel)]="promoForm.descripcion" rows="2"></textarea>
+            <textarea [(ngModel)]="promoForm.descripcion" rows="2"
+              placeholder="Ej. Válido para uñas acrílicas y de gel"></textarea>
           </div>
-  
+
           <div class="input-row">
+            <!-- Precio especial que el admin fija libremente (no es un porcentaje) -->
             <div class="input-field">
-              <label>Descuento (%)</label>
-              <input type="number" [(ngModel)]="promoForm.valor_descuento" min="1" max="100" step="1">
+              <label>Precio Especial (Q)</label>
+              <input type="number" [(ngModel)]="promoForm.precio_especial" min="0" step="0.01">
             </div>
+            <!-- null = sin límite; un número = máximo de veces que se puede usar esta promo -->
             <div class="input-field">
-              <label>Límite de Usos</label>
-              <input type="number" [(ngModel)]="promoForm.limite_usos" min="1">
+              <label>Límite de Usos (vacío = ilimitado)</label>
+              <input type="number" [(ngModel)]="promoForm.limite_usos" min="1" placeholder="Sin límite">
             </div>
           </div>
-  
+
           <div class="input-row">
             <div class="input-field">
               <label>Fecha Inicio</label>
@@ -99,7 +121,7 @@
               <input type="date" [(ngModel)]="promoForm.fecha_fin">
             </div>
           </div>
-  
+
           <div class="input-field full-width">
             <label>Estado de la Promoción</label>
             <select [(ngModel)]="promoForm.activo">
