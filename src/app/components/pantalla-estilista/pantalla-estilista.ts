@@ -1,17 +1,25 @@
 import { Component, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { timeout } from 'rxjs/operators';
+import { forkJoin, of } from 'rxjs';
+import { timeout, catchError } from 'rxjs/operators';
 import { EstilistaNavbarComponent } from '../estilista-navbar/estilista-navbar';
 
 interface DiaHorario {
   dia:            string;
   nombreCompleto: string;
   numeroFecha:    number;
+  fechaISO:       string;
   horas:          number;
   inicio:         string;
   fin:            string;
   descanso:       boolean;
+  // Días especiales bloqueados por el admin
+  bloqueado:      boolean;
+  tipoBloqueado:  'cerrado' | 'horario_especial' | '';
+  motivoBloqueado: string;
+  inicioBloqueado: string;
+  finBloqueado:    string;
 }
 
 @Component({
@@ -122,44 +130,117 @@ export class PantallaEstilistaComponent implements OnInit {
     return `Hace ${Math.floor(hrs / 24)}d`;
   }
 
-  // ── Horario semanal ───────────────────────────────────────────────
+  // Offset en días desde el lunes para cada nombre de día
+  private readonly DIA_OFFSET: Record<string, number> = {
+    'lunes':0,'martes':1,'miércoles':2,'miercoles':2,
+    'jueves':3,'viernes':4,'sábado':5,'sabado':5,'domingo':6
+  };
+
+  private fechaISODesdeLunes(lunesISO: string, nombreDia: string): string {
+    const offset = this.DIA_OFFSET[nombreDia.toLowerCase().trim()] ?? 0;
+    const d = new Date(lunesISO + 'T00:00:00');
+    d.setDate(d.getDate() + offset);
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+  }
+
+  // ── Horario semanal + días bloqueados ────────────────────────────
+  // Carga en paralelo el horario del estilista y los días especiales
+  // del admin para la semana actual, y los fusiona en horarioSemanal.
   cargarHorario(): void {
     const token = localStorage.getItem('token');
     if (!token) return;
     this.cargandoHorario = true;
-    this.http.get<any[]>(`${this.api}/horarios/mi-horario`, { headers: this.getHeaders() })
-      .pipe(timeout(10000))
-      .subscribe({
-        next: (res) => {
-          this.cargandoHorario = false;
-          if (!res || res.length === 0) { this.sinHorario = true; this.cdr.detectChanges(); return; }
-          this.horarioSemanal = res.map(d => {
-            const esDescanso = d.es_descanso === 1 || d.es_descanso === true;
-            const inicio     = d.hora_inicio ? d.hora_inicio.substring(0, 5) : '';
-            const fin        = d.hora_fin    ? d.hora_fin.substring(0, 5)    : '';
-            let horas = 0;
-            if (!esDescanso && d.hora_inicio && d.hora_fin) {
-              const [h1, m1] = d.hora_inicio.split(':').map(Number);
-              const [h2, m2] = d.hora_fin.split(':').map(Number);
-              horas = Math.round(((h2 - h1) + (m2 - m1) / 60) * 10) / 10;
-            }
-            const nombreDia = (d.dia_semana || '').toLowerCase().trim();
-            return {
-              dia:            this.ABREV[nombreDia] ?? d.dia_semana.substring(0, 3),
-              nombreCompleto: nombreDia,
-              numeroFecha:    this.getFechaDelDia(nombreDia),
-              horas, inicio, fin, descanso: esDescanso
-            };
-          });
+
+    // Lunes de la semana actual
+    const hoy  = new Date();
+    const diff = hoy.getDay() === 0 ? -6 : 1 - hoy.getDay();
+    hoy.setDate(hoy.getDate() + diff);
+    const lunesActual = `${hoy.getFullYear()}-${String(hoy.getMonth()+1).padStart(2,'0')}-${String(hoy.getDate()).padStart(2,'0')}`;
+
+    // Meses que cubre la semana (puede abarcar dos meses)
+    const domingo = new Date(lunesActual + 'T00:00:00');
+    domingo.setDate(domingo.getDate() + 6);
+    const mesLunes   = lunesActual.substring(0, 7);   // 'YYYY-MM'
+    const mesDomingo = `${domingo.getFullYear()}-${String(domingo.getMonth()+1).padStart(2,'0')}`;
+
+    // Construir URLs de días bloqueados (uno o dos meses)
+    const urlBloqueadosLunes   = `${this.api}/dias-bloqueados?mes=${mesLunes}`;
+    const urlBloqueadosDomingo = mesDomingo !== mesLunes
+      ? `${this.api}/dias-bloqueados?mes=${mesDomingo}` : null;
+
+    const bloqueados$ = urlBloqueadosDomingo
+      ? forkJoin([
+          this.http.get<any[]>(urlBloqueadosLunes).pipe(catchError(() => of([]))),
+          this.http.get<any[]>(urlBloqueadosDomingo).pipe(catchError(() => of([])))
+        ])
+      : this.http.get<any[]>(urlBloqueadosLunes).pipe(catchError(() => of([[]])));
+
+    forkJoin({
+      semanas:    this.http.get<any[]>(`${this.api}/horarios/mi-horario`, { headers: this.getHeaders() })
+                    .pipe(timeout(10000), catchError(() => of([]))),
+      bloqueados: bloqueados$
+    }).subscribe({
+      next: ({ semanas, bloqueados }) => {
+        this.cargandoHorario = false;
+
+        // Aplanar días bloqueados (pueden venir de 1 o 2 arrays)
+        const bloqueadosFlat: any[] = Array.isArray(bloqueados[0])
+          ? (bloqueados as any[][]).flat()
+          : (bloqueados as any[]);
+
+        // Índice rápido: fecha → registro bloqueado
+        const bloqueadosMap = new Map<string, any>();
+        bloqueadosFlat.forEach(b => bloqueadosMap.set(b.fecha, b));
+
+        if (!semanas || semanas.length === 0) {
+          // Sin horario asignado — igual mostrar si hay días bloqueados en la semana
+          this.sinHorario = true;
           this.cdr.detectChanges();
-        },
-        error: (err) => {
-          this.cargandoHorario = false;
-          if (err.status === 404) this.sinHorario = true;
-          else this.errorHorario = err.error?.message || `Error ${err.status}`;
-          this.cdr.detectChanges();
+          return;
         }
-      });
+
+        const semanaActual = semanas.find(s => s.semana_inicio === lunesActual) ?? semanas[0];
+        const dias: any[] = semanaActual?.horarios ?? [];
+
+        if (dias.length === 0) { this.sinHorario = true; this.cdr.detectChanges(); return; }
+
+        this.horarioSemanal = dias.map(d => {
+          const esDescanso = !!d.descanso;
+          const inicio     = d.inicio ?? '';
+          const fin        = d.fin    ?? '';
+          let horas = 0;
+          if (!esDescanso && inicio && fin) {
+            const [h1, m1] = inicio.split(':').map(Number);
+            const [h2, m2] = fin.split(':').map(Number);
+            horas = Math.round(((h2 - h1) + (m2 - m1) / 60) * 10) / 10;
+          }
+          const nombreDia = (d.dia || '').toLowerCase().trim();
+          const fechaISO  = this.fechaISODesdeLunes(lunesActual, nombreDia);
+          const blq       = bloqueadosMap.get(fechaISO);
+
+          return {
+            dia:             this.ABREV[nombreDia] ?? d.dia.substring(0, 3),
+            nombreCompleto:  d.dia,
+            numeroFecha:     this.getFechaDelDia(nombreDia),
+            fechaISO,
+            horas, inicio, fin,
+            descanso:        esDescanso,
+            bloqueado:       !!blq,
+            tipoBloqueado:   blq?.tipo ?? '',
+            motivoBloqueado: blq?.motivo ?? '',
+            inicioBloqueado: blq?.hora_inicio ? String(blq.hora_inicio).substring(0,5) : '',
+            finBloqueado:    blq?.hora_fin    ? String(blq.hora_fin).substring(0,5)    : '',
+          } as DiaHorario;
+        });
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.cargandoHorario = false;
+        if (err.status === 404) this.sinHorario = true;
+        else this.errorHorario = err.error?.message || `Error ${err.status}`;
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   get totalHoras(): number  { return this.horarioSemanal.reduce((t, d) => t + d.horas, 0); }

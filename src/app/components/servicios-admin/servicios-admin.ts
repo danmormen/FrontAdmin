@@ -118,11 +118,18 @@ export class ServiciosAdminComponent implements OnInit {
 
   eliminarServicio(id: number | undefined) {
     if (!id) return;
-    if (!confirm('¿Estás seguro de eliminar este servicio?')) return;
-    this.http.delete(`${this.apiServicios}/${id}`, { headers: this.getHeaders() })
+    if (!confirm('¿Estás seguro? Si el servicio tiene citas asociadas se desactivará en lugar de eliminarse.')) return;
+    this.http.delete<any>(`${this.apiServicios}/${id}`, { headers: this.getHeaders() })
       .subscribe({
-        next: () => { alert('Servicio eliminado'); this.cargarServicios(); },
-        error: () => alert('Error al eliminar')
+        next: (res) => {
+          if (res?.message === 'desactivado') {
+            alert('El servicio tiene citas asociadas y fue desactivado (ya no aparece para nuevas reservas, pero el historial se mantiene).');
+          } else {
+            alert('Servicio eliminado correctamente.');
+          }
+          this.cargarServicios();
+        },
+        error: (err) => alert('Error: ' + (err.error?.error || 'No se pudo procesar la solicitud.'))
       });
   }
 

@@ -45,6 +45,8 @@ export class EmpleadosAdminComponent implements OnInit {
   editando     = false;
   empleadoForm: Empleado = this.getNuevoEmpleado();
 
+  mostrarInactivos = false;
+
   // IDs de especialidades seleccionadas en el formulario actual
   especialidadesSeleccionadas: number[] = [];
 
@@ -104,6 +106,15 @@ export class EmpleadosAdminComponent implements OnInit {
 
   estaSeleccionada(id: number): boolean {
     return this.especialidadesSeleccionadas.includes(id);
+  }
+
+  // ── Filtrar empleados ────────────────────────────────────────────
+  get empleadosVisibles() {
+    return this.empleados.filter(e => this.mostrarInactivos ? !e.activo : e.activo);
+  }
+
+  toggleInactivos() {
+    this.mostrarInactivos = !this.mostrarInactivos;
   }
 
   // ── Carga de empleados ──────────────────────────────────────────
@@ -189,10 +200,26 @@ export class EmpleadosAdminComponent implements OnInit {
 
   eliminarEmpleado(id: number) {
     if (!confirm('¿Estás seguro de eliminar a este empleado?')) return;
-    this.http.delete(`${this.apiUrl}/${id}`, { headers: this.getHeaders() })
+    this.http.delete<any>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() })
       .subscribe({
-        next: () => { alert('Usuario eliminado'); this.cargarEmpleados(); },
+        next: (res) => {
+          if (res?.message === 'desactivado') {
+            alert('El empleado tiene historial de citas y fue desactivado. Puedes reactivarlo si regresa.');
+          } else {
+            alert('Empleado eliminado correctamente.');
+          }
+          this.cargarEmpleados();
+        },
         error: () => alert('Error al eliminar')
+      });
+  }
+
+  reactivarEmpleado(emp: any) {
+    if (!confirm(`¿Reactivar a ${emp.nombre}? Recuperará su acceso y datos anteriores.`)) return;
+    this.http.patch<any>(`${this.apiUrl}/${emp.id}/reactivar`, {}, { headers: this.getHeaders() })
+      .subscribe({
+        next: () => { alert(`${emp.nombre} fue reactivado correctamente.`); this.cargarEmpleados(); },
+        error: (err) => alert('Error: ' + (err.error?.error || 'No se pudo reactivar.'))
       });
   }
 

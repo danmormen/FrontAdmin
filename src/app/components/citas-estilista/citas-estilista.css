@@ -798,3 +798,287 @@
   .appt-time-stripe { min-width: 58px; padding: 0 12px; }
   .appt-time-val { font-size: 0.9rem; }
 }
+
+/* ══════════════════════════════════════════════════════════════════
+   WALK-IN — Botón + Badge
+   ══════════════════════════════════════════════════════════════════ */
+
+/* Botón "Cliente sin cuenta" junto al label del día */
+.btn-walkin {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1.5px solid rgba(107,117,96,0.55);
+  background: rgba(107,117,96,0.18);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #F5F0EB;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, box-shadow 0.18s;
+  white-space: nowrap;
+}
+.btn-walkin:hover {
+  background: rgba(107,117,96,0.36);
+  border-color: rgba(107,117,96,0.80);
+  box-shadow: 0 3px 12px rgba(72,80,63,0.18);
+}
+
+/* Badge "Presencial" en las tarjetas de citas walk-in */
+.appt-row-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.walkin-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #4A5446;
+  background: rgba(136,147,123,0.22);
+  border: 1px solid rgba(107,117,96,0.30);
+  border-radius: 20px;
+  padding: 2px 8px;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   WALK-IN MODAL
+   ══════════════════════════════════════════════════════════════════ */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(30, 35, 26, 0.52);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  z-index: 900;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: fadeOverlay 0.18s ease;
+}
+@keyframes fadeOverlay { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-box {
+  background: rgba(245, 240, 235, 0.96);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.82);
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(45, 51, 40, 0.28), 0 2px 8px rgba(45,51,40,0.10);
+  width: 100%;
+  max-width: 480px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideModal 0.20s ease;
+}
+@keyframes slideModal {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+  to   { opacity: 1; transform: translateY(0)    scale(1); }
+}
+
+/* Header del modal */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 22px 0;
+}
+.modal-title-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4A5446;
+}
+.modal-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2D3328;
+  margin: 0;
+}
+.modal-close-btn {
+  background: rgba(136,147,123,0.14);
+  border: 1px solid rgba(136,147,123,0.25);
+  border-radius: 8px;
+  width: 32px; height: 32px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  color: #6B7560;
+  transition: background 0.15s;
+}
+.modal-close-btn:hover { background: rgba(136,147,123,0.28); color: #2D3328; }
+.modal-close-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* Pill de fecha en el modal */
+.modal-fecha-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  margin: 12px 22px 0;
+  padding: 4px 12px;
+  background: rgba(107,117,96,0.14);
+  border: 1px solid rgba(107,117,96,0.25);
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #4A5446;
+}
+
+/* Formulario */
+.modal-form {
+  padding: 16px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.mf-group {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.mf-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #4A5446;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+.mf-optional {
+  font-weight: 500;
+  text-transform: none;
+  color: #88937B;
+}
+
+.mf-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(136,147,123,0.30);
+  background: rgba(255,255,255,0.75);
+  font-family: 'Inter', system-ui, sans-serif;
+  font-size: 0.90rem;
+  color: #2D3328;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.mf-input:focus {
+  border-color: rgba(107,117,96,0.65);
+  box-shadow: 0 0 0 3px rgba(107,117,96,0.10);
+}
+.mf-input:disabled { opacity: 0.60; cursor: not-allowed; }
+.mf-textarea { resize: none; }
+
+/* Lista de servicios como checkboxes estilizados */
+.mf-servicios-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-height: 180px;
+  overflow-y: auto;
+  padding-right: 4px;
+}
+.mf-servicios-list::-webkit-scrollbar { width: 4px; }
+.mf-servicios-list::-webkit-scrollbar-track { background: transparent; }
+.mf-servicios-list::-webkit-scrollbar-thumb { background: rgba(136,147,123,0.35); border-radius: 4px; }
+
+.mf-srv-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(136,147,123,0.22);
+  background: rgba(255,255,255,0.58);
+  cursor: pointer;
+  transition: background 0.14s, border-color 0.14s;
+  font-size: 0.88rem;
+}
+.mf-srv-item:hover { background: rgba(165,174,152,0.20); border-color: rgba(107,117,96,0.35); }
+.mf-srv-item.mf-srv-selected {
+  background: rgba(107,117,96,0.14);
+  border-color: rgba(107,117,96,0.55);
+}
+.mf-srv-item input[type="checkbox"] {
+  width: 16px; height: 16px;
+  accent-color: #6B7560;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.mf-srv-name { flex: 1; color: #2D3328; font-weight: 500; }
+.mf-srv-price { font-size: 0.80rem; font-weight: 700; color: #4a7c5c; }
+
+/* Precio estimado */
+.mf-precio-estimado {
+  margin-top: 6px;
+  padding: 6px 12px;
+  background: rgba(74,124,92,0.10);
+  border: 1px solid rgba(74,124,92,0.25);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  color: #2D5940;
+}
+.mf-precio-estimado strong { color: #1a4230; }
+
+/* Error */
+.mf-error {
+  padding: 8px 12px;
+  background: rgba(239,68,68,0.10);
+  border: 1px solid rgba(239,68,68,0.25);
+  border-radius: 8px;
+  font-size: 0.82rem;
+  color: #B91C1C;
+}
+
+/* Botones del modal */
+.modal-actions {
+  display: flex;
+  gap: 10px;
+  padding: 0 22px 22px;
+}
+.btn-modal-cancel {
+  flex: 0 0 auto;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: 1.5px solid rgba(136,147,123,0.40);
+  background: transparent;
+  color: #6B7560;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.btn-modal-cancel:hover { background: rgba(136,147,123,0.12); }
+.btn-modal-cancel:disabled { opacity: 0.45; cursor: not-allowed; }
+
+.btn-modal-save {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  padding: 10px 20px;
+  border-radius: 12px;
+  border: none;
+  background: rgba(107,117,96,0.88);
+  color: #F5F0EB;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(72,80,63,0.18), inset 0 1px 0 rgba(255,255,255,0.22);
+  transition: background 0.15s, box-shadow 0.15s;
+}
+.btn-modal-save:hover { background: rgba(72,80,63,0.92); box-shadow: 0 4px 16px rgba(72,80,63,0.26); }
+.btn-modal-save:disabled { opacity: 0.55; cursor: not-allowed; }

@@ -554,3 +554,39 @@
   .services-grid { grid-template-columns: 1fr; }
   .greeting-card { flex-direction: column; align-items: flex-start; gap: 12px; }
 }
+
+/* ── Puntos: nuevos estilos ─────────────────────────────────────── */
+.points-loading { color: #C0A0A8; }
+
+.points-pct {
+  font-size: 0.72rem;
+  color: #9B6F75;
+  margin: 4px 0 0;
+  text-align: right;
+}
+
+/* ── Servicios: nuevos estilos ──────────────────────────────────── */
+.service-card { cursor: pointer; transition: transform 0.15s, box-shadow 0.15s; }
+.service-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(183,110,121,0.15); }
+
+.service-cat-badge {
+  font-size: 0.68rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: rgba(183, 110, 121, 0.12);
+  color: #9B5060;
+  white-space: nowrap;
+  text-transform: capitalize;
+}
+
+.service-desc {
+  font-size: 0.80rem;
+  color: #9B6F75;
+  margin: 6px 0 10px;
+  line-height: 1.45;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

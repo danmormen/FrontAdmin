@@ -351,16 +351,76 @@
   background: linear-gradient(90deg, #C49A78, #B8855E);
   margin-bottom: 6px;
 }
-.dia-bar.descanso {
-  background: rgba(165, 174, 152, 0.35);
-}
+.dia-bar.descanso    { background: rgba(165, 174, 152, 0.35); }
+.dia-bar.bar-cerrado  { background: rgba(220, 60, 60, 0.40); }
+.dia-bar.bar-especial { background: linear-gradient(90deg, #8B6F3E, #C49A78); }
 
 .dia-rango {
   font-size: 0.74rem;
   color: #6B7560;
   white-space: nowrap;
 }
-.dia-rango.descanso-txt { color: #C0C8B8; }
+.dia-rango.descanso-txt   { color: #C0C8B8; }
+.dia-rango.especial-rango { color: #6B5020; font-weight: 700; }
+
+/* ── Días especiales / bloqueados por el admin ───────────────────── */
+
+.dia-col.dia-cerrado {
+  background: rgba(220, 60, 60, 0.08);
+  border: 1px solid rgba(220, 60, 60, 0.22);
+  border-radius: 10px;
+  padding: 6px 4px;
+}
+.dia-col.dia-especial {
+  background: rgba(180, 130, 50, 0.10);
+  border: 1px solid rgba(180, 130, 50, 0.28);
+  border-radius: 10px;
+  padding: 6px 4px;
+}
+
+.dia-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 2px 7px;
+  border-radius: 20px;
+  font-size: 0.60rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
+}
+.badge-cerrado {
+  background: rgba(220, 60, 60, 0.15);
+  color: #B91C1C;
+  border: 1px solid rgba(220, 60, 60, 0.25);
+}
+.badge-especial {
+  background: rgba(180, 130, 50, 0.15);
+  color: #7C5A10;
+  border: 1px solid rgba(180, 130, 50, 0.28);
+}
+
+.motivo-txt {
+  font-size: 0.63rem;
+  color: #8B5E3C;
+  text-align: center;
+  font-style: italic;
+  line-height: 1.3;
+  margin-top: 2px;
+  word-break: break-word;
+  max-width: 100%;
+}
+.dia-col.dia-cerrado .motivo-txt { color: #991b1b; }
+
+/* También renombramos .dia-horas → .dia-nombre (usado en HTML) */
+.dia-nombre {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: #2D3328;
+  margin-bottom: 4px;
+  text-align: center;
+}
 
 .horario-vacio {
   text-align: center;

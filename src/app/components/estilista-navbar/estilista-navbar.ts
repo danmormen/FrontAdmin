@@ -7,7 +7,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 // a través del @Input 'active', para resaltar el ítem correspondiente.
 export type EstilistaNavSection =
   | 'inicio' | 'agenda' | 'detalle' | 'horario'
-  | 'resenas' | 'notificaciones' | 'perfil';
+  | 'resenas' | 'notificaciones' | 'perfil' | 'nueva-cita';
 
 @Component({
   selector: 'app-estilista-navbar',
@@ -35,7 +35,8 @@ export class EstilistaNavbarComponent implements OnInit {
     horario:        'horario-estilista',
     resenas:        'resenas-estilista',
     notificaciones: 'notificacion-estilista',
-    perfil:         'perfil-estilista'
+    perfil:         'perfil-estilista',
+    'nueva-cita':   'agendar-walkin'
   };
 
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}

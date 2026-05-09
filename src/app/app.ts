@@ -33,6 +33,7 @@ import { NotificacionEstilistaComponent } from './components/notificacion-estili
 import { PerfilEstilistaComponent } from './components/perfil-estilista/perfil-estilista';
 import { EstilistaHorarioComponent } from './components/horario-estilista/horario-estilista';
 import { HorariosAdministradorComponent } from './components/horario-administrador/horario-administrador';
+import { AgendarWalkinComponent } from './components/agendar-walkin/agendar-walkin';
 
 // ── Componentes de Autenticación y Seguridad ──────────────────────
 import { CambioContrasenaComponent } from './components/cambio-contrasena/cambio-contrasena';
@@ -54,7 +55,7 @@ type VistaActual =
   | 'dias-especiales-admin'
   | 'estilista' | 'citas-estilista' | 'detalle-citas'
   | 'resenas-estilista' | 'notificacion-estilista' | 'perfil-estilista'
-  | 'horario-estilista'
+  | 'horario-estilista' | 'agendar-walkin'
   | 'cambio-password' | 'recuperar-password';
 
 @Component({
@@ -71,7 +72,7 @@ type VistaActual =
     DetalleCitasComponent, ResenasEstilistaComponent, NotificacionEstilistaComponent,
     PerfilEstilistaComponent, EstilistaHorarioComponent, HorariosAdministradorComponent,
     RecompensasAdminComponent, CambioContrasenaComponent, RecuperarContrasenaComponent,
-    DiasEspecialesAdminComponent
+    DiasEspecialesAdminComponent, AgendarWalkinComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -136,6 +137,7 @@ export class App {
       'notificaciones-estilista': 'notificacion-estilista', // alias con 's'
       'perfil-estilista':         'perfil-estilista',
       'horario-estilista':        'horario-estilista',
+      'agendar-walkin':           'agendar-walkin',
 
       'cambio-password':    'cambio-password',
       'recuperar-password': 'recuperar-password'

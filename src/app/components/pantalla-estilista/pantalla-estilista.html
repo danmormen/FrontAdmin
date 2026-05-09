@@ -172,12 +172,58 @@
         <!-- Horario cargado -->
         <div class="horario-grid"
              *ngIf="!cargandoHorario && !errorHorario && !sinHorario && horarioSemanal.length > 0">
-          <div class="dia-col" *ngFor="let d of horarioSemanal">
-            <span class="dia-horas" [class.descanso]="d.descanso">{{ d.nombreCompleto }} {{ d.numeroFecha }}</span>
-            <span class="dia-label">{{ d.descanso ? 0 : d.horas }} horas</span>
-            <div class="dia-bar" [class.descanso]="d.descanso"></div>
-            <span class="dia-rango" *ngIf="!d.descanso">{{ d.inicio }} - {{ d.fin }}</span>
-            <span class="dia-rango descanso-txt" *ngIf="d.descanso">—</span>
+          <div class="dia-col"
+               *ngFor="let d of horarioSemanal"
+               [class.descanso]="d.descanso"
+               [class.dia-cerrado]="d.bloqueado && d.tipoBloqueado === 'cerrado'"
+               [class.dia-especial]="d.bloqueado && d.tipoBloqueado === 'horario_especial'">
+
+            <!-- Nombre y número del día -->
+            <span class="dia-nombre">{{ d.nombreCompleto }} {{ d.numeroFecha }}</span>
+
+            <!-- Badge de día especial (sobre el horario normal) -->
+            <span class="dia-badge badge-cerrado" *ngIf="d.bloqueado && d.tipoBloqueado === 'cerrado'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10">
+                <circle cx="12" cy="12" r="9"/><path d="M15 9l-6 6M9 9l6 6"/>
+              </svg>
+              Cerrado
+            </span>
+            <span class="dia-badge badge-especial" *ngIf="d.bloqueado && d.tipoBloqueado === 'horario_especial'">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="10" height="10">
+                <circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>
+              </svg>
+              Especial
+            </span>
+
+            <!-- Horas laborables -->
+            <span class="dia-label" *ngIf="!d.bloqueado || d.tipoBloqueado === 'horario_especial'">
+              {{ d.descanso ? 0 : d.horas }} horas
+            </span>
+
+            <!-- Barra visual -->
+            <div class="dia-bar"
+                 [class.descanso]="d.descanso"
+                 [class.bar-cerrado]="d.bloqueado && d.tipoBloqueado === 'cerrado'"
+                 [class.bar-especial]="d.bloqueado && d.tipoBloqueado === 'horario_especial'">
+            </div>
+
+            <!-- Rango de horas normal -->
+            <ng-container *ngIf="!d.bloqueado">
+              <span class="dia-rango" *ngIf="!d.descanso">{{ d.inicio }} - {{ d.fin }}</span>
+              <span class="dia-rango descanso-txt" *ngIf="d.descanso">Libre</span>
+            </ng-container>
+
+            <!-- Día cerrado por admin -->
+            <span class="dia-rango motivo-txt" *ngIf="d.bloqueado && d.tipoBloqueado === 'cerrado'">
+              {{ d.motivoBloqueado || 'Salón cerrado' }}
+            </span>
+
+            <!-- Horario especial por admin -->
+            <ng-container *ngIf="d.bloqueado && d.tipoBloqueado === 'horario_especial'">
+              <span class="dia-rango especial-rango">{{ d.inicioBloqueado }} - {{ d.finBloqueado }}</span>
+              <span class="motivo-txt" *ngIf="d.motivoBloqueado">{{ d.motivoBloqueado }}</span>
+            </ng-container>
+
           </div>
         </div>
       </div>

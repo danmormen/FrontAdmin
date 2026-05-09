@@ -8,20 +8,25 @@
   <div class="main-content">
     <header class="page-header">
       <h1 class="page-title">Gestión de Empleados</h1>
-      <button class="add-btn" (click)="abrirModalNuevo()">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="15" height="15">
-          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
-        </svg>
-        Agregar Empleado
-      </button>
+      <div class="header-buttons">
+        <button class="add-btn" (click)="abrirModalNuevo()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" width="15" height="15">
+            <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+          </svg>
+          Agregar Empleado
+        </button>
+        <button class="btn-toggle-inactivos" (click)="toggleInactivos()">
+          {{ mostrarInactivos ? 'Ver activos' : 'Ver inactivos' }}
+        </button>
+      </div>
     </header>
 
     <div class="employee-grid">
-      <div *ngIf="empleados.length === 0" class="no-data">
-        <p>No hay empleados registrados.</p>
+      <div *ngIf="empleadosVisibles.length === 0" class="no-data">
+        <p>{{ mostrarInactivos ? 'No hay empleados inactivos.' : 'No hay empleados registrados.' }}</p>
       </div>
 
-      <div class="employee-card" *ngFor="let emp of empleados">
+      <div class="employee-card" *ngFor="let emp of empleadosVisibles">
         <div class="card-top">
           <div class="info">
             <h3>{{ emp.nombre }}</h3>
@@ -46,7 +51,7 @@
         </div>
 
         <div class="card-footer">
-          <button class="action-btn password" (click)="abrirModalPassword(emp)" title="Cambiar Contraseña">
+          <button class="action-btn password" (click)="abrirModalPassword(emp)" title="Cambiar Contraseña" *ngIf="emp.activo">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
             </svg>
@@ -59,11 +64,17 @@
             </svg>
             Editar
           </button>
-          <button class="action-btn delete" (click)="eliminarEmpleado(emp.id)">
+          <button class="action-btn delete" (click)="eliminarEmpleado(emp.id)" *ngIf="emp.activo">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
             </svg>
             Eliminar
+          </button>
+          <button class="action-btn reactivate" (click)="reactivarEmpleado(emp)" *ngIf="!emp.activo">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M3 21v-5h5"/>
+            </svg>
+            Reactivar
           </button>
         </div>
       </div>

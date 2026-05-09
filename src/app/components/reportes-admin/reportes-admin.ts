@@ -1,6 +1,7 @@
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, OnInit, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AdminNavbarComponent } from '../admin-navbar/admin-navbar';
 
 @Component({
@@ -10,52 +11,69 @@ import { AdminNavbarComponent } from '../admin-navbar/admin-navbar';
   templateUrl: './reportes-admin.html',
   styleUrls: ['./reportes-admin.css']
 })
-export class ReportesAdminComponent {
+export class ReportesAdminComponent implements OnInit {
   @Output() navigate = new EventEmitter<string>();
   @Output() logout   = new EventEmitter<void>();
 
-  periodoSeleccionado = 'mes';
+  private apiUrl = 'http://localhost:3000/api/reportes';
 
-  // ── KPIs principales ──────────────────────────────────────────────
+  periodoSeleccionado = 'mes';
+  cargando  = true;
+  error     = '';
+
+  // ── Datos del API ─────────────────────────────────────────────────
   kpis = {
-    ingresosTotales:      15420,
-    ingresosAnterior:     13850,
-    citasCompletadas:     248,
-    citasAnterior:        232,
-    satisfaccion:         4.7,
-    satisfaccionAnterior: 4.5
+    ingresos: 0, ingresosAnterior: 0,
+    citas: 0,    citasAnterior: 0,
+    satisfaccion: 0, satisfaccionAnterior: 0
   };
 
-  // ── Citas por día ─────────────────────────────────────────────────
-  citasPorDia = [
-    { dia: 'Lun', total: 42 },
-    { dia: 'Mar', total: 38 },
-    { dia: 'Mié', total: 35 },
-    { dia: 'Jue', total: 41 },
-    { dia: 'Vie', total: 52 },
-    { dia: 'Sáb', total: 48 },
-    { dia: 'Dom', total: 12 }
-  ];
+  totales = { total: 0, completadas: 0, canceladas: 0, pendientes: 0, confirmadas: 0 };
 
-  // ── Servicios más populares ───────────────────────────────────────
-  serviciosPopulares = [
-    { nombre: 'Corte de Cabello',    total: 89 },
-    { nombre: 'Tinte y Color',       total: 56 },
-    { nombre: 'Peinado Especial',    total: 42 },
-    { nombre: 'Tratamiento Capilar', total: 35 },
-    { nombre: 'Manicure/Pedicure',   total: 26 }
-  ];
+  citasPorDia:     { dia: string; total: number }[] = [];
+  serviciosTop:    { nombre: string; total: number }[] = [];
+  estilistas:      { nombre: string; citas: number; ingresos: number; satisfaccion: number }[] = [];
 
-  // ── Estilistas más activos ────────────────────────────────────────
-  estilistas = [
-    { nombre: 'Ana Martínez',   citas: 78, ingresos: 5240, satisfaccion: 4.8 },
-    { nombre: 'Carmen López',   citas: 72, ingresos: 4850, satisfaccion: 4.7 },
-    { nombre: 'María González', citas: 65, ingresos: 4120, satisfaccion: 4.6 }
-  ];
+  rango = { inicio: '', fin: '' };
 
-  // ── Helpers ───────────────────────────────────────────────────────
+  constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
+
+  ngOnInit() { this.cargarReporte(); }
+
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    return new HttpHeaders({ Authorization: 'Bearer ' + token });
+  }
+
+  cargarReporte() {
+    this.cargando = true;
+    this.error    = '';
+    const url = `${this.apiUrl}?periodo=${this.periodoSeleccionado}`;
+
+    this.http.get<any>(url, { headers: this.getHeaders() }).subscribe({
+      next: (data) => {
+        this.kpis        = data.kpis;
+        this.citasPorDia = data.citasPorDia;
+        this.serviciosTop= data.serviciosTop;
+        this.estilistas  = data.estilistas;
+        this.totales     = data.totales;
+        this.rango       = data.rango;
+        this.cargando    = false;
+        this.cdr.detectChanges();
+      },
+      error: () => {
+        this.error    = 'No se pudo cargar el reporte.';
+        this.cargando = false;
+        this.cdr.detectChanges();
+      }
+    });
+  }
+
+  onPeriodoChange() { this.cargarReporte(); }
+
+  // ── Helpers de KPIs ──────────────────────────────────────────────
   getPorcentajeCambio(actual: number, anterior: number): number {
-    if (anterior === 0) return 0;
+    if (!anterior) return actual > 0 ? 100 : 0;
     return Math.round(((actual - anterior) / anterior) * 100);
   }
 
@@ -63,21 +81,48 @@ export class ReportesAdminComponent {
     return actual >= anterior;
   }
 
+  // ── Helpers de gráficas ───────────────────────────────────────────
+  getMaxDia(): number {
+    return Math.max(...this.citasPorDia.map(d => d.total), 1);
+  }
+
   getAlturaBarra(total: number): number {
-    const max = Math.max(...this.citasPorDia.map(d => d.total));
-    return Math.round((total / max) * 160);
+    return Math.round((total / this.getMaxDia()) * 160);
   }
 
   esDiaPico(total: number): boolean {
-    return total === Math.max(...this.citasPorDia.map(d => d.total));
+    return total > 0 && total === this.getMaxDia();
   }
 
   getAnchoServicio(total: number): number {
-    const max = this.serviciosPopulares[0].total;
+    const max = this.serviciosTop[0]?.total || 1;
     return Math.round((total / max) * 100);
   }
 
+  // ── Labels de período ─────────────────────────────────────────────
+  get labelPeriodo(): string {
+    const map: Record<string, string> = {
+      semana: 'Esta semana', mes: 'Este mes',
+      trimestre: 'Este trimestre', año: 'Este año'
+    };
+    return map[this.periodoSeleccionado] ?? '';
+  }
+
+  get labelRango(): string {
+    if (!this.rango.inicio) return '';
+    const fmt = (s: string) => {
+      const [y, m, d] = s.split('-').map(Number);
+      return new Date(y, m - 1, d).toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+    };
+    return `${fmt(this.rango.inicio)} – ${fmt(this.rango.fin)}`;
+  }
+
+  // ── Tasa de cancelación ───────────────────────────────────────────
+  get tasaCancelacion(): number {
+    if (!this.totales.total) return 0;
+    return Math.round((this.totales.canceladas / this.totales.total) * 100);
+  }
+
   onNavigate(dest: string) { this.navigate.emit(dest); }
-  volverAlPanel()          { this.navigate.emit('admin'); }
-  cerrarSesion()           { this.logout.emit(); }
+  cerrarSesion()            { this.logout.emit(); }
 }

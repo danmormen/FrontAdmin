@@ -259,6 +259,13 @@
 }
 .action-btn.delete:hover { background: rgba(245, 180, 180, 0.35); }
 
+.action-btn.reactivate {
+  border-color: rgba(79, 123, 90, 0.40);
+  color: #4F7B5A;
+  background: rgba(184, 217, 188, 0.20);
+}
+.action-btn.reactivate:hover { background: rgba(184, 217, 188, 0.38); }
+
 /* === Modal === */
 .modal-backdrop {
   position: fixed;
@@ -520,10 +527,44 @@
 }
 
 /* === Add btn con icono === */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 36px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .add-btn {
   display: flex;
   align-items: center;
   gap: 7px;
+}
+
+.btn-toggle-inactivos {
+  background: rgba(206, 181, 158, 0.35);
+  color: #8B6F4D;
+  border: 1.5px solid rgba(206, 181, 158, 0.50);
+  padding: 11px 20px;
+  border-radius: 14px;
+  font-weight: 700;
+  font-size: 0.92rem;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  transition: background 0.2s, box-shadow 0.2s;
+}
+
+.btn-toggle-inactivos:hover {
+  background: rgba(206, 181, 158, 0.55);
+  box-shadow: 0 2px 8px rgba(206, 181, 158, 0.20);
 }
 
 /* Botones modal */

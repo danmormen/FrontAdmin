@@ -195,4 +195,10 @@
     (logout)="onLogout()">
   </app-estilista-horario>
 
+  <app-agendar-walkin
+    *ngIf="vistaActual === 'agendar-walkin'"
+    (navigate)="onNavigate($event)"
+    (logout)="onLogout()">
+  </app-agendar-walkin>
+
 </div>

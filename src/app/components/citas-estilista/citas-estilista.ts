@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { EstilistaNavbarComponent } from '../estilista-navbar/estilista-navbar';
 
@@ -8,7 +9,7 @@ const DIAS_ES = ['Domingo','Lunes','Martes','Miércoles','Jueves','Viernes','Sá
 @Component({
   selector: 'app-citas-estilista',
   standalone: true,
-  imports: [CommonModule, EstilistaNavbarComponent],
+  imports: [CommonModule, FormsModule, EstilistaNavbarComponent],
   templateUrl: './citas-estilista.html',
   styleUrls: ['./citas-estilista.css']
 })
@@ -27,13 +28,42 @@ export class CitasEstilistaComponent implements OnInit {
   // Día expandido (click para ver detalle)
   diaExpandido: string | null = null;
 
+  // ── Walk-in modal ──────────────────────────────────────────────
+  modalVisible     = false;
+  guardandoWalkIn  = false;
+  errorWalkIn      = '';
+  serviciosDisponibles: any[] = [];
+
+  walkIn = {
+    nombre:    '',
+    telefono:  '',
+    fecha:     '',
+    hora:      '',
+    servicios: [] as number[],
+    notas:     ''
+  };
+
   constructor(private http: HttpClient, private cdr: ChangeDetectorRef) {}
 
-  ngOnInit() { this.cargarSemana(); }
+  ngOnInit() {
+    this.cargarSemana();
+    this.cargarServicios();
+  }
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token');
     return new HttpHeaders({ Authorization: 'Bearer ' + token });
+  }
+
+  // ── Servicios disponibles para el select del modal ────────────
+  private cargarServicios() {
+    this.http.get<any[]>(`${this.apiUrl}/servicios`, { headers: this.getHeaders() }).subscribe({
+      next: (data) => {
+        this.serviciosDisponibles = (data || []).filter(s => s.activo !== 0);
+        this.cdr.detectChanges();
+      },
+      error: () => {}
+    });
   }
 
   // Calcula el lunes de la semana actual + offset
@@ -131,6 +161,82 @@ export class CitasEstilistaComponent implements OnInit {
   estadoClass(estado: string): string {
     const m: Record<string,string> = { confirmada:'pill-green', pendiente:'pill-yellow', cancelada:'pill-red', completada:'pill-blue' };
     return m[estado] ?? 'pill-yellow';
+  }
+
+  // ── Modal walk-in ──────────────────────────────────────────────
+  abrirModalWalkIn(fecha: string) {
+    this.errorWalkIn = '';
+    this.walkIn = {
+      nombre:    '',
+      telefono:  '',
+      fecha:     fecha,
+      hora:      '',
+      servicios: [],
+      notas:     ''
+    };
+    this.modalVisible = true;
+    this.cdr.detectChanges();
+  }
+
+  cerrarModal() {
+    if (this.guardandoWalkIn) return;
+    this.modalVisible = false;
+    this.cdr.detectChanges();
+  }
+
+  toggleServicio(id: number) {
+    const idx = this.walkIn.servicios.indexOf(id);
+    if (idx === -1) this.walkIn.servicios.push(id);
+    else            this.walkIn.servicios.splice(idx, 1);
+  }
+
+  isServicioSelected(id: number): boolean {
+    return this.walkIn.servicios.includes(id);
+  }
+
+  get precioEstimado(): number {
+    return this.serviciosDisponibles
+      .filter(s => this.walkIn.servicios.includes(s.id))
+      .reduce((sum, s) => sum + parseFloat(s.precio || 0), 0);
+  }
+
+  guardarWalkIn() {
+    this.errorWalkIn = '';
+
+    if (!this.walkIn.nombre.trim()) {
+      this.errorWalkIn = 'El nombre del cliente es requerido.'; return;
+    }
+    if (!this.walkIn.hora) {
+      this.errorWalkIn = 'Selecciona una hora.'; return;
+    }
+    if (this.walkIn.servicios.length === 0) {
+      this.errorWalkIn = 'Selecciona al menos un servicio.'; return;
+    }
+
+    this.guardandoWalkIn = true;
+
+    const body = {
+      nombre:    this.walkIn.nombre.trim(),
+      telefono:  this.walkIn.telefono.trim() || null,
+      fecha:     this.walkIn.fecha,
+      hora:      this.walkIn.hora,
+      servicios: this.walkIn.servicios,
+      notas:     this.walkIn.notas.trim() || null
+    };
+
+    this.http.post<any>(`${this.apiUrl}/citas/walk-in`, body, { headers: this.getHeaders() }).subscribe({
+      next: () => {
+        this.guardandoWalkIn = false;
+        this.modalVisible    = false;
+        this.cargarSemana();   // refrescar agenda
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        this.guardandoWalkIn = false;
+        this.errorWalkIn = err.error?.error || 'Error al registrar la cita. Intenta de nuevo.';
+        this.cdr.detectChanges();
+      }
+    });
   }
 
   onNavigate(dest: string) { this.navigate.emit(dest); }
