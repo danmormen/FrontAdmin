@@ -386,11 +386,25 @@
   justify-content: space-between;
   gap: 10px;
 }
+.card-client-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
 .card-client-name {
   font-size: 0.95rem;
   font-weight: 700;
   color: #2F2A2A;
   line-height: 1.2;
+}
+
+.card-client-phone {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.75rem;
+  color: #A09585;
 }
 
 .card-badges {

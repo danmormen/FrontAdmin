@@ -18,9 +18,19 @@ export class RegistroComponent {
   email:           string  = '';
   pass:            string  = '';
   fechaNacimiento: string  = '';
+  telefonoDisplay: string  = '';
   mostrarPass:     boolean = false;
 
   constructor(private http: HttpClient) {}
+
+  // Formatea el teléfono como xxxx-xxxx mientras el usuario escribe
+  onTelInput(event: any) {
+    let digits = event.target.value.replace(/\D/g, '').substring(0, 8);
+    this.telefonoDisplay = digits.length > 4
+      ? digits.substring(0, 4) + '-' + digits.substring(4)
+      : digits;
+    event.target.value = this.telefonoDisplay;
+  }
 
   // Bloquea cualquier tecla que no sea un dígito (0-9) en el campo de fecha.
   // charCode < 31 son teclas de control (Enter, Backspace, etc.) que sí dejamos pasar.
@@ -77,6 +87,12 @@ export class RegistroComponent {
       return;
     }
 
+    const telefonoDigits = this.telefonoDisplay.replace(/\D/g, '');
+    if (telefonoDigits.length !== 8) {
+      alert('Por favor, ingresa un número de teléfono válido de 8 dígitos.');
+      return;
+    }
+
     if (this.nombre && this.apellido && this.email && this.pass) {
 
       // La variable local se llama 'pass' para abreviar, pero el backend espera 'password'.
@@ -85,7 +101,8 @@ export class RegistroComponent {
         apellido:        this.apellido,
         email:           this.email,
         password:        this.pass,
-        fechaNacimiento: this.fechaNacimiento
+        fechaNacimiento: this.fechaNacimiento,
+        telefono:        telefonoDigits
       };
 
       this.http.post('http://localhost:3000/api/auth/registro', datosRegistro)

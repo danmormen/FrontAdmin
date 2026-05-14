@@ -60,6 +60,20 @@
       </div>
 
       <div class="input-field">
+        <label for="telefono">Teléfono</label>
+        <div class="phone-wrapper">
+          <span class="phone-prefix">+502</span>
+          <input id="telefono"
+                 type="text"
+                 [ngModel]="telefonoDisplay"
+                 (input)="onTelInput($event)"
+                 placeholder="xxxx-xxxx"
+                 maxlength="9"
+                 inputmode="numeric">
+        </div>
+      </div>
+
+      <div class="input-field">
         <label for="fecha">Fecha de Nacimiento</label>
         <input id="fecha"
                type="text"

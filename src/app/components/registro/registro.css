@@ -161,6 +161,33 @@
 }
 
 /* Toggle de ojo en password */
+.phone-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255,255,255,0.55);
+  border: 1px solid rgba(183,110,121,0.25);
+  border-radius: 12px;
+  padding: 0 14px;
+}
+.phone-wrapper input {
+  flex: 1;
+  background: none;
+  border: none;
+  outline: none;
+  padding: 12px 0;
+  font-size: 0.95rem;
+  color: #2F2A2A;
+}
+.phone-prefix {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #7A6F6F;
+  white-space: nowrap;
+  border-right: 1px solid rgba(183,110,121,0.2);
+  padding-right: 10px;
+}
+
 .password-wrapper { position: relative; }
 .password-wrapper input { padding-right: 42px; }
 .toggle-pass {
