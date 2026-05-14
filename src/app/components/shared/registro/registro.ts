@@ -21,6 +21,7 @@ export class RegistroComponent {
   fechaNacimiento: string  = '';
   telefonoDisplay: string  = '';
   mostrarPass:     boolean = false;
+  cargando:        boolean = false;
 
   constructor(private http: HttpClient) {}
 
@@ -96,7 +97,8 @@ export class RegistroComponent {
 
     if (this.nombre && this.apellido && this.email && this.pass) {
 
-      // La variable local se llama 'pass' para abreviar, pero el backend espera 'password'.
+      this.cargando = true;
+
       const datosRegistro = {
         nombre:          this.nombre,
         apellido:        this.apellido,
@@ -109,10 +111,7 @@ export class RegistroComponent {
       this.http.post(`${environment.apiUrl}/api/auth/registro`, datosRegistro)
         .subscribe({
           next: (respuesta: any) => {
-            // El backend devuelve un token, pero por ahora no iniciamos sesión
-            // automáticamente: mandamos al login para que el usuario entre con sus datos.
-            // Si en el futuro se quisiera auto-login, solo habría que guardar el token
-            // y emitir el evento de login en lugar de redirigir al login.
+            this.cargando = false;
             if (respuesta.token) {
               localStorage.setItem('token', respuesta.token);
             }
@@ -120,8 +119,7 @@ export class RegistroComponent {
             this.onNavigate.emit('login');
           },
           error: (errorRes) => {
-            // express-validator devuelve los errores en errorRes.error.errores (array).
-            // Los errores de negocio del backend (email duplicado, etc.) vienen en .message.
+            this.cargando = false;
             if (errorRes.error && errorRes.error.errores) {
               const mensajes = errorRes.error.errores.map((e: any) => e.msg).join('\n');
               alert('Revisa tus datos:\n' + mensajes);

@@ -86,7 +86,16 @@
         <small class="helper-text">Solo números. Debes ser mayor de 18 años.</small>
       </div>
 
-      <button class="primary-btn" (click)="registrar()">Crear mi cuenta</button>
+      <button class="primary-btn" (click)="registrar()" [disabled]="cargando">
+        <span *ngIf="!cargando">Crear mi cuenta</span>
+        <span *ngIf="cargando" class="btn-loading">
+          <svg class="spinner" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="12" cy="12" r="10" stroke-opacity="0.25"/>
+            <path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"/>
+          </svg>
+          Creando cuenta...
+        </span>
+      </button>
 
       <div class="divider"></div>
 

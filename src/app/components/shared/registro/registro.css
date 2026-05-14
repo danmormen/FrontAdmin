@@ -254,6 +254,26 @@
 .link-pink:hover { color: #A05E69; text-decoration: underline; }
 .link-pink.bold { font-weight: 700; }
 
+/* Spinner de carga en botón */
+.btn-loading {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.spinner {
+  width: 18px;
+  height: 18px;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+.primary-btn:disabled {
+  opacity: 0.75;
+  cursor: not-allowed;
+}
+
 /* Responsive: cards apiladas */
 @media (max-width: 760px) {
   .auth-wrapper {
