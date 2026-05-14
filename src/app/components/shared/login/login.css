@@ -3,11 +3,9 @@
 
 /* Wrapper general: fondo gradiente fijo a toda la pantalla */
 .auth-page {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
+  position: relative;
+  width: 100%;
+  min-height: 100dvh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -20,6 +18,7 @@
     #E8D5D0 75%,
     #F5E6E8 100%
   );
+  overflow-x: hidden;
 }
 
 /* Circulos decorativos difuminados de fondo */

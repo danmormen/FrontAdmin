@@ -2,11 +2,9 @@
 /* Mismo sistema que login: dos cards sobre fondo gradiente con circulos */
 
 .auth-page {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  overflow: auto; /* permite scroll si el form crece */
+  position: relative;
+  width: 100%;
+  min-height: 100dvh; /* dvh respeta la barra de Safari en iPhone */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -21,6 +19,7 @@
   );
   padding: 24px 0;
   box-sizing: border-box;
+  overflow-x: hidden;
 }
 
 .bg-circle {
