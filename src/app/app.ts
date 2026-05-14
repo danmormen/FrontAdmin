@@ -2,42 +2,42 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 // ── Componentes Cliente ────────────────────────────────────────────
-import { LoginComponent } from './components/login/login';
-import { RegistroComponent } from './components/registro/registro';
-import { HomeComponent } from './components/home/home';
-import { PerfilComponent } from './components/perfil/perfil';
-import { ServiciosComponent } from './components/servicios/servicios';
-import { ReservarComponent } from './components/reservar/reservar';
-import { PromocionesComponent } from './components/promociones/promociones';
-import { VerCitaComponent } from './components/ver-cita/ver-cita';
-import { RecompensasComponent } from './components/recompensas/recompensas';
-import { ResenasComponent } from './components/resenas/resenas';
+import { LoginComponent } from './components/shared/login/login';
+import { RegistroComponent } from './components/shared/registro/registro';
+import { HomeComponent } from './components/cliente/home/home';
+import { PerfilComponent } from './components/shared/perfil/perfil';
+import { ServiciosComponent } from './components/cliente/servicios/servicios';
+import { ReservarComponent } from './components/cliente/reservar/reservar';
+import { PromocionesComponent } from './components/cliente/promociones/promociones';
+import { VerCitaComponent } from './components/cliente/ver-cita/ver-cita';
+import { RecompensasComponent } from './components/cliente/recompensas/recompensas';
+import { ResenasComponent } from './components/cliente/resenas/resenas';
 
 // ── Componentes Admin ──────────────────────────────────────────────
-import { PantallaAdminComponent } from './components/pantalla-administrador/pantalla-administrador';
-import { EmpleadosAdminComponent } from './components/empleados-admin/empleados-admin';
-import { ServiciosAdminComponent } from './components/servicios-admin/servicios-admin';
-import { GestionCitasAdminComponent } from './components/gestion-citas-admin/gestion-citas-admin';
-import { PromocionesAdminComponent } from './components/promociones-admin/promociones-admin';
-import { NotificacionesAdminComponent } from './components/notificaciones-admin/notificaciones-admin';
-import { RecompensasAdminComponent } from './components/recompensa-admin/recompensa-admin';
-import { ReportesAdminComponent } from './components/reportes-admin/reportes-admin';
-import { DiasEspecialesAdminComponent } from './components/dias-especiales-admin/dias-especiales-admin';
+import { PantallaAdminComponent } from './components/admin/pantalla-administrador/pantalla-administrador';
+import { EmpleadosAdminComponent } from './components/admin/empleados-admin/empleados-admin';
+import { ServiciosAdminComponent } from './components/admin/servicios-admin/servicios-admin';
+import { GestionCitasAdminComponent } from './components/admin/gestion-citas-admin/gestion-citas-admin';
+import { PromocionesAdminComponent } from './components/admin/promociones-admin/promociones-admin';
+import { NotificacionesAdminComponent } from './components/admin/notificaciones-admin/notificaciones-admin';
+import { RecompensasAdminComponent } from './components/admin/recompensa-admin/recompensa-admin';
+import { ReportesAdminComponent } from './components/admin/reportes-admin/reportes-admin';
+import { DiasEspecialesAdminComponent } from './components/admin/dias-especiales-admin/dias-especiales-admin';
 
 // ── Componentes Estilista ──────────────────────────────────────────
-import { PantallaEstilistaComponent } from './components/pantalla-estilista/pantalla-estilista';
-import { CitasEstilistaComponent } from './components/citas-estilista/citas-estilista';
-import { DetalleCitasComponent } from './components/detalle-citas/detalle-citas';
-import { ResenasEstilistaComponent } from './components/resenas-estilista/resenas-estilista';
-import { NotificacionEstilistaComponent } from './components/notificacion-estilista/notificacion-estilista';
-import { PerfilEstilistaComponent } from './components/perfil-estilista/perfil-estilista';
-import { EstilistaHorarioComponent } from './components/horario-estilista/horario-estilista';
-import { HorariosAdministradorComponent } from './components/horario-administrador/horario-administrador';
-import { AgendarWalkinComponent } from './components/agendar-walkin/agendar-walkin';
+import { PantallaEstilistaComponent } from './components/estilista/pantalla-estilista/pantalla-estilista';
+import { CitasEstilistaComponent } from './components/estilista/citas-estilista/citas-estilista';
+import { DetalleCitasComponent } from './components/estilista/detalle-citas/detalle-citas';
+import { ResenasEstilistaComponent } from './components/estilista/resenas-estilista/resenas-estilista';
+import { NotificacionEstilistaComponent } from './components/estilista/notificacion-estilista/notificacion-estilista';
+import { PerfilEstilistaComponent } from './components/estilista/perfil-estilista/perfil-estilista';
+import { EstilistaHorarioComponent } from './components/estilista/horario-estilista/horario-estilista';
+import { HorariosAdministradorComponent } from './components/admin/horario-administrador/horario-administrador';
+import { AgendarWalkinComponent } from './components/estilista/agendar-walkin/agendar-walkin';
 
 // ── Componentes de Autenticación y Seguridad ──────────────────────
-import { CambioContrasenaComponent } from './components/cambio-contrasena/cambio-contrasena';
-import { RecuperarContrasenaComponent } from './components/recuperar-contrasena/recuperar-contrasena';
+import { CambioContrasenaComponent } from './components/shared/cambio-contrasena/cambio-contrasena';
+import { RecuperarContrasenaComponent } from './components/shared/recuperar-contrasena/recuperar-contrasena';
 
 // ══════════════════════════════════════════════════════════════════
 // VistaActual — tipo union con todos los nombres de pantalla posibles.
